@@ -1,0 +1,55 @@
+{
+  "note": "Simplified import-tax rules for a GB buyer. ESTIMATES, not tax advice. Verified 2026-10-31 against the listed sources.",
+  "rules": [
+    {
+      "id": "GB-GB",
+      "origin": "GB",
+      "destination": "GB",
+      "originVatIncludedBps": 0,
+      "stripOriginVatOnExport": false,
+      "importVatBps": 0,
+      "vatOnShipping": false,
+      "lowValueThreshold": null,
+      "dutyBpsAboveThreshold": 0,
+      "sources": ["https://www.gov.uk/vat-rates"],
+      "verifiedAt": "2026-10-31",
+      "note": "Domestic purchase: UK consumer prices already include VAT (standard rate 20%); no import charges."
+    },
+    {
+      "id": "US-GB",
+      "origin": "US",
+      "destination": "GB",
+      "originVatIncludedBps": 0,
+      "stripOriginVatOnExport": false,
+      "importVatBps": 2000,
+      "vatOnShipping": true,
+      "lowValueThreshold": { "amountMinor": 13500, "currency": "GBP" },
+      "dutyBpsAboveThreshold": null,
+      "sources": [
+        "https://www.gov.uk/goods-sent-from-abroad/tax-and-duty",
+        "https://www.gov.uk/guidance/vat-and-overseas-goods-sold-directly-to-customers-in-the-uk",
+        "https://www.gov.uk/vat-rates"
+      ],
+      "verifiedAt": "2026-10-31",
+      "note": "Consignment intrinsic value <= £135 (excludes shipping and VAT): the seller charges UK VAT (20%) at checkout and no customs duty is due. Above £135: import VAT plus commodity-specific customs duty, paid to the carrier. Assumes US listed prices exclude sales tax on export. The UK plans to remove the £135 duty relief by March 2029 at the latest."
+    },
+    {
+      "id": "DE-GB",
+      "origin": "DE",
+      "destination": "GB",
+      "originVatIncludedBps": 1900,
+      "stripOriginVatOnExport": true,
+      "importVatBps": 2000,
+      "vatOnShipping": true,
+      "lowValueThreshold": { "amountMinor": 13500, "currency": "GBP" },
+      "dutyBpsAboveThreshold": null,
+      "sources": [
+        "https://www.gov.uk/goods-sent-from-abroad/tax-and-duty",
+        "https://www.gov.uk/guidance/vat-and-overseas-goods-sold-directly-to-customers-in-the-uk",
+        "https://www.gov.uk/vat-rates"
+      ],
+      "verifiedAt": "2026-10-31",
+      "note": "Same UK rules as US-GB. Assumes German consumer prices include 19% German VAT (standard rate; confirmed by multiple secondary sources, not the ministry) and that the retailer removes it on export (zero-rated). Retailer practice varies, so this is an estimate."
+    }
+  ]
+}

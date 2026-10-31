@@ -1,0 +1,10 @@
+{
+  "note": "SIMULATED shipping costs and delivery days for the demo. Channel3 offers carry no shipping data. These are not carrier quotes.",
+  "lanes": [
+    { "origin": "GB", "destination": "GB", "amountMinor": 399, "currency": "GBP", "days": 2 },
+    { "origin": "US", "destination": "GB", "amountMinor": 1499, "currency": "USD", "days": 8 },
+    { "origin": "DE", "destination": "GB", "amountMinor": 899, "currency": "EUR", "days": 5 },
+    { "origin": "US", "destination": "US", "amountMinor": 599, "currency": "USD", "days": 4 },
+    { "origin": "DE", "destination": "DE", "amountMinor": 499, "currency": "EUR", "days": 3 }
+  ]
+}

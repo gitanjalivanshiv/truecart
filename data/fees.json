@@ -1,0 +1,16 @@
+{
+  "merchant": {
+    "percentBps": 349,
+    "internationalBps": 150,
+    "fixedMinor": { "USD": 49, "GBP": 39, "EUR": 39 },
+    "source": "https://www.paypal.com/us/business/paypal-business-fees",
+    "verifiedAt": "2026-10-31",
+    "note": "US merchant fees for 'All other commercial transactions' (page last updated 2026-10-01). Paid by the merchant, not the buyer: shown in the 'merchant pays' panel and reconciliation only."
+  },
+  "buyerFxSpread": {
+    "bps": 300,
+    "source": "https://www.paypal.com/uk/digital-wallet/paypal-consumer-fees",
+    "verifiedAt": null,
+    "note": "UNCONFIRMED. The UK consumer fees page (updated 2026-01-22) lists '3% above the base exchange rate' under business / receiver-bears conversions; the consumer purchase rate is not stated clearly. Always labelled 'estimate'."
+  }
+}

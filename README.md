@@ -6,7 +6,7 @@ TrueCart is an AI shopping agent that buys within a spending mandate you set, ra
 
 Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com) (2026).
 
-**Status:** Phase 0/1. Scaffold, sandbox guard and feasibility spikes are done; the product is not built yet. See [`docs/SPIKE_RESULTS.md`](docs/SPIKE_RESULTS.md).
+**Status:** Phase 2 in progress. Done: scaffold, sandbox guard, feasibility spikes ([`docs/SPIKE_RESULTS.md`](docs/SPIKE_RESULTS.md)), and the pure domain engines (money, mandate, policy, approvals, landed cost, merchant fees) with table and property tests. Not built yet: discovery pipeline, agent, executor, UI.
 
 ## Run locally
 
@@ -14,7 +14,7 @@ Requires Node.js 24 (see `.node-version`; 22.12+ works).
 
 ```bash
 npm install
-cp .env.example .env   # fill in sandbox credentials (see below)
+cp .env.example .env   # fill in sandbox credentials: docs/SETUP_CREDENTIALS.md
 npm run dev            # http://localhost:3000, health at /api/health
 ```
 
@@ -46,7 +46,7 @@ _Placeholder: a sandbox personal (GB) buyer login will be listed here and in the
 ```
 app/                Next.js App Router (UI + /api routes)
 src/config/         sandbox guard
-src/domain/         money · mandate · policy · landedCost (pure, no network)        [Phase 2]
+src/domain/         money · mandate · policy · approval · authorize · landedCost · fees (pure, no network)
 src/executor/       the only code that can move money                               [Phase 2]
 src/agent/          Claude tool-use loop                                            [Phase 2]
 src/integrations/   paypal (client, webhooks) · channel3 · fxrates · anthropic
@@ -54,7 +54,8 @@ src/mcp/            TrueCart MCP server                                         
 src/db/             SQLite                                                          [Phase 2]
 scripts/spikes/     feasibility spikes (S1–S6)
 tests/{unit,e2e}/   Vitest and Playwright
-docs/               DECISIONS.md (append-only), SPIKE_RESULTS.md
+data/               import rules, simulated shipping lanes, fee table (sourced, dated)
+docs/               DECISIONS.md (append-only), SPIKE_RESULTS.md, SETUP_CREDENTIALS.md
 ```
 
 ## Safety design (summary)

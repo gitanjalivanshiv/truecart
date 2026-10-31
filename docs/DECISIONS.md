@@ -40,10 +40,22 @@ Format: date (IST) · decision · reason.
 - `https://api.frankfurter.dev/v2/rates?base=GBP&quotes=USD,EUR`: no key, no quotas (abuse rate-limited), daily, blended central-bank sources, free for commercial use. Behind the `FxRateSource` interface; rates kept as decimal strings. Verified live 2026-10-31.
 
 ## 2026-10-31 · Exact BigInt rationals for FX/bps maths instead of a decimal library
+
 - SPEC 5.1 suggests a decimal library for rates. We only ever multiply minor units by a rate or by basis points and round once, so parsing decimal-string rates into BigInt `num/10^scale` is exact, has zero dependencies, and makes "no floats" checkable by grep. Rounding modes: HALF_EVEN (display lines), CEIL (policy worst case), HALF_UP (fee model), FLOOR.
 
 ## 2026-10-31 · Policy additions beyond SPEC 5.3
+
 - `maxUnitsPerPurchase` on the mandate (default 3): blocks "buy 20 units" injections even when 20 cheap units fit under the cap.
 - `LOW_CONFIDENCE_ESTIMATE` escalates to NEEDS_APPROVAL; `WALLET_NOT_LINKED` and `MANDATE_MISMATCH` deny.
 - All reasons are reported, not just the first. Monthly window = UTC calendar month. Ledger PENDING entries reserve the CEIL worst case; the executor must refuse a capture above the reservation (property-tested invariant: committed spend never exceeds the monthly cap).
 - Approvals bind mandate, offer, merchant, quantity, amount and currency (SPEC listed offer/merchant/amount/currency/expiry); they unlock NEEDS_APPROVAL only and can never override DENIED.
+
+## 2026-10-31 · Landed-cost model for a GB buyer
+
+- Rules live in `data/import_rules.json` (verified against gov.uk on 2026-10-31): consignment intrinsic value ≤ £135 (excl. shipping and VAT) means the seller charges 20% UK VAT at checkout (so it is part of the PayPal charge and incurs the FX spread) and no duty. Above £135, import VAT and commodity-specific duty are paid to the carrier. Duty is not estimated (`null`), and that forces low confidence, which forces approval.
+- DE offers: assume listed prices include 19% German VAT, removed on export. This is an explicit, labelled assumption ("retailer practice varies").
+- Shipping is always from the simulated lane table (`data/shipping_table.json`), because Channel3 offers have no shipping data.
+- The FX spread is applied to the PayPal-charged amount only when order currency ≠ funding currency. 300 bps is UNCONFIRMED (see SPIKE_RESULTS) and is always labelled estimate.
+- Confidence: high = no estimated inputs; medium = 1–2 (simulated shipping always counts); low = 3+, or any unknown (country, rule, route, duty).
+- Merchant fees (3.49% + fixed, +1.50% intl; PayPal page updated 2026-10-01) are seller-side only and are never added to the buyer total.
+- Ranking: sticker = listed price at the base rate; true = landed total; ties broken by offer id. `vsStickerLeader.drivers` are code-computed deltas per line kind. The LLM may phrase them but never computes them.
