@@ -1,16 +1,10 @@
-// Every cross-currency comparison goes through an explicit Quote (SPEC 5.1).
-// Rates are decimal strings; never parse them into floats for money maths.
+// Every cross-currency comparison goes through an explicit Quote (SPEC 5.1); the type lives in the pure domain.
+import type { Quote } from "@/src/domain/money";
 
-export interface Quote {
-  from: string; // ISO-4217
-  to: string;
-  rate: string; // 1 `from` = rate `to`
-  source: "paypal-fxaas" | "frankfurter" | "fixture";
-  asOf: string; // ISO date/time the rate refers to
-}
+export type { Quote };
 
 export interface FxRateSource {
-  readonly name: Quote["source"];
+  readonly name: "paypal-fxaas" | "frankfurter" | "fixture";
   quote(from: string, to: string[]): Promise<Quote[]>;
 }
 

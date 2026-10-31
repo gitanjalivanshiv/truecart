@@ -38,3 +38,12 @@ Format: date (IST) · decision · reason.
 ## 2026-10-31 · FX fallback source: Frankfurter v2
 
 - `https://api.frankfurter.dev/v2/rates?base=GBP&quotes=USD,EUR`: no key, no quotas (abuse rate-limited), daily, blended central-bank sources, free for commercial use. Behind the `FxRateSource` interface; rates kept as decimal strings. Verified live 2026-10-31.
+
+## 2026-10-31 · Exact BigInt rationals for FX/bps maths instead of a decimal library
+- SPEC 5.1 suggests a decimal library for rates. We only ever multiply minor units by a rate or by basis points and round once, so parsing decimal-string rates into BigInt `num/10^scale` is exact, has zero dependencies, and makes "no floats" checkable by grep. Rounding modes: HALF_EVEN (display lines), CEIL (policy worst case), HALF_UP (fee model), FLOOR.
+
+## 2026-10-31 · Policy additions beyond SPEC 5.3
+- `maxUnitsPerPurchase` on the mandate (default 3): blocks "buy 20 units" injections even when 20 cheap units fit under the cap.
+- `LOW_CONFIDENCE_ESTIMATE` escalates to NEEDS_APPROVAL; `WALLET_NOT_LINKED` and `MANDATE_MISMATCH` deny.
+- All reasons are reported, not just the first. Monthly window = UTC calendar month. Ledger PENDING entries reserve the CEIL worst case; the executor must refuse a capture above the reservation (property-tested invariant: committed spend never exceeds the monthly cap).
+- Approvals bind mandate, offer, merchant, quantity, amount and currency (SPEC listed offer/merchant/amount/currency/expiry); they unlock NEEDS_APPROVAL only and can never override DENIED.
