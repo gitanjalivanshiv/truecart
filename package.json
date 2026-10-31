@@ -1,0 +1,51 @@
+{
+  "name": "truecart",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "spike:vault": "tsx scripts/spikes/s1-vault.ts",
+    "spike:fx-orders": "tsx scripts/spikes/s2-fx-orders.ts",
+    "spike:fx-quote": "tsx scripts/spikes/s3-fx-quote.ts",
+    "spike:channel3": "tsx scripts/spikes/s4-channel3.ts",
+    "spike:webhook": "tsx scripts/spikes/s5-webhook.ts",
+    "spike:mcp": "tsx scripts/spikes/s6-mcp.ts",
+    "spike:channel3-mcp": "tsx scripts/spikes/s4b-channel3-mcp.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "next": "16.4.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.10",
+    "tailwindcss": "^4",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  },
+  "description": "TrueCart: an AI shopping agent that buys within your PayPal mandate and ranks offers by true landed cost (PayPal sandbox only).",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  }
+}

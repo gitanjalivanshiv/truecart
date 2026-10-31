@@ -1,0 +1,32 @@
+# Render Blueprint (stub). Docs: https://render.com/docs/blueprint-spec — [VERIFY] fields and plan before first deploy.
+services:
+  - type: web
+    name: truecart
+    runtime: node
+    plan: free # SPEC 13.3: paid instance vs free tier is an open decision (free spins down; disk not persistent)
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: PAYPAL_BASE_URL
+        value: https://api-m.sandbox.paypal.com
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ANTHROPIC_MODEL
+        value: claude-sonnet-5-5
+      - key: CHANNEL3_API_KEY
+        sync: false
+      - key: APP_BASE_URL
+        sync: false
+      - key: MASK_BRANDS
+        value: "true"
+      - key: DEMO_MODE
+        value: "true"
