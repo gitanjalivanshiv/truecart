@@ -87,3 +87,15 @@ Format: date (IST) · decision · reason.
   - the first cert fetch gets a 20 s timeout.
 - Migration 1 was edited in place (purchase statuses SUBMITTED/PENDING, capture columns) before any database existed. Migrations are append-only from the first deploy.
 - Verified live 2026-11-02 (`npm run smoke:executor`): GBP 5.00 and USD 7.00 purchases CAPTURED; a replayed proposal returned the same order and capture with no new charge.
+
+## 2026-11-02 · Discovery pipeline (SPEC 5.5, revised by spike S4)
+
+- **Record/replay.** Live mode records every Channel3 response under `fixtures/channel3/` and falls back to the recording on 402/429/timeout/5xx. `DEMO_MODE=true` replays only (no credits spent). In replay mode, an unseen query uses the closest recorded query for the same market (word overlap ≥ 0.5), and the market note says so. FX rates are recorded the same way (`fixtures/fx/`).
+- **Normalization is the trust boundary for merchant data:**
+  - prices go `String(number)` → strict decimal parser, and anything with float noise is dropped;
+  - control, zero-width and bidi characters are stripped, and line separators become spaces;
+  - text lengths are capped.
+- **Merchant country** comes from a country-code TLD or a uk./us./de. subdomain (`domain`), else the search market (`locale`, flagged). Offers from countries outside the mandate are denied by policy.
+- **Cross-market matching** is fuzzy because Channel3 ids differ per market: same brand plus title-token Jaccard ≥ 0.6 (brand words, units and filler removed). It is labelled "identical-title" or "similar-title" and never claimed to be exact. Unbranded offers are never grouped.
+- **MASK_BRANDS (default on):** brands become "Brand A…", stores "Store GB-1…", and images are hidden. Titles keep only words on a generic-vocabulary **allowlist**, because a brand blocklist missed product-line trademarks in S4 data. Display only: real values stay in the data.
+- **Live result 2026-11-02**, hero query "insulated water bottle 1 litre" (36 offers across GB/US/DE): the cheapest sticker (US, $13.99) ranks #5 by landed cost (£26.75); the true #1 is a GB offer at £18.99. Belgian and Australian stores were DENIED (country not in the mandate).

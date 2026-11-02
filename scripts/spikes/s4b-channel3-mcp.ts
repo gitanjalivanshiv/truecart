@@ -12,7 +12,10 @@ run(async () => {
   const { tools } = await client.listTools();
   console.log(
     JSON.stringify(
-      tools.map((t) => ({ name: t.name, params: Object.keys((t.inputSchema as { properties?: object }).properties ?? {}) })),
+      tools.map((t) => ({
+        name: t.name,
+        params: Object.keys((t.inputSchema as { properties?: object }).properties ?? {}),
+      })),
       null,
       2,
     ),
@@ -24,7 +27,11 @@ run(async () => {
   const props = Object.keys((search.inputSchema as { properties?: object }).properties ?? {});
   const query = arg("query", "insulated stainless steel water bottle 1 litre")!;
   const out: Record<string, unknown> = { tool: search.name, params: props };
-  for (const [country, currency] of [["GB", "GBP"], ["US", "USD"], ["DE", "EUR"]]) {
+  for (const [country, currency] of [
+    ["GB", "GBP"],
+    ["US", "USD"],
+    ["DE", "EUR"],
+  ]) {
     const args: Record<string, unknown> = { query };
     if (props.includes("country")) args.country = country;
     if (props.includes("currency")) args.currency = currency;

@@ -1,0 +1,16 @@
+[
+  {
+    "from": "GBP",
+    "to": "EUR",
+    "rate": "1.1972",
+    "source": "frankfurter",
+    "asOf": "2026-11-02"
+  },
+  {
+    "from": "GBP",
+    "to": "USD",
+    "rate": "1.3392",
+    "source": "frankfurter",
+    "asOf": "2026-11-02"
+  }
+]
