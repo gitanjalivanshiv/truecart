@@ -33,8 +33,9 @@ export interface TurnResult {
   stoppedBy: "answer" | "steps" | "tokens" | "model_error";
 }
 
+// Broad on purpose: a false positive only appends the true statement "no payment was made".
 const PURCHASE_CLAIM =
-  /\b(i(?:'ve| have)? (?:bought|purchased|ordered|paid)|purchase (?:is |was )?(?:complete|completed|done|confirmed|successful)|order (?:is |was |has been )?(?:placed|confirmed)|payment (?:is |was )?(?:complete|successful))\b/i;
+  /\b(captured|bought|purchased|paid)\b|\b(purchase|order|payment|checkout)\b[^.!?\n]{0,40}\b(complete|completed|confirmed|successful|successfully|placed|done|went through|processed)\b/i;
 
 /** Keeps the last `keepUserTurns` user turns (never splits a tool call from its result). */
 export function trimHistory(history: AgentMessage[], keepUserTurns = 6): AgentMessage[] {

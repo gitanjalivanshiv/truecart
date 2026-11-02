@@ -92,10 +92,27 @@ describe("gemini adapter", () => {
     [503, "UNAVAILABLE"],
   ])("HTTP %i -> %s", async (status, kind) => {
     const { fetchFn } = mockFetch(status, { error: "secret request echo" });
-    await expect(geminiAdapter({ apiKey: "k", fetchFn }).complete(req)).rejects.toMatchObject({
+    await expect(geminiAdapter({ apiKey: "k", fetchFn, sleep: async () => {} }).complete(req)).rejects.toMatchObject({
       kind,
       message: expect.not.stringContaining("secret"),
     });
+  });
+
+  it("retries a 503 once on the same model, then succeeds", async () => {
+    let n = 0;
+    const urls: string[] = [];
+    const fetchFn = (async (url: string) => {
+      urls.push(url);
+      return n++ === 0
+        ? new Response("{}", { status: 503 })
+        : new Response(JSON.stringify({ candidates: [{ content: { role: "model", parts: [{ text: "ok" }] } }] }), {
+            status: 200,
+          });
+    }) as unknown as typeof fetch;
+    const res = await geminiAdapter({ apiKey: "k", model: "m-1", fetchFn, sleep: async () => {} }).complete(req);
+    expect(res.message.text).toBe("ok");
+    expect(urls).toHaveLength(2);
+    expect(new Set(urls).size).toBe(1);
   });
 
   it("reports a blocked prompt and a missing key", async () => {

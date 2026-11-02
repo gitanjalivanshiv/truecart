@@ -9,7 +9,7 @@ import { z } from "zod";
 import { ModelError, type AgentMessage, type ModelAdapter, type ModelRequest, type ModelResponse } from "../types";
 
 const BASE = "https://generativelanguage.googleapis.com/v1beta";
-export const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
+export const DEFAULT_GEMINI_MODEL = "gemini-3.5-flash-lite";
 
 const Part = z.looseObject({
   text: z.string().optional(),
@@ -57,7 +57,13 @@ function toContents(messages: AgentMessage[]): unknown[] {
 }
 
 export function geminiAdapter(
-  opts: { apiKey?: string; model?: string; fetchFn?: typeof fetch; timeoutMs?: number } = {},
+  opts: {
+    apiKey?: string;
+    model?: string;
+    fetchFn?: typeof fetch;
+    timeoutMs?: number;
+    sleep?: (ms: number) => Promise<void>;
+  } = {},
 ): ModelAdapter {
   const model = opts.model ?? process.env.GEMINI_MODEL ?? DEFAULT_GEMINI_MODEL;
   if (!/^[a-z0-9.-]+$/.test(model)) throw new ModelError("CONFIG", "invalid GEMINI_MODEL");
@@ -67,34 +73,43 @@ export function geminiAdapter(
     async complete(req: ModelRequest): Promise<ModelResponse> {
       const apiKey = opts.apiKey ?? process.env.GEMINI_API_KEY;
       if (!apiKey) throw new ModelError("CONFIG", "GEMINI_API_KEY is not set");
-      let res: globalThis.Response;
-      try {
-        res = await (opts.fetchFn ?? fetch)(`${BASE}/models/${model}:generateContent`, {
-          method: "POST",
-          headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: req.system }] },
-            contents: toContents(req.messages),
-            tools: [
-              {
-                functionDeclarations: req.tools.map((t) => ({
-                  name: t.name,
-                  description: t.description,
-                  parameters: t.parameters,
-                })),
-              },
-            ],
-            toolConfig: { functionCallingConfig: { mode: "AUTO" } },
-            generationConfig: { maxOutputTokens: req.maxOutputTokens, temperature: 0.2 },
-          }),
-          signal: AbortSignal.timeout(opts.timeoutMs ?? 45_000),
-        });
-      } catch (err) {
-        throw new ModelError(
-          (err as Error).name === "TimeoutError" ? "TIMEOUT" : "UNAVAILABLE",
-          "Gemini request failed",
-        );
+      const body = JSON.stringify({
+        systemInstruction: { parts: [{ text: req.system }] },
+        contents: toContents(req.messages),
+        tools: [
+          {
+            functionDeclarations: req.tools.map((t) => ({
+              name: t.name,
+              description: t.description,
+              parameters: t.parameters,
+            })),
+          },
+        ],
+        toolConfig: { functionCallingConfig: { mode: "AUTO" } },
+        generationConfig: { maxOutputTokens: req.maxOutputTokens, temperature: 0.2 },
+      });
+      // Free-tier capacity spikes show up as 503s and timeouts (seen 2026-11-03): retry once on the same model.
+      // (Not a different model: thought signatures are model-specific.)
+      let res: globalThis.Response | undefined;
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          res = await (opts.fetchFn ?? fetch)(`${BASE}/models/${model}:generateContent`, {
+            method: "POST",
+            headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
+            body,
+            signal: AbortSignal.timeout(opts.timeoutMs ?? 45_000),
+          });
+          if (res.status !== 503 || attempt === 2) break;
+        } catch (err) {
+          if (attempt === 2)
+            throw new ModelError(
+              (err as Error).name === "TimeoutError" ? "TIMEOUT" : "UNAVAILABLE",
+              "Gemini request failed",
+            );
+        }
+        await (opts.sleep ?? ((ms: number) => new Promise((r) => setTimeout(r, ms))))(1_500);
       }
+      res = res!;
       if (!res.ok) {
         // Never echo the body: it can include the request.
         const kind =

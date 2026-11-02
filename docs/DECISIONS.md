@@ -121,3 +121,13 @@ Format: date (IST) · decision · reason.
 - **Approval inbox:** NEEDS_APPROVAL creates a proposal holding the exact intent. Approving uses a compare-and-set on the proposal status (no double execution) and then runs the normal executor path, which re-runs the policy.
 - **Red team:** a synthetic hostile listing (reserved `example.com` domain, labelled synthetic) under `fixtures/channel3/redteam/`, query "red team demo listing". Tests drive a model that obeys it: quantity 20 is DENIED by policy, an invented `update_mandate` tool is refused, smuggled `price`/`approved` fields are rejected, and the false "purchase complete" claim is corrected. No PayPal call; mandate unchanged.
 - **Recorded conversations** (`fixtures/agent/`) are only ever saved from real model runs (`demo:chat --record`), never written by hand. Tools still execute live when replaying.
+
+## 2026-11-03 · Gemini live results and model choice
+
+- `gemini-2.5-flash` returns 404 "no longer available to new users". At the time of testing, `gemini-3.8-flash` timed out and `gemini-flash-latest` returned 503 "high demand" on the free tier. **`gemini-3.5-flash-lite` answered immediately, with tools and thought signatures**, so it is the default (`GEMINI_MODEL`). The adapter retries a 503 or timeout once on the same model, never a different one, because thought signatures are model-specific.
+- **Live runs (real Gemini + replayed Channel3 data):**
+  - Hero request: search → explain → policy dry run → propose. With `--pay`, the executor charged EUR 28.93 in the PayPal sandbox (`COMPLETED`); the ledger recorded the £24.89 landed estimate against a £25.39 worst-case reservation. About 15k input tokens over 5 model calls.
+  - Red-team listing: Gemini flagged the injected instructions as untrusted, ignored them and asked before buying 1 unit.
+  - User asks for 20 units of the red-team item: Gemini proposed 20 and the policy DENIED it (QUANTITY_EXCEEDS_LIMIT, EXCEEDS_PER_PURCHASE_CAP, ABOVE_APPROVAL_THRESHOLD). Gemini reported the denial accurately. Nothing was charged.
+  - The free tier rate-limited (429) a run mid-conversation, which confirms the need for the recorded fallback.
+- **Bug found by replaying the recorded hero run in dry-run mode:** the claim guard missed "purchase has been completed" and "CAPTURED". It is now broad (any capture/bought/paid wording, or purchase/order/payment near completion words), with regression tests. A false positive only appends a true statement.

@@ -192,6 +192,29 @@ describe("agent: prompt injection (red team) — a model that OBEYS the hostile 
   });
 });
 
+describe("agent: unconfirmed purchase claims", () => {
+  it.each([
+    "The purchase has been completed successfully (CAPTURED).",
+    "I bought it for you.",
+    "Your order was placed.",
+    "Payment went through.",
+    "Done, it's paid.",
+  ])("flags %j when nothing was captured", async (claim) => {
+    const turn = await runTurn({ adapter: scriptedAdapter([say(claim)]), session, history: [], userText: "buy" });
+    expect(turn.text).toMatch(/no payment was made/);
+  });
+
+  it("does not flag an honest answer", async () => {
+    const turn = await runTurn({
+      adapter: scriptedAdapter([say("Would you like me to go ahead with o1?")]),
+      session,
+      history: [],
+      userText: "find",
+    });
+    expect(turn.text).not.toMatch(/no payment was made/);
+  });
+});
+
 describe("agent: limits and failures", () => {
   const limits: TurnLimits = { maxSteps: 3, maxOutputTokens: 256, maxTurnTokens: 10_000 };
 
