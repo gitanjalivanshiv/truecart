@@ -3,7 +3,7 @@
 Status key: **PASS** confirmed by a live run · **PARTIAL** part confirmed live · **DOCS-ONLY** contract verified in official docs, live run blocked · **FAIL**.
 All runs are PayPal **sandbox**. Spike output is redacted; raw ids stay in git-ignored `scripts/spikes/.out/`.
 
-_Last updated: 2026-10-31 (Phase 0/1 session). No credentials were available in this session, so the PayPal and Channel3 API spikes are blocked._
+_Last updated: 2026-11-02. PayPal sandbox credentials available; Channel3 key pending._
 
 | #   | Spike                                                        | Status                                                           | Script                                                        | Chosen fallback                                                    |
 | --- | ------------------------------------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------ |
@@ -31,19 +31,34 @@ _Last updated: 2026-10-31 (Phase 0/1 session). No credentials were available in 
 
 - **Our choice:** `usage_pattern: UNSCHEDULED_PREPAID` (agent buys at irregular times, and the charge happens before fulfilment). The script accepts `--pattern` to try others.
 - **Live run checklist:** setup → approve as GB buyer → `token` → `charge --currency USD` (record status `COMPLETED` vs `APPROVED`/`PAYER_ACTION_REQUIRED`, latency) → `replay` (same `PayPal-Request-Id` must return the same order) → `charge --no-stored-credential` (does the order still go through?).
+- **Live result 2026-11-02: PASS.**
+  - Setup token → `PAYER_ACTION_REQUIRED`, then approved in the browser by the GB sandbox buyer → `APPROVED`. Payment token created; its response echoes `usage_type: MERCHANT`, `customer_type: CONSUMER`, `usage_pattern: UNSCHEDULED_PREPAID`, the buyer's GB shipping address and `payer_id`.
+  - `POST /v2/checkout/orders` with `payment_source.paypal.vault_id` + `stored_credential {MERCHANT, SUBSEQUENT, UNSCHEDULED_PREPAID}` returned **`status: COMPLETED` with the capture already done, in one call (~3.6s), with no redirect or payer action**. So the executor does not call `/capture` for vaulted orders; it reads `purchase_units[0].payments.captures[0]`.
+  - **Idempotency:** re-sending the same `PayPal-Request-Id` returned the _same_ order and capture ids (no double charge).
+  - Without `stored_credential` the sandbox also completed the charge. We still always send it, because it is the correct signal for a merchant-initiated charge.
+  - Fee calibration: USD 12.34 → `paypal_fee` 1.11 = our model exactly (3.49% 0.43 + intl 1.50% 0.19 + 0.49).
 - **Fallback if no MIT charge:** buyer-approved order per purchase. The approval inbox then doubles as the PayPal approval step. Script: `spike:fx-orders -- approve`.
 
 ## S2 · Multi-currency orders on one US business account
 
 - **Script:** charges USD/GBP/EUR 10.00 via the vault token and prints each capture's `seller_receivable_breakdown` (`gross_amount`, `paypal_fee`, `net_amount`, `receivable_amount`, `exchange_rate`).
 - **Docs/community:** a US business account may block or hold currencies it doesn't hold. The setting is **Account Settings → Payment preferences → Block payments** (allow, convert to USD, or ask each time). Record which choice yields `exchange_rate` + `receivable_amount` in the breakdown. "Convert" is what we want, because it gives real FX data for reconciliation.
+- **Live result 2026-11-02: PASS.** Vaulted MIT charges of 10.00 USD / GBP / EUR all `COMPLETED` on the US business account. No receiving-preference change was needed (or it was already set).
+
+  |     | gross | paypal_fee | our model | net  | receivable_amount | exchange_rate     | vs Frankfurter mid (2026-11-02) |
+  | --- | ----- | ---------- | --------- | ---- | ----------------- | ----------------- | ------------------------------- |
+  | GBP | 10.00 | 0.89       | 0.89 ✓    | 9.11 | 11.86 USD         | 1.301739879661924 | 1.3393 → 2.80% below            |
+  | EUR | 10.00 | 0.89       | 0.89 ✓    | 9.11 | 9.94 USD          | 1.090842204431814 | 1.11841 → 2.47% below           |
+  - `receivable_amount = net × exchange_rate`, so conversion happens on the seller's net.
+  - These are **seller-side** conversion figures from sandbox rates. They calibrate the merchant panel, not the buyer spread (F6 still applies), and sandbox rates may not match production. The executor should store `exchange_rate` as the full decimal string.
+
 - **Fallback:** a modelled merchant fee/FX labelled "estimate"; the reconciliation view shows captured gross only.
 
 ## S3 · Currency Exchange quote API
 
 - **Docs:** `POST /v2/pricing/quote-exchange-rates`, `quote_items[]: { base_currency, base_amount, quote_currency, markup_percent?, fx_id? }`. The response includes `exchange_rate_quotes[]` with `fx_id`, `exchange_rate`, `rate_refresh_time`, `expiry_time`. It requires the OAuth scope `https://uri.paypal.com/services/pricing/quote-exchange-rates/read`. The spike checks whether our token's `scope` list contains it before calling.
 - **Fallback, live PASS 2026-10-31:** Frankfurter v2 `GET https://api.frankfurter.dev/v2/rates?base=GBP&quotes=USD,EUR` returned `GBP→EUR 1.1964`, `GBP→USD 1.337` (asOf 2026-10-31) in ~3.3s. No key needed, daily updates, free for commercial use. Implemented as `src/integrations/fxrates/frankfurter.ts` behind `FxRateSource`.
-- **Expected:** the PayPal side is gated (P2 anyway).
+- **Live result 2026-11-02:** the client-credentials token **does** include the `.../pricing/quote-exchange-rates/read` scope (31 scopes in total), but `POST /v2/pricing/quote-exchange-rates` returns **403 `FEATURE_NOT_PROVISIONED`** (debug_id ca544ea29ec9f). The feature must be provisioned by PayPal for the account. Decision: Frankfurter is the rate source; FXaaS stays P2 and is only worth asking PayPal about if time allows.
 
 ## S4 · Channel3 multi-locale
 
@@ -72,6 +87,11 @@ _Last updated: 2026-10-31 (Phase 0/1 session). No credentials were available in 
 
 - **Docs:** sandbox `https://mcp.sandbox.paypal.com/http` (streamable HTTP) and `/sse`. Headless auth uses `Authorization: Bearer <access token from client credentials>`. The environment is chosen by host. The local alternative is `npx -y @paypal/mcp --tools=all` with `PAYPAL_ACCESS_TOKEN` and `PAYPAL_ENVIRONMENT=SANDBOX`. The docs don't state token lifetime; the spike records `expires_in`.
 - **Script:** connects (streamable HTTP, then SSE as fallback), lists tools, and calls nothing.
+- **Live result 2026-11-02:**
+  - **SSE `https://mcp.sandbox.paypal.com/sse` with `Authorization: Bearer <client-credentials token>` works**: connected in ~1.6s and listed **46 tools**, including `get_order`, `list_transactions`, `create_shipment_tracking`, `get_shipment_tracking`, `list_disputes`, `get_dispute`, `create_order`, `pay_order`, `create_refund`, plus invoicing, subscription and catalog tools.
+  - Streamable HTTP returned 404 at `/http` (the documented path), `/http/`, `/mcp` and `/`.
+  - The access token's `expires_in` is **32,399 s (9 h)**, so the server must refresh it before reconnecting.
+  - Decision: use SSE for the read/ops view (order lookup, tracking). Never expose MCP write tools (`create_order`, `pay_order`, `create_refund`) to our agent: payments stay on the executor's direct REST path.
 
 ---
 
