@@ -138,7 +138,7 @@ export function settleLedgerEntry(
 
 // ---------- purchases ----------
 
-export type PurchaseStatus = "RESERVED" | "CAPTURED" | "FAILED";
+export type PurchaseStatus = "RESERVED" | "SUBMITTED" | "PENDING" | "CAPTURED" | "FAILED";
 
 export interface PurchaseRecord {
   id: string;
@@ -157,7 +157,10 @@ export interface PurchaseRecord {
   status: PurchaseStatus;
   paypalOrderId: string | null;
   paypalCaptureId: string | null;
+  captureStatus: string | null;
+  errorCode: string | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 type PurchaseRow = Record<string, unknown>;
@@ -179,7 +182,10 @@ const toPurchase = (r: PurchaseRow): PurchaseRecord => ({
   status: r.status as PurchaseStatus,
   paypalOrderId: (r.paypal_order_id as string | null) ?? null,
   paypalCaptureId: (r.paypal_capture_id as string | null) ?? null,
+  captureStatus: (r.capture_status as string | null) ?? null,
+  errorCode: (r.error_code as string | null) ?? null,
   createdAt: r.created_at as string,
+  updatedAt: r.updated_at as string,
 });
 
 export function getPurchaseByRequestId(db: Db, requestId: string): PurchaseRecord | undefined {
@@ -190,4 +196,85 @@ export function getPurchaseByRequestId(db: Db, requestId: string): PurchaseRecor
 export function getPurchase(db: Db, id: string): PurchaseRecord | undefined {
   const row = db.prepare("SELECT * FROM purchases WHERE id = ?").get(id) as PurchaseRow | undefined;
   return row && toPurchase(row);
+}
+
+export function updatePurchase(
+  db: Db,
+  id: string,
+  fields: Partial<{
+    status: PurchaseStatus;
+    paypalOrderId: string;
+    paypalCaptureId: string;
+    captureStatus: string;
+    sellerBreakdown: unknown;
+    paypalResponse: unknown;
+    errorCode: string;
+    error: unknown;
+  }>,
+  now: Date,
+): void {
+  const cols: Record<string, unknown> = {
+    status: fields.status,
+    paypal_order_id: fields.paypalOrderId,
+    paypal_capture_id: fields.paypalCaptureId,
+    capture_status: fields.captureStatus,
+    seller_breakdown: fields.sellerBreakdown === undefined ? undefined : JSON.stringify(fields.sellerBreakdown),
+    paypal_response: fields.paypalResponse === undefined ? undefined : JSON.stringify(fields.paypalResponse),
+    error_code: fields.errorCode,
+    error: fields.error === undefined ? undefined : JSON.stringify(fields.error),
+  };
+  const set = Object.entries(cols).filter(([, v]) => v !== undefined);
+  const sql = `UPDATE purchases SET ${[...set.map(([k]) => `${k} = ?`), "updated_at = ?"].join(", ")} WHERE id = ?`;
+  db.prepare(sql).run(...(set.map(([, v]) => v) as (string | null)[]), now.toISOString(), id);
+}
+
+export function purchasesWithStatus(db: Db, statuses: PurchaseStatus[]): PurchaseRecord[] {
+  const rows = db
+    .prepare(`SELECT * FROM purchases WHERE status IN (${statuses.map(() => "?").join(", ")}) ORDER BY created_at`)
+    .all(...statuses) as PurchaseRow[];
+  return rows.map(toPurchase);
+}
+
+export function getPurchaseByCaptureId(db: Db, captureId: string): PurchaseRecord | undefined {
+  const row = db.prepare("SELECT * FROM purchases WHERE paypal_capture_id = ?").get(captureId) as
+    PurchaseRow | undefined;
+  return row && toPurchase(row);
+}
+
+export function getPurchaseByOrderId(db: Db, orderId: string): PurchaseRecord | undefined {
+  const row = db.prepare("SELECT * FROM purchases WHERE paypal_order_id = ?").get(orderId) as PurchaseRow | undefined;
+  return row && toPurchase(row);
+}
+
+/** Unlinks a wallet everywhere it is used (e.g. VAULT.PAYMENT-TOKEN.DELETED). Returns affected mandates. */
+export function unlinkWalletToken(db: Db, walletTokenRef: string, now: Date): number {
+  return Number(
+    db
+      .prepare("UPDATE mandates SET wallet_token_ref = NULL, updated_at = ? WHERE wallet_token_ref = ?")
+      .run(now.toISOString(), walletTokenRef).changes,
+  );
+}
+
+export interface WebhookEventInsert {
+  id: string;
+  eventType: string;
+  resourceId: string | null;
+  verifiedBy: string;
+  payload: string;
+}
+
+/** Dedupe: true if this event id is new. */
+export function insertWebhookEvent(db: Db, e: WebhookEventInsert, now: Date): boolean {
+  return (
+    db
+      .prepare(
+        `INSERT OR IGNORE INTO webhook_events (id, event_type, resource_id, verified_by, payload, received_at)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+      )
+      .run(e.id, e.eventType, e.resourceId, e.verifiedBy, e.payload, now.toISOString()).changes === 1
+  );
+}
+
+export function markWebhookProcessed(db: Db, id: string, now: Date): void {
+  db.prepare("UPDATE webhook_events SET processed_at = ? WHERE id = ?").run(now.toISOString(), id);
 }

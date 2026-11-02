@@ -66,7 +66,8 @@ const certCache = new Map<string, string>();
 export const fetchCertPem: CertFetcher = async (url) => {
   const hit = certCache.get(url.href);
   if (hit) return hit;
-  const res = await fetch(url, { signal: AbortSignal.timeout(10_000), cache: "no-store" });
+  // 20 s: the first cert fetch timed out at 10 s in spike S5.
+  const res = await fetch(url, { signal: AbortSignal.timeout(20_000), cache: "no-store" });
   if (!res.ok) throw new WebhookVerificationError(`cert fetch failed: ${res.status}`);
   const pem = await res.text();
   const cert = new X509Certificate(pem);

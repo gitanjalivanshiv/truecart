@@ -19,7 +19,8 @@
     "spike:channel3": "tsx scripts/spikes/s4-channel3.ts",
     "spike:webhook": "tsx scripts/spikes/s5-webhook.ts",
     "spike:mcp": "tsx scripts/spikes/s6-mcp.ts",
-    "spike:channel3-mcp": "tsx scripts/spikes/s4b-channel3-mcp.ts"
+    "spike:channel3-mcp": "tsx scripts/spikes/s4b-channel3-mcp.ts",
+    "smoke:executor": "tsx scripts/smoke/executor-sandbox.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",

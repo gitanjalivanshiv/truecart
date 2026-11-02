@@ -7,7 +7,7 @@ import { DatabaseSync } from "node:sqlite";
 
 export type Db = DatabaseSync;
 
-// Append-only. Each entry runs once, tracked by PRAGMA user_version.
+// Append-only once deployed. Each entry runs once, tracked by PRAGMA user_version.
 const MIGRATIONS: string[] = [
   `
   CREATE TABLE mandates (
@@ -45,9 +45,12 @@ const MIGRATIONS: string[] = [
     landed_currency    TEXT NOT NULL,
     approval_id        TEXT REFERENCES approvals(id),
     authorized_via     TEXT NOT NULL CHECK (authorized_via IN ('AUTO', 'APPROVAL')),
-    status             TEXT NOT NULL CHECK (status IN ('RESERVED', 'CAPTURED', 'FAILED')),
+    status             TEXT NOT NULL CHECK (status IN ('RESERVED', 'SUBMITTED', 'PENDING', 'CAPTURED', 'FAILED')),
     paypal_order_id    TEXT,
     paypal_capture_id  TEXT,
+    capture_status     TEXT,
+    seller_breakdown   TEXT,                   -- seller_receivable_breakdown JSON (reconciliation)
+    error_code         TEXT,
     policy             TEXT NOT NULL,          -- PolicyResult JSON at reservation time
     paypal_response    TEXT,                   -- redacted
     error              TEXT,

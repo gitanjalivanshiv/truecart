@@ -61,10 +61,29 @@ Format: date (IST) · decision · reason.
 - Ranking: sticker = listed price at the base rate; true = landed total; ties broken by offer id. `vsStickerLeader.drivers` are code-computed deltas per line kind. The LLM may phrase them but never computes them.
 
 ## 2026-11-02 · Demo product: insulated water bottle (open decision 13.2, owner-approved)
+
 - S4 showed cross-market overlaps (same branded bottles in GB/US and GB/DE), a wide price spread, and every offer under the £135 VAT threshold. Brands are masked in demo mode.
 
 ## 2026-11-02 · SQLite via Node's built-in `node:sqlite`, not better-sqlite3
+
 - better-sqlite3 needs a native install script, which npm 11's allow-scripts blocks by default (here and in CI/Render) and which can break on Node upgrades. Node 24 ships `node:sqlite` (`DatabaseSync`): synchronous, safe-integer preserving, no dependency. Verified: compare-and-set via `changes`, `BEGIN IMMEDIATE` transactions.
 - Money-guarding writes run in one `BEGIN IMMEDIATE` transaction (`src/db/reserveCharge.ts`): re-run policy against the stored ledger, consume the approval by compare-and-set, reserve the worst case as PENDING, insert the purchase. PayPal is called after commit.
 - `PayPal-Request-Id = tc-` + sha256(mandateId, proposalId)[:32]. Replaying a proposal returns the same purchase; buying the same item again needs a new proposal.
 - Captures can never exceed the reservation: enforced in code and by a CHECK constraint.
+
+## 2026-11-02 · Executor design (SPEC 5.6, 5.7)
+
+- `buy()` is the only path to a charge: `reserveCharge` (policy + approval CAS + worst-case reservation) → mark SUBMITTED → vaulted MIT order → record the outcome and settle the ledger in one transaction.
+- Retries (timeout, network, 429, 5xx) reuse the same `PayPal-Request-Id`, which PayPal honours (spike S1), so they never double-charge. If the outcome is still unknown after 3 attempts the reservation is kept and `reconcile()` re-sends with the same id later (default after 5 min).
+- Terminal failures are classified from PayPal's documented issue codes (DECLINED / WALLET / MERCHANT / CONFIG). They fail the purchase and release the reservation.
+- `invoice_id = custom_id = purchaseId`: a second PayPal-side duplicate guard, and how webhooks find the purchase.
+- A RESERVED purchase that was never submitted is re-checked for pause, expiry and an unlinked wallet before submitting.
+- A captured amount that differs from the approved amount is recorded with a `CAPTURED_AMOUNT_MISMATCH` warning.
+- Webhooks:
+  - only our webhook id (never the simulator's `WEBHOOK_ID`);
+  - 503 on verifier outage (PayPal retries), 400 on a bad signature or hostile cert URL;
+  - de-duplicated by event id;
+  - `VAULT.PAYMENT-TOKEN.DELETED` unlinks the wallet;
+  - the first cert fetch gets a 20 s timeout.
+- Migration 1 was edited in place (purchase statuses SUBMITTED/PENDING, capture columns) before any database existed. Migrations are append-only from the first deploy.
+- Verified live 2026-11-02 (`npm run smoke:executor`): GBP 5.00 and USD 7.00 purchases CAPTURED; a replayed proposal returned the same order and capture with no new charge.

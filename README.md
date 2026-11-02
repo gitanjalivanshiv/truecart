@@ -6,7 +6,7 @@ TrueCart is an AI shopping agent that buys within a spending mandate you set, ra
 
 Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com) (2026).
 
-**Status:** Phase 2 in progress. Done: scaffold, sandbox guard, feasibility spikes ([`docs/SPIKE_RESULTS.md`](docs/SPIKE_RESULTS.md)), and the pure domain engines (money, mandate, policy, approvals, landed cost, merchant fees) with table and property tests. Not built yet: discovery pipeline, agent, executor, UI.
+**Status:** Phase 2 in progress. Done: scaffold, sandbox guard, feasibility spikes ([`docs/SPIKE_RESULTS.md`](docs/SPIKE_RESULTS.md)), and the pure domain engines (money, mandate, policy, approvals, landed cost, merchant fees) with table and property tests. Also done: SQLite store and the payment executor (verified live against PayPal sandbox), plus the signed webhook receiver. Not built yet: discovery pipeline, agent, UI.
 
 ## Run locally
 
@@ -47,11 +47,11 @@ _Placeholder: a sandbox personal (GB) buyer login will be listed here and in the
 app/                Next.js App Router (UI + /api routes)
 src/config/         sandbox guard
 src/domain/         money · mandate · policy · approval · authorize · landedCost · fees (pure, no network)
-src/executor/       the only code that can move money                               [Phase 2]
+src/executor/       the only code that can move money: reserve -> vaulted PayPal charge -> settle; webhooks; reconcile
 src/agent/          Claude tool-use loop                                            [Phase 2]
 src/integrations/   paypal (client, webhooks) · channel3 · fxrates · anthropic
 src/mcp/            TrueCart MCP server                                             [P1]
-src/db/             SQLite                                                          [Phase 2]
+src/db/             SQLite (node:sqlite): mandates, approvals, purchases, ledger, webhook events
 scripts/spikes/     feasibility spikes (S1–S6)
 tests/{unit,e2e}/   Vitest and Playwright
 data/               import rules, simulated shipping lanes, fee table (sourced, dated)
