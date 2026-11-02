@@ -100,3 +100,10 @@ export function finishProposal(db: Db, id: string, status: ProposalStatus, outco
     id,
   );
 }
+
+export function proposalsForMandate(db: Db, mandateId: string, limit = 50): Proposal[] {
+  const rows = db
+    .prepare("SELECT * FROM proposals WHERE mandate_id = ? ORDER BY created_at DESC LIMIT ?")
+    .all(mandateId, limit) as Row[];
+  return rows.map(toProposal);
+}

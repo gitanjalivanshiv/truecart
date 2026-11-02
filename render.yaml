@@ -28,6 +28,10 @@ services:
         sync: false
       - key: APP_BASE_URL
         sync: false
+      - key: DEMO_WALLET_TOKEN
+        sync: false
+      - key: AGENT_DAILY_TURNS
+        value: "300"
       - key: MASK_BRANDS
         value: "true"
       - key: DEMO_MODE

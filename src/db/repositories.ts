@@ -278,3 +278,35 @@ export function insertWebhookEvent(db: Db, e: WebhookEventInsert, now: Date): bo
 export function markWebhookProcessed(db: Db, id: string, now: Date): void {
   db.prepare("UPDATE webhook_events SET processed_at = ? WHERE id = ?").run(now.toISOString(), id);
 }
+
+export function purchasesForMandate(
+  db: Db,
+  mandateId: string,
+): (PurchaseRecord & { sellerBreakdown: unknown; paypalResponse: unknown })[] {
+  const rows = db
+    .prepare("SELECT * FROM purchases WHERE mandate_id = ? ORDER BY created_at DESC")
+    .all(mandateId) as PurchaseRow[];
+  return rows.map((r) => ({
+    ...toPurchase(r),
+    sellerBreakdown: r.seller_breakdown ? JSON.parse(r.seller_breakdown as string) : null,
+    paypalResponse: r.paypal_response ? JSON.parse(r.paypal_response as string) : null,
+  }));
+}
+
+export function webhookEventsForPurchases(
+  db: Db,
+  purchaseIds: string[],
+  captureIds: string[],
+): { id: string; eventType: string; receivedAt: string; resourceId: string | null }[] {
+  if (purchaseIds.length === 0) return [];
+  const rows = db
+    .prepare(
+      "SELECT id, event_type, received_at, resource_id, payload FROM webhook_events ORDER BY received_at DESC LIMIT 200",
+    )
+    .all() as { id: string; event_type: string; received_at: string; resource_id: string | null; payload: string }[];
+  const ids = new Set(purchaseIds);
+  const caps = new Set(captureIds);
+  return rows
+    .filter((r) => (r.resource_id && caps.has(r.resource_id)) || [...ids].some((id) => r.payload.includes(id)))
+    .map((r) => ({ id: r.id, eventType: r.event_type, receivedAt: r.received_at, resourceId: r.resource_id }));
+}

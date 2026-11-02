@@ -6,7 +6,9 @@ test("health endpoint reports sandbox", async ({ request }) => {
   expect(await res.json()).toMatchObject({ ok: true, paypal: "sandbox" });
 });
 
-test("home page carries the honest sandbox banner", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByText("Sandbox: no real money. Merchants are simulated.")).toBeVisible();
+test("every page carries the honest sandbox banner", async ({ page }) => {
+  for (const path of ["/", "/offers", "/approvals", "/ledger", "/mandate", "/red-team"]) {
+    await page.goto(path);
+    await expect(page.getByText("Sandbox: no real money. Merchants are simulated.")).toBeVisible();
+  }
 });

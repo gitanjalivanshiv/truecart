@@ -6,7 +6,7 @@ TrueCart is an AI shopping agent that buys within a spending mandate you set, ra
 
 Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com) (2026).
 
-**Status:** Phase 2 in progress. Done: scaffold, sandbox guard, feasibility spikes ([`docs/SPIKE_RESULTS.md`](docs/SPIKE_RESULTS.md)), and the pure domain engines (money, mandate, policy, approvals, landed cost, merchant fees) with table and property tests. Also done: SQLite store and the payment executor (verified live against PayPal sandbox), plus the signed webhook receiver. Also done: Channel3 discovery (record/replay, normalization, fuzzy cross-market matching, brand masking) feeding the landed-cost ranking. Also done: the provider-neutral agent (tools, approval inbox flow, prompt-injection guards). Not built yet: UI.
+**Status:** working end to end in the PayPal sandbox: web app (Shop, Offers, Approvals, Ledger, Mandate, Red team), AI agent, landed-cost ranking, mandate policy, approvals, payments, webhooks and reconciliation. Not yet deployed.
 
 ## Run locally
 
@@ -16,6 +16,12 @@ Requires Node.js 24 (see `.node-version`; 22.12+ works).
 npm install
 cp .env.example .env   # fill in sandbox credentials: docs/SETUP_CREDENTIALS.md
 npm run dev            # http://localhost:3000, health at /api/health
+```
+
+For a fully offline, deterministic run (recorded product data and recorded AI runs; payments still go to the PayPal sandbox):
+
+```bash
+DEMO_MODE=true AGENT_MODE=replay npm run dev
 ```
 
 ### Credentials (all sandbox / test)
@@ -30,6 +36,19 @@ npm run dev            # http://localhost:3000, health at /api/health
 ### Sandbox buyer for judges
 
 _Placeholder: a sandbox personal (GB) buyer login will be listed here and in the Devpost testing instructions. It is a PayPal sandbox test account and cannot move real money._
+
+## What you can do
+
+| Page          | What it shows                                                                                                                                                                                                            |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Shop**      | Ask the agent for a product. A live log shows every search, cost breakdown, mandate check and payment, next to the PayPal activity (orders, webhooks).                                                                   |
+| **Offers**    | All offers from UK, US and German shops ranked by landed cost (toggle to sticker price), with a cost build-up bar, the mandate's decision per offer, and a line-by-line breakdown. Buy within the mandate from here too. |
+| **Approvals** | Purchases above your auto-buy limit, laid out like a declaration. Approve and pay, or reject.                                                                                                                            |
+| **Ledger**    | Spend against your caps, and every purchase reconciled against PayPal's capture breakdown (fee model vs actual fee).                                                                                                     |
+| **Mandate**   | Caps, auto-buy limit, max units, allowed shop countries, pause switch, and PayPal sandbox wallet linking.                                                                                                                |
+| **Red team**  | A synthetic hostile listing that tries to hijack the agent. Run it through the AI agent, or simulate a fully hijacked agent: both are denied by the mandate.                                                             |
+
+Each visitor gets their own workspace (anonymous cookie): their own mandate, approvals and ledger.
 
 ## Scripts
 

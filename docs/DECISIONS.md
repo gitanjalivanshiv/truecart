@@ -131,3 +131,20 @@ Format: date (IST) · decision · reason.
   - User asks for 20 units of the red-team item: Gemini proposed 20 and the policy DENIED it (QUANTITY_EXCEEDS_LIMIT, EXCEEDS_PER_PURCHASE_CAP, ABOVE_APPROVAL_THRESHOLD). Gemini reported the denial accurately. Nothing was charged.
   - The free tier rate-limited (429) a run mid-conversation, which confirms the need for the recorded fallback.
 - **Bug found by replaying the recorded hero run in dry-run mode:** the claim guard missed "purchase has been completed" and "CAPTURED". It is now broad (any capture/bought/paid wording, or purchase/order/payment near completion words), with regression tests. A false positive only appends a true statement.
+
+## 2026-11-03 · Web UI
+
+- **Visual language:** a customs declaration crossed with a bank statement.
+  - Paper/ink palette with one restrained set of status colours (ledger green, approval amber, customs red).
+  - Hairline rules, numbered form boxes, stamped statuses, tabular mono figures.
+  - Square corners, no shadows or gradients, no icon library.
+  - Type: Schibsted Grotesk (text) and IBM Plex Mono (figures, codes). Light and dark themes.
+- **AG Grid Community** (master/detail and row grouping are Enterprise-only), themed via `themeQuartz.withParams` to the same tokens. The offer breakdown is a side panel rather than a detail row.
+- **Per-visitor workspaces:** `proxy.ts` (Next 16's renamed middleware) sets an anonymous id cookie; each visitor gets their own mandate, approvals and ledger, so judges never share caps. New workspaces may use the shared sandbox buyer wallet (`DEMO_WALLET_TOKEN`, server-only) or link their own sandbox wallet through the Vault flow.
+- **One purchase path:** the agent tool and the Offers "Buy" button both call `src/agent/purchase.ts`. The browser sends ids only.
+- **Limits:**
+  - per visitor: 12 agent turns / 10 min, 20 searches / 10 min;
+  - global: 300 agent turns per day (`AGENT_DAILY_TURNS`).
+- **Recorded fallback:** demo requests replay recorded real runs when the live model is busy or over its limits, but **only if the failed live turn proposed nothing** (never repeat a purchase). `AGENT_MODE=replay` forces it for tests or quota exhaustion. The UI always labels a recorded run.
+- **Masking:** a mid-payment ledger row briefly showed a raw store domain (it joined on a field set only after payment). Purchases now join their proposal by id, and no view falls back to raw ids or domains. PayPal payloads in the activity panel have personal payer/address fields redacted.
+- Route handlers re-throw Next.js control-flow errors (`unstable_rethrow`) so prerender bail-outs are not turned into 500s.

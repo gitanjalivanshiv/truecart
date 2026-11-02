@@ -19,6 +19,15 @@ describe("redact", () => {
     expect(out.keep).toBe("visible");
   });
 
+  it("hides personal payer and address fields", () => {
+    const out = redact({
+      name: { given_name: "Jo", surname: "Doe" },
+      address: { address_line_1: "1 High St", postal_code: "TW9 1EH", country_code: "GB" },
+    });
+    expect(JSON.stringify(out)).not.toMatch(/Jo|Doe|High St|TW9/);
+    expect(out.address.country_code).toBe("GB");
+  });
+
   it("handles cycles", () => {
     const a: Record<string, unknown> = { name: "a" };
     a.self = a;

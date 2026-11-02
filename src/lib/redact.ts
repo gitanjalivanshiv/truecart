@@ -5,6 +5,10 @@ const DROP =
 const MASK_TAIL =
   /^(vault_id|payment_token|customer_id|payer_id|account_id|merchant_id|email_address|email|phone_number|national_number)$/i;
 
+// Personal fields from PayPal payer/shipping objects (sandbox data, but never shown in the UI).
+const PERSONAL =
+  /^(given_name|surname|full_name|middle_name|address_line_1|address_line_2|admin_area_1|admin_area_2|postal_code|birth_date)$/i;
+
 export function maskTail(value: string, keep = 4): string {
   if (value.length <= keep) return "*".repeat(value.length);
   return `${"*".repeat(Math.min(8, value.length - keep))}${value.slice(-keep)}`;
@@ -22,6 +26,7 @@ export function redact<T>(input: T, seen = new WeakSet<object>()): T {
   for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
     if (DROP.test(key)) out[key] = "[redacted]";
     else if (MASK_TAIL.test(key) && typeof value === "string") out[key] = maskTail(value);
+    else if (PERSONAL.test(key) && typeof value === "string") out[key] = "[personal]";
     else if (key === "href" && typeof value === "string")
       out[key] = value.replace(/([?&](token|ba_token)=)[^&]+/gi, "$1[redacted]");
     else out[key] = redact(value, seen);

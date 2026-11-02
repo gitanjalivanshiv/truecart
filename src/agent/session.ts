@@ -5,6 +5,7 @@ import type { Db } from "@/src/db/database";
 import type { PayPalGateway } from "@/src/executor/gateway";
 import type { Quote } from "@/src/domain/money";
 import type { RankedRow } from "@/src/discovery/rank";
+import type { Discovery } from "@/src/discovery/discover";
 
 export interface OfferRef {
   ref: string;
@@ -24,8 +25,19 @@ export interface AgentSession {
   now: () => Date;
   refs: Map<string, OfferRef>;
   nextRef: number;
+  /** Called after each search so the UI (Offers page) can show the full ranking. */
+  onSearch?: (result: {
+    query: string;
+    quantity: number;
+    rows: RankedRow[];
+    quotes: Quote[];
+    fxSource: string;
+    discovery: Discovery;
+  }) => void;
 }
 
-export function newSession(args: Omit<AgentSession, "refs" | "nextRef">): AgentSession {
+export function newSession(
+  args: Omit<AgentSession, "refs" | "nextRef" | "onSearch"> & Pick<AgentSession, "onSearch">,
+): AgentSession {
   return { ...args, refs: new Map(), nextRef: 1 };
 }

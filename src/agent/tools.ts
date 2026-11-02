@@ -2,10 +2,9 @@
 // Every price, total, country and limit comes from our own records and engines (project rule: the LLM never
 // moves money and never does money arithmetic). Schemas are strict: unknown fields are rejected.
 
-import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { getMandate, ledgerForMandate } from "@/src/db/repositories";
-import { getProposal, insertProposal, finishProposal, type ProposalDisplay } from "@/src/db/proposals";
+import { getProposal } from "@/src/db/proposals";
 import { committedThisMonth } from "@/src/domain/ledger";
 import { agentView } from "@/src/domain/mandate";
 import { landedCost, type LandedCost } from "@/src/domain/landedCost";
@@ -13,11 +12,11 @@ import { toDecimalString, type Money } from "@/src/domain/money";
 import { evaluate, type PurchaseIntent } from "@/src/domain/policy";
 import { discover } from "@/src/discovery/discover";
 import { costingContextFor, rankDiscovery } from "@/src/discovery/rank";
-import { buy } from "@/src/executor/executor";
 import { getQuotes } from "@/src/integrations/fxrates/resilient";
 import type { AgentSession, OfferRef } from "./session";
 import type { ToolSpec } from "./types";
 import { merchantText, UNTRUSTED_NOTE } from "./untrusted";
+import { proposePurchase as proposeShared } from "./purchase";
 
 const fmt = (m: Money) => `${toDecimalString(m)} ${m.currency}`;
 const MAX_RESULTS = 10;
@@ -109,6 +108,7 @@ const searchOffers: AgentTool<{ query: string; quantity?: number }> = {
       now,
     });
 
+    s.onSearch?.({ query, quantity, rows, quotes: fx.quotes, fxSource: fx.source, discovery });
     const top = rows.slice(0, MAX_RESULTS).map((row) => {
       const ref = `o${s.nextRef++}`;
       s.refs.set(ref, { ref, row, quotes: fx.quotes, query });
@@ -252,61 +252,43 @@ const proposePurchase: AgentTool<{ ref: string; quantity: number }> = {
   schema: z.strictObject({ ref: Ref, quantity: Quantity }),
   async run(s, { ref, quantity }) {
     const r = lookup(s, ref);
-    const now = s.now();
-    const cost = costFor(s, r, quantity);
-    const intent = intentFor(s, r, cost, quantity);
-    const policy = evaluate(mandateOf(s), ledgerForMandate(s.db, s.mandateId), intent, now);
-    const display: ProposalDisplay = {
-      title: r.row.display.title,
-      merchant: r.row.display.merchant,
-      merchantCountry: r.row.offer.merchantCountry,
-      price: `${fmt(r.row.offer.unitPrice)} x ${quantity}`,
-      landedTotal: fmt(cost.total),
-      lines: lines(cost),
-      confidence: cost.confidence,
-    };
-    const id = `prop_${randomUUID()}`;
-    const base = { id, sessionId: s.id, mandateId: s.mandateId, offerId: intent.offerId, intent, display, policy };
-
-    if (policy.decision === "DENIED") {
-      insertProposal(s.db, { ...base, status: "DENIED" }, now);
+    const res = await proposeShared(
+      { db: s.db, mandateId: s.mandateId, sessionId: s.id, gateway: s.gateway, now: s.now },
+      r.row,
+      r.quotes,
+      quantity,
+    );
+    if (res.status === "DENIED") {
       return {
         status: "DENIED",
-        proposal_id: id,
-        reasons: policy.reasons,
+        proposal_id: res.proposalId,
+        reasons: res.policy.reasons,
         message: "The mandate does not allow this purchase. Nothing was charged.",
       };
     }
-    if (policy.decision === "NEEDS_APPROVAL") {
-      insertProposal(s.db, { ...base, status: "AWAITING_APPROVAL" }, now);
+    if (res.status === "AWAITING_APPROVAL") {
       return {
         status: "AWAITING_APPROVAL",
-        proposal_id: id,
-        reasons: policy.reasons,
-        landed_total_estimate: fmt(cost.total),
+        proposal_id: res.proposalId,
+        reasons: res.policy.reasons,
+        landed_total_estimate: fmt(res.cost.total),
         message: "Sent to the user's approval inbox. Nothing is charged until they approve.",
       };
     }
-    if (!s.gateway) {
+    if (res.status === "DRY_RUN") {
       return {
         status: "DRY_RUN",
-        proposal_id: id,
         message: "Within the mandate and would be bought automatically, but payments are disabled in this session.",
       };
     }
-    insertProposal(s.db, { ...base, status: "EXECUTING" }, now);
-    const outcome = await buy(
-      { db: s.db, gateway: s.gateway, now: s.now },
-      { proposalId: id, intent, merchantLabel: display.merchant },
-    );
-    finishProposal(s.db, id, outcome.status === "DENIED" ? "DENIED" : "DONE", outcome, s.now());
+    const outcome = res.outcome;
     return {
       status: outcome.status,
-      proposal_id: id,
+      proposal_id: res.proposalId,
       ...(outcome.status === "CAPTURED" && {
         paypal_order_id: outcome.orderId,
-        charged: fmt(cost.charged),
-        landed_total_estimate: fmt(cost.total),
+        charged: fmt(res.cost.charged),
+        landed_total_estimate: fmt(res.cost.total),
       }),
       ...(outcome.status === "DENIED" && { reasons: outcome.reasons }),
       ...(outcome.status === "FAILED" && { failure: outcome.code }),

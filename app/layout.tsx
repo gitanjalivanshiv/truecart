@@ -1,34 +1,39 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { IBM_Plex_Mono, Schibsted_Grotesk } from "next/font/google";
+import { Header } from "./_components/Header";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const grotesk = Schibsted_Grotesk({ subsets: ["latin"], variable: "--font-grotesk" });
+const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-mono" });
 
 export const metadata: Metadata = {
   title: "TrueCart (sandbox)",
   description:
-    "AI shopping agent with a PayPal spending mandate and true landed-cost ranking. PayPal sandbox only: no real money.",
+    "Shopping agent that buys within a PayPal spending mandate and ranks offers by landed cost. PayPal sandbox only: no real money.",
 };
+
+// Applied before paint so a saved dark/light choice never flashes.
+const themeScript = `try{var t=localStorage.getItem("tc-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+    <html lang="en-GB" className={`${grotesk.variable} ${plexMono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="min-h-screen">
         <div
           role="status"
-          className="bg-amber-100 px-4 py-2 text-center text-sm font-medium text-amber-900 dark:bg-amber-900 dark:text-amber-50"
+          className="bg-ink px-4 py-1.5 text-center font-mono text-[11px] tracking-[0.08em] text-paper uppercase"
         >
-          Sandbox: no real money. Merchants are simulated.
+          Sandbox: no real money. Merchants are simulated. Shipping, tax and FX figures are estimates.
         </div>
-        {children}
+        <Header />
+        <main className="mx-auto max-w-[1240px] px-4 pt-6 pb-16 sm:px-6">{children}</main>
+        <footer className="mx-auto max-w-[1240px] border-t border-rule px-4 py-5 text-[12px] text-muted sm:px-6">
+          PayPal sandbox · Offers from Channel3 · Rates from Frankfurter · AI model: Gemini (free tier). Product names
+          and stores are masked in demo mode.
+        </footer>
       </body>
     </html>
   );
