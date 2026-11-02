@@ -59,3 +59,6 @@ Format: date (IST) · decision · reason.
 - Confidence: high = no estimated inputs; medium = 1–2 (simulated shipping always counts); low = 3+, or any unknown (country, rule, route, duty).
 - Merchant fees (3.49% + fixed, +1.50% intl; PayPal page updated 2026-10-01) are seller-side only and are never added to the buyer total.
 - Ranking: sticker = listed price at the base rate; true = landed total; ties broken by offer id. `vsStickerLeader.drivers` are code-computed deltas per line kind. The LLM may phrase them but never computes them.
+
+## 2026-11-02 · Demo product: insulated water bottle (open decision 13.2, owner-approved)
+- S4 showed cross-market overlaps (same branded bottles in GB/US and GB/DE), a wide price spread, and every offer under the £135 VAT threshold. Brands are masked in demo mode.
