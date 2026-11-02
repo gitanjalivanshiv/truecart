@@ -62,3 +62,9 @@ Format: date (IST) · decision · reason.
 
 ## 2026-11-02 · Demo product: insulated water bottle (open decision 13.2, owner-approved)
 - S4 showed cross-market overlaps (same branded bottles in GB/US and GB/DE), a wide price spread, and every offer under the £135 VAT threshold. Brands are masked in demo mode.
+
+## 2026-11-02 · SQLite via Node's built-in `node:sqlite`, not better-sqlite3
+- better-sqlite3 needs a native install script, which npm 11's allow-scripts blocks by default (here and in CI/Render) and which can break on Node upgrades. Node 24 ships `node:sqlite` (`DatabaseSync`): synchronous, safe-integer preserving, no dependency. Verified: compare-and-set via `changes`, `BEGIN IMMEDIATE` transactions.
+- Money-guarding writes run in one `BEGIN IMMEDIATE` transaction (`src/db/reserveCharge.ts`): re-run policy against the stored ledger, consume the approval by compare-and-set, reserve the worst case as PENDING, insert the purchase. PayPal is called after commit.
+- `PayPal-Request-Id = tc-` + sha256(mandateId, proposalId)[:32]. Replaying a proposal returns the same purchase; buying the same item again needs a new proposal.
+- Captures can never exceed the reservation: enforced in code and by a CHECK constraint.
