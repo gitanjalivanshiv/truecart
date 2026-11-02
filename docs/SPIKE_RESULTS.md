@@ -3,16 +3,16 @@
 Status key: **PASS** confirmed by a live run · **PARTIAL** part confirmed live · **DOCS-ONLY** contract verified in official docs, live run blocked · **FAIL**.
 All runs are PayPal **sandbox**. Spike output is redacted; raw ids stay in git-ignored `scripts/spikes/.out/`.
 
-_Last updated: 2026-11-02. PayPal sandbox credentials available; Channel3 key pending._
+_Last updated: 2026-11-02. All six spikes have run live._
 
-| #   | Spike                                                        | Status                                                           | Script                                                        | Chosen fallback                                                    |
-| --- | ------------------------------------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------ |
-| S1  | Vault v3 + merchant-initiated charge                         | DOCS-ONLY (blocked: PayPal creds + GB buyer)                     | `npm run spike:vault -- setup\|status\|token\|charge\|replay` | One buyer approval per purchase (`spike:fx-orders -- approve`)     |
-| S2  | GBP/EUR orders on US business; `seller_receivable_breakdown` | DOCS-ONLY (blocked: PayPal creds)                                | `npm run spike:fx-orders`                                     | Model fee/FX, label "estimate"                                     |
-| S3  | FX quote API access                                          | PARTIAL (fallback live PASS; PayPal side blocked)                | `npm run spike:fx-quote`                                      | **Frankfurter v2** (live PASS)                                     |
-| S4  | Channel3 GB/US/DE                                            | DOCS-ONLY (blocked: Channel3 key)                                | `npm run spike:channel3`                                      | Fixtures + simulated shipping table (needed regardless, see below) |
-| S5  | Webhook receive + signature verify                           | PARTIAL (verifier unit-tested; live blocked: creds + public URL) | `npm run spike:webhook -- serve\|list\|create\|simulate`      | Poll order status                                                  |
-| S6  | PayPal hosted sandbox MCP                                    | DOCS-ONLY (blocked: PayPal creds)                                | `npm run spike:mcp`                                           | Local `@paypal/mcp` or direct REST for ops views                   |
+| #   | Spike                                                        | Status                                                                                                  | Script                                                        | Chosen fallback                                                     |
+| --- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------- |
+| S1  | Vault v3 + merchant-initiated charge                         | **PASS**: one call, `COMPLETED`, no redirect, ~3.6 s; idempotent replay                                 | `npm run spike:vault -- setup\|status\|token\|charge\|replay` | Not needed (buyer approval per purchase kept as a fallback)         |
+| S2  | GBP/EUR orders on US business; `seller_receivable_breakdown` | **PASS**: GBP + EUR captured; breakdown has `receivable_amount` + `exchange_rate`; fees match our model | `npm run spike:fx-orders`                                     | Not needed                                                          |
+| S3  | FX quote API access                                          | **FAIL (gated, as expected)**: 403 `FEATURE_NOT_PROVISIONED` despite scope                              | `npm run spike:fx-quote`                                      | **Frankfurter v2** (live PASS)                                      |
+| S4  | Channel3 GB/US/DE                                            | **PARTIAL**: locale search works; product ids **not** shared across locales; no shipping data           | `npm run spike:channel3`                                      | Brand + title fuzzy matching; simulated shipping; fixtures recorded |
+| S5  | Webhook receive + signature verify                           | **PASS**: real event self-verified + postback `SUCCESS`; simulator self-verified                        | `npm run spike:webhook -- serve\|list\|create\|simulate`      | Order-status polling kept for missed events                         |
+| S6  | PayPal hosted sandbox MCP                                    | **PASS via SSE** (46 tools, 9 h token); streamable HTTP 404                                             | `npm run spike:mcp`                                           | SSE transport; direct REST for the payment path                     |
 
 ---
 
@@ -71,6 +71,15 @@ _Last updated: 2026-11-02. PayPal sandbox credentials available; Channel3 key pe
   - Shipping and delivery come from `data/shipping_table.json` for **every** offer (`shippingSource: "simulated"`). This is the primary path, not a fallback.
   - Merchant country is inferred from offer `domain` TLD (`.co.uk`→GB, `.de`→DE), else from the search locale, and flagged low confidence when ambiguous (`.com`).
 - **Unknown until a live run:** whether product `id`s are shared across locales, and whether `price.currency` always equals the requested currency. The script measures both, plus title-overlap, TLD distribution and the branded share, for 3 candidate generic categories. It records raw responses to `fixtures/channel3/`.
+- **Live result 2026-11-02** (9 searches; raw responses in `fixtures/channel3/spike-*.json`). Queries: insulated water bottle 1 L, glass French press, cast-iron skillet. Locales GB/GBP, US/USD, DE/EUR, `limit` 10.
+  - **Product ids are never shared across locales:** 0 shared ids in every pair for all three queries. The same real product does appear in several markets under different ids (e.g. the same branded straw bottle in GB at 35 GBP and in US at 36 USD; the same branded insulated bottle in GB at 42 GBP and in DE at 39–48 EUR). Cross-market "same product" matching therefore has to be brand + normalised-title similarity, flagged as a fuzzy match.
+  - Normalised-title overlaps: water bottle GB–US 2, GB–DE 1, US–DE 1; French press 0; skillet GB–US 1, GB–DE 3.
+  - **Price currency always equals the requested currency (100%)**, even for foreign store domains (e.g. a `.nl` store priced in GBP for the GB locale, a `.co.uk` store priced in EUR for DE). So prices are market-localised and the domain is not a reliable merchant-country signal.
+  - **Merchant country from TLD:** only about 10% of offers have a country TLD; most are `.com`. In practice `countrySource` is `"locale"` (medium confidence).
+  - `price.price` is a JSON **number** (e.g. `17.49`). Parse it via `String(n)` into `parseDecimal`, which rejects anything with more decimals than the currency allows. Never multiply floats.
+  - No shipping, delivery, merchant-country or GTIN fields (confirms the docs). `availability` was always `InStock` (default filter). **100% of results are branded**, so `MASK_BRANDS` is required for the video.
+  - Price ranges (water bottle): GB 17.49–42 GBP, US 9.90–58 USD, DE 18.50–48 EUR. All are far below the £135 threshold, so the simple VAT regime applies.
+  - **Demo category recommendation (open decision 13.2):** insulated water bottle. It has cross-market overlaps, a wide price spread, a generic product, and stays in the under-£135 regime. French press had no overlaps.
 - **Keyless probe:** Channel3's free-tier MCP (`https://mcp.trychannel3.com/`, `npm run spike:channel3-mcp -- --list-only`) works without a key, but its `search_products` takes only `query`/`image_url`/`thread_id`, with **no locale params**. It can't answer S4. Needs the API key.
 
 ## S5 · Webhooks
@@ -82,6 +91,19 @@ _Last updated: 2026-11-02. PayPal sandbox credentials available; Channel3 key pe
 - **Live run needs:** PayPal creds plus a public HTTPS URL. No tunnel is installed (`cloudflared`/`ngrok` absent). Options: `brew install cloudflared` and `cloudflared tunnel --url http://localhost:8787`, or deploy the receiver to Render.
   - Steps: `serve` → `create --url` → put the id in `PAYPAL_WEBHOOK_ID` → `simulate`, which proves self-verify with `WEBHOOK_ID` (postback is unsupported for mock events).
   - Then a real `PAYMENT.CAPTURE.COMPLETED` from an S1 charge proves both methods.
+
+- **Live result 2026-11-02: PASS.**
+  - cloudflared 2026.10.7 was installed to `~/.local/bin` from Cloudflare's GitHub release. The release-notes SHA-256 is for the binary inside the `.tgz` and matched; the binary is signed "Developer ID Application: Cloudflare Inc. (68WVV388M8)" and notarized.
+  - A quick tunnel (`*.trycloudflare.com`) forwarded to the local receiver. Webhook `6N297856KK281481V` was registered for 6 event types.
+  - **Simulator** `PAYMENT.CAPTURE.COMPLETED`: delivered about 55 s after `simulate-event`; self-verified `true` with webhook id `WEBHOOK_ID`. The first attempt failed because the first cert fetch exceeded our 10 s timeout. The retry fetched `https://api.sandbox.paypal.com/v1/notifications/certs/CERT-…` fine, and PayPal **re-delivered the same event id**.
+  - **Real event:** a vaulted USD 1.00 charge (order 9DA6144328228921P) produced `PAYMENT.CAPTURE.COMPLETED` within seconds: **self-verified `true` and postback `verification_status: SUCCESS`**.
+  - **Production route requirements** (from this run):
+    - return 5xx on transient errors (cert fetch timeout) so PayPal retries;
+    - return 4xx on a bad signature;
+    - de-duplicate by event id;
+    - give the first cert fetch a 20 s timeout and cache the cert;
+    - **never accept `WEBHOOK_ID` (simulator) signatures in production**, since any developer can aim simulator events at our URL.
+  - The registered webhook points at an expired quick-tunnel URL. Replace it (and `PAYPAL_WEBHOOK_ID`) when Render is deployed.
 
 ## S6 · PayPal hosted sandbox MCP
 

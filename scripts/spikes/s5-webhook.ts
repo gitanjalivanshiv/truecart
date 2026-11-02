@@ -38,7 +38,12 @@ run(async () => {
       try {
         const headers = readWebhookHeaders((n) => req.headers[n] as string | undefined);
         const event = JSON.parse(raw.toString("utf8")) as { id?: string; event_type?: string };
-        Object.assign(result, { eventId: event.id, eventType: event.event_type });
+        Object.assign(result, {
+          eventId: event.id,
+          eventType: event.event_type,
+          certUrl: headers.certUrl,
+          authAlgo: headers.authAlgo,
+        });
         result.selfVerified = await selfVerify({ headers, webhookId, rawBody: raw });
         if (!simulator) result.postback = await postbackVerify({ headers, webhookId, rawBody: raw.toString("utf8") });
       } catch (err) {
