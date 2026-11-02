@@ -12,7 +12,7 @@ export async function GET() {
     configured: {
       paypal: configured("PAYPAL_CLIENT_ID") && configured("PAYPAL_CLIENT_SECRET"),
       webhook: configured("PAYPAL_WEBHOOK_ID"),
-      anthropic: configured("ANTHROPIC_API_KEY"),
+      llm: configured("GEMINI_API_KEY"),
       channel3: configured("CHANNEL3_API_KEY"),
     },
     time: new Date().toISOString(),

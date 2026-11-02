@@ -42,7 +42,7 @@ describe("migrations", () => {
     a.close();
     const b = openDatabase(path);
     expect(getMandate(b, "mandate-1")?.id).toBe("mandate-1");
-    expect((b.prepare("PRAGMA user_version").get() as { user_version: number }).user_version).toBe(1);
+    expect((b.prepare("PRAGMA user_version").get() as { user_version: number }).user_version).toBe(2);
     b.close();
   });
 });

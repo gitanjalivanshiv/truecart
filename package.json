@@ -21,7 +21,8 @@
     "spike:mcp": "tsx scripts/spikes/s6-mcp.ts",
     "spike:channel3-mcp": "tsx scripts/spikes/s4b-channel3-mcp.ts",
     "smoke:executor": "tsx scripts/smoke/executor-sandbox.ts",
-    "demo:discover": "tsx scripts/demo/discover.ts"
+    "demo:discover": "tsx scripts/demo/discover.ts",
+    "demo:chat": "tsx scripts/demo/chat.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",

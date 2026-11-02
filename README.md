@@ -6,7 +6,7 @@ TrueCart is an AI shopping agent that buys within a spending mandate you set, ra
 
 Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com) (2026).
 
-**Status:** Phase 2 in progress. Done: scaffold, sandbox guard, feasibility spikes ([`docs/SPIKE_RESULTS.md`](docs/SPIKE_RESULTS.md)), and the pure domain engines (money, mandate, policy, approvals, landed cost, merchant fees) with table and property tests. Also done: SQLite store and the payment executor (verified live against PayPal sandbox), plus the signed webhook receiver. Also done: Channel3 discovery (record/replay, normalization, fuzzy cross-market matching, brand masking) feeding the landed-cost ranking. Not built yet: agent, UI.
+**Status:** Phase 2 in progress. Done: scaffold, sandbox guard, feasibility spikes ([`docs/SPIKE_RESULTS.md`](docs/SPIKE_RESULTS.md)), and the pure domain engines (money, mandate, policy, approvals, landed cost, merchant fees) with table and property tests. Also done: SQLite store and the payment executor (verified live against PayPal sandbox), plus the signed webhook receiver. Also done: Channel3 discovery (record/replay, normalization, fuzzy cross-market matching, brand masking) feeding the landed-cost ranking. Also done: the provider-neutral agent (tools, approval inbox flow, prompt-injection guards). Not built yet: UI.
 
 ## Run locally
 
@@ -48,7 +48,7 @@ app/                Next.js App Router (UI + /api routes)
 src/config/         sandbox guard
 src/domain/         money · mandate · policy · approval · authorize · landedCost · fees (pure, no network)
 src/executor/       the only code that can move money: reserve -> vaulted PayPal charge -> settle; webhooks; reconcile
-src/agent/          Claude tool-use loop                                            [Phase 2]
+src/agent/          provider-neutral tool-use agent (Gemini adapter), tools, injection guards
 src/integrations/   paypal (client, webhooks) · channel3 (client, record/replay, normalize, mask) · fxrates · anthropic
 src/discovery/      query -> offers across markets -> landed cost -> ranking -> policy dry run
 fixtures/           recorded Channel3 responses and FX rates (demo works offline with DEMO_MODE=true)
@@ -63,7 +63,7 @@ docs/               DECISIONS.md (append-only), SPIKE_RESULTS.md, SETUP_CREDENTI
 ## Safety design (summary)
 
 - Sandbox guard at boot and on every PayPal request (`src/config/sandbox.ts`).
-- The LLM can search, rank and propose; only `src/executor/` can create or capture PayPal orders, after re-running the policy engine and verifying a cart-bound, single-use approval.
+- The AI model can search, rank and propose; only `src/executor/` can create or capture PayPal orders, after re-running the policy engine and verifying a cart-bound, single-use approval. The model only ever passes an offer ref and a quantity: prices, totals, countries and limits come from our own records.
 - Money is integer minor units; the LLM never does arithmetic on money.
 - Product text from merchants is untrusted data and cannot change limits or tool arguments.
 - Every PayPal write carries a `PayPal-Request-Id` idempotency key; every external call has a timeout.

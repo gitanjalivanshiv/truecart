@@ -81,6 +81,23 @@ const MIGRATIONS: string[] = [
     processed_at TEXT
   );
   `,
+  `
+  CREATE TABLE proposals (
+    id           TEXT PRIMARY KEY,
+    session_id   TEXT NOT NULL,
+    mandate_id   TEXT NOT NULL REFERENCES mandates(id),
+    offer_id     TEXT NOT NULL,
+    intent       TEXT NOT NULL,                -- PurchaseIntent JSON, built server-side (never from LLM numbers)
+    display      TEXT NOT NULL,                -- what the approval card shows (masked labels, landed lines)
+    policy       TEXT NOT NULL,                -- PolicyResult JSON at proposal time
+    status       TEXT NOT NULL CHECK (status IN ('AWAITING_APPROVAL', 'EXECUTING', 'DONE', 'REJECTED', 'DENIED')),
+    purchase_id  TEXT REFERENCES purchases(id),
+    outcome      TEXT,                         -- BuyOutcome JSON
+    created_at   TEXT NOT NULL,
+    updated_at   TEXT NOT NULL
+  );
+  CREATE INDEX proposals_by_status ON proposals (status, created_at);
+  `,
 ];
 
 export function openDatabase(path: string = process.env.DATABASE_PATH ?? "data/truecart.db"): Db {

@@ -99,3 +99,25 @@ Format: date (IST) · decision · reason.
 - **Cross-market matching** is fuzzy because Channel3 ids differ per market: same brand plus title-token Jaccard ≥ 0.6 (brand words, units and filler removed). It is labelled "identical-title" or "similar-title" and never claimed to be exact. Unbranded offers are never grouped.
 - **MASK_BRANDS (default on):** brands become "Brand A…", stores "Store GB-1…", and images are hidden. Titles keep only words on a generic-vocabulary **allowlist**, because a brand blocklist missed product-line trademarks in S4 data. Display only: real values stay in the data.
 - **Live result 2026-11-02**, hero query "insulated water bottle 1 litre" (36 offers across GB/US/DE): the cheapest sticker (US, $13.99) ranks #5 by landed cost (£26.75); the true #1 is a GB offer at £18.99. Belgian and Australian stores were DENIED (country not in the mandate).
+
+## 2026-11-03 · Provider-neutral agent; Gemini free tier as the live model (owner decision: no paid API credits)
+
+- `ModelAdapter` interface (`src/agent/types.ts`). The loop, tools and guards never depend on a provider. Adapters:
+  - Gemini (REST `generateContent`; the raw model turn is replayed verbatim to keep `thoughtSignature`);
+  - scripted (tests);
+  - replay/recording (demo fallback).
+- Gemini free tier, checked 2026-11-03 on aistudio.google.com:
+  - `gemini-2.5-flash` and several Gemini 3.x flash/flash-lite models are free;
+  - rate limits are per project and shown in AI Studio;
+  - **free-tier inputs may be used by Google to improve its products**, so only sandbox data is sent and the README says so.
+  - Default model `gemini-2.5-flash` (configurable via `GEMINI_MODEL`).
+- **The model never supplies money values.** Tool arguments are a query, an offer ref ("o3"), a quantity or a proposal id. The server re-prices with the same engine and quotes and builds the intent itself. Schemas are strict (unknown fields rejected), so "price" or "approved" cannot be smuggled.
+- **Guards:**
+  - unknown tools are refused;
+  - tool arguments are validated;
+  - per-turn caps: 6 model calls, 1,024 output tokens per call, 60,000 tokens per turn;
+  - history trimmed to the last 6 user turns;
+  - a final answer claiming a purchase the executor did not confirm gets an explicit "no payment was made" note.
+- **Approval inbox:** NEEDS_APPROVAL creates a proposal holding the exact intent. Approving uses a compare-and-set on the proposal status (no double execution) and then runs the normal executor path, which re-runs the policy.
+- **Red team:** a synthetic hostile listing (reserved `example.com` domain, labelled synthetic) under `fixtures/channel3/redteam/`, query "red team demo listing". Tests drive a model that obeys it: quantity 20 is DENIED by policy, an invented `update_mandate` tool is refused, smuggled `price`/`approved` fields are rejected, and the false "purchase complete" claim is corrected. No PayPal call; mandate unchanged.
+- **Recorded conversations** (`fixtures/agent/`) are only ever saved from real model runs (`demo:chat --record`), never written by hand. Tools still execute live when replaying.

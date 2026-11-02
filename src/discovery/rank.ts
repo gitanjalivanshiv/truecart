@@ -3,7 +3,13 @@
 
 import { evaluate, type PolicyResult } from "@/src/domain/policy";
 import type { LedgerEntry } from "@/src/domain/ledger";
-import { landedCost, rankOffers, type LandedCost, type RankedOffer } from "@/src/domain/landedCost";
+import {
+  landedCost,
+  rankOffers,
+  type CostingContext,
+  type LandedCost,
+  type RankedOffer,
+} from "@/src/domain/landedCost";
 import type { Mandate } from "@/src/domain/mandate";
 import type { Quote } from "@/src/domain/money";
 import { feeTable, importRules, shippingLanes } from "@/src/domain/referenceData";
@@ -21,6 +27,20 @@ export interface RankedRow extends RankedOffer {
 export interface RankResult {
   rows: RankedRow[];
   skipped: { offerId: string; reason: string }[];
+}
+
+/** The one place a mandate + quotes become a costing context (ranking and re-pricing use the same rules). */
+export function costingContextFor(mandate: Mandate, quotes: readonly Quote[]): CostingContext {
+  return {
+    buyerCountry: mandate.buyerCountry,
+    fundingCurrency: mandate.fundingCurrency,
+    reportingCurrency: mandate.currency,
+    quotes,
+    importRules,
+    shippingLanes,
+    fxSpreadBps: feeTable.buyerFxSpread.bps,
+    deliveryDayValueMinor: mandate.deliveryDayValueMinor,
+  };
 }
 
 export function rankDiscovery(
@@ -52,16 +72,7 @@ export function rankDiscovery(
             unitPrice: o.unitPrice,
             quantity,
           },
-          {
-            buyerCountry: mandate.buyerCountry,
-            fundingCurrency: mandate.fundingCurrency,
-            reportingCurrency: mandate.currency,
-            quotes,
-            importRules,
-            shippingLanes,
-            fxSpreadBps: feeTable.buyerFxSpread.bps,
-            deliveryDayValueMinor: mandate.deliveryDayValueMinor,
-          },
+          costingContextFor(mandate, quotes),
         ),
       );
     } catch (err) {
