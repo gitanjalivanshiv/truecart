@@ -6,7 +6,21 @@ TrueCart is an AI shopping agent that buys within a spending mandate you set, ra
 
 Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com) (2026).
 
-**Status:** working end to end in the PayPal sandbox: web app (Shop, Offers, Approvals, Ledger, Mandate, Red team), AI agent, landed-cost ranking, mandate policy, approvals, payments, webhooks and reconciliation. Not yet deployed.
+**Status:** working end to end in the PayPal sandbox: web app (Shop, Offers, Approvals, Ledger, Mandate, Red team), AI agent, landed-cost ranking, mandate policy, approvals, payments, webhooks and reconciliation. **Live demo: https://truecart-dm3w.onrender.com**
+
+## Try the hosted demo
+
+**https://truecart-dm3w.onrender.com** (free hosting: if it has been idle, the first load takes about a minute).
+
+No login is needed. Each visitor gets their own workspace with a demo mandate (£150 per purchase, £400 a month, auto-buy up to £40) and a shared PayPal **sandbox** buyer wallet.
+
+1. **Shop:** click the suggested request. The agent searches UK, US and German shops, ranks them by landed cost and buys the best one within the mandate. Watch the log and the PayPal activity.
+2. **Offers:** see why the cheapest sticker price is not the cheapest purchase; click a row for the cost breakdown.
+3. Ask for **3 bottles**: it goes to **Approvals** instead of being bought. Approve it there.
+4. **Red team:** a listing that tries to hijack the agent. Run it through the agent, or simulate a fully hijacked agent: both are denied.
+5. **Mandate:** change limits or pause everything, then try again.
+
+Workspaces reset when the free server restarts.
 
 ## Run locally
 
@@ -26,16 +40,17 @@ DEMO_MODE=true AGENT_MODE=replay npm run dev
 
 ### Credentials (all sandbox / test)
 
-| Variable                                   | Where to get it                                                                                                                 |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` | [developer.paypal.com](https://developer.paypal.com/dashboard/applications/sandbox) > Apps & Credentials > **Sandbox** REST app |
-| `PAYPAL_WEBHOOK_ID`                        | `npm run spike:webhook -- create --url https://<public-url>/api/webhooks/paypal`                                                |
-| `ANTHROPIC_API_KEY`                        | [console.anthropic.com](https://console.anthropic.com)                                                                          |
-| `CHANNEL3_API_KEY`                         | [channel3.ai](https://channel3.ai)                                                                                              |
+| Variable                                   | Where to get it                                                                                                                                                                  |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` | [developer.paypal.com](https://developer.paypal.com/dashboard/applications/sandbox) > Apps & Credentials > **Sandbox** REST app                                                  |
+| `PAYPAL_WEBHOOK_ID`                        | `npm run spike:webhook -- create --url https://<public-url>/api/webhooks/paypal`                                                                                                 |
+| `GEMINI_API_KEY`                           | [aistudio.google.com](https://aistudio.google.com) > Get API key (free tier; Google may use free-tier inputs to improve its products, TrueCart only sends sandbox shopping data) |
+| `DEMO_WALLET_TOKEN`                        | The sandbox buyer's Vault token printed by `npm run spike:vault -- token` (server-only)                                                                                          |
+| `CHANNEL3_API_KEY`                         | [channel3.ai](https://channel3.ai)                                                                                                                                               |
 
 ### Sandbox buyer for judges
 
-_Placeholder: a sandbox personal (GB) buyer login will be listed here and in the Devpost testing instructions. It is a PayPal sandbox test account and cannot move real money._
+No login is needed for the hosted demo: every workspace starts with a shared PayPal **sandbox** buyer wallet (saved once through PayPal's Vault approval). To try linking your own wallet on the **Mandate** page, use any PayPal **sandbox** personal account (create one free under Testing Tools > Sandbox Accounts at developer.paypal.com). Never use a real PayPal login.
 
 ## What you can do
 
