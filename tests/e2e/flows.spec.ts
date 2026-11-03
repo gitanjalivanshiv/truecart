@@ -54,8 +54,9 @@ test("pause switch: a paused mandate refuses every purchase", async ({ page }) =
   await rankWaterBottles(page);
   await page.locator(".ag-row[row-index='0']").click();
   await page.getByRole("button", { name: "Buy within mandate" }).click();
-  await expect(page.getByText("Purchases are paused")).toBeVisible();
-  await expect(page.getByText("Nothing was charged.")).toBeVisible();
+  const result = page.getByRole("status", { name: "Purchase result" });
+  await expect(result).toContainText("Purchases are paused");
+  await expect(result).toContainText("Nothing was charged.");
 });
 
 test("hero path (recorded AI run, real PayPal sandbox): the agent buys the bottle within the mandate", async ({

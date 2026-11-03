@@ -59,7 +59,7 @@ function BuyResult({
     UNKNOWN: "PayPal has not confirmed yet. The amount stays reserved; you will not be charged twice.",
   };
   return (
-    <div className="mt-3 border-t border-rule pt-3 text-[13px]">
+    <div role="status" aria-label="Purchase result" className="mt-3 border-t border-rule pt-3 text-[13px]">
       <Stamp status={r.status} /> <span className="ml-2">{text[r.status] ?? r.status}</span>
       {r.status === "DENIED" && (
         <div className="mt-1 text-stop">
