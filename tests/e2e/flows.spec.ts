@@ -66,7 +66,8 @@ test("hero path (recorded AI run, real PayPal sandbox): the agent buys the bottl
   await page.getByRole("button", { name: /Get me a 1L insulated water bottle/ }).click();
   await expect(page.locator("ol").getByText("Paid")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByText(/^recorded run of /)).toBeVisible();
-  await expect(page.locator("header")).toContainText("24.89 GBP of 400.00 GBP");
+  // The recorded run picks the true #1 (UK store, 15.00 + 3.99 simulated shipping).
+  await expect(page.locator("header")).toContainText("18.99 GBP of 400.00 GBP");
   await open(page, "/ledger");
   await expect(page.locator(".ag-row").first()).toContainText("Paid");
 });

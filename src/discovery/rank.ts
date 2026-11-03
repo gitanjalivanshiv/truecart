@@ -80,9 +80,14 @@ export function rankDiscovery(
     }
   }
 
-  const display = displayLabels(discovery.offers, args.maskBrands);
+  const ranked = rankOffers(costs);
+  const display = displayLabels(
+    discovery.offers,
+    args.maskBrands,
+    ranked.map((r) => r.offerId),
+  );
   const groupOf = new Map(discovery.groups.flatMap((g) => g.offerIds.map((id) => [id, g.groupId] as const)));
-  const rows = rankOffers(costs).map((r) => {
+  const rows = ranked.map((r) => {
     const offer = byId.get(r.offerId)!;
     const policy = evaluate(
       mandate,

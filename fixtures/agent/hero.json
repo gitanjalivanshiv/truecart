@@ -1,17 +1,17 @@
 {
   "description": "Get me a 1L insulated water bottle, delivered to the UK, under £40.",
   "model": "gemini/gemini-3.5-flash-lite",
-  "recordedAt": "2026-11-02T18:38:44.417Z",
+  "recordedAt": "2026-11-03T06:07:42.557Z",
   "turns": [
     {
       "role": "assistant",
       "text": "",
       "toolCalls": [
         {
-          "id": "call_1430242",
+          "id": "call_397001",
           "name": "search_offers",
           "args": {
-            "query": "1L insulated water bottle"
+            "query": "insulated water bottle 1 litre"
           }
         }
       ]
@@ -21,10 +21,10 @@
       "text": "",
       "toolCalls": [
         {
-          "id": "call_1395027",
+          "id": "call_246358",
           "name": "explain_ranking",
           "args": {
-            "ref": "o4"
+            "ref": "o1"
           }
         }
       ]
@@ -34,32 +34,18 @@
       "text": "",
       "toolCalls": [
         {
-          "id": "call_973005",
-          "name": "check_policy",
-          "args": {
-            "ref": "o4",
-            "quantity": 1
-          }
-        }
-      ]
-    },
-    {
-      "role": "assistant",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "call_830625",
+          "id": "call_243719",
           "name": "propose_purchase",
           "args": {
-            "ref": "o4",
-            "quantity": 1
+            "quantity": 1,
+            "ref": "o1"
           }
         }
       ]
     },
     {
       "role": "assistant",
-      "text": "I found a 1L stainless steel insulated water bottle from Store DE-5 (**o4**) with an estimated true landed cost of **£24.89** (sticker price 17.99 EUR, plus estimated shipping, import VAT, and currency conversion), which is well under your £40 budget.\n\nThe purchase has been completed successfully (**CAPTURED**).",
+      "text": "Found 36 offers. The best value is **o1** from Store GB-1 at an estimated landed total of **18.99 GBP** (15.00 GBP item + estimated 3.99 GBP shipping), well under your £40 budget.\n\nPurchase completed successfully (Status: **CAPTURED**, Order ID: (see PayPal activity)).",
       "toolCalls": []
     }
   ]

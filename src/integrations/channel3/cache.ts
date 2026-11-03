@@ -1,7 +1,8 @@
 // Record/replay for Channel3 (SPEC 5.5). The demo must survive quota exhaustion and judges' repeated runs.
 //   replay mode (DEMO_MODE=true): recorded responses only; never spends credits.
 //   live mode: call Channel3, record the response; on 402/429/timeout/5xx fall back to the recording.
-// Recordings are JSON envelopes { request, recordedAt, response } anywhere under fixtures/channel3/.
+// Recordings are JSON envelopes { request, recordedAt, response }. The repo carries anonymized ones under
+// fixtures/channel3/ (scripts/fixtures/anonymize-channel3.ts); raw live recordings stay in data/ (git-ignored).
 
 import { createHash } from "node:crypto";
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
@@ -15,7 +16,10 @@ import {
   type SearchResponse,
 } from "./client";
 
+/** Committed, anonymized recordings (public repo). */
 export const FIXTURE_ROOT = join(process.cwd(), "fixtures/channel3");
+/** Live recordings (raw Channel3 data): local only, git-ignored. */
+export const LIVE_RECORD_DIR = join(process.cwd(), "data/channel3-cache");
 
 export type DiscoverySource = "live" | "recorded";
 
@@ -97,7 +101,11 @@ export function readRecording(
   req: SearchRequest,
   opts: { closest?: boolean; root?: string } = {},
 ): CachedSearch | undefined {
-  const index = indexFor(opts.root ?? FIXTURE_ROOT);
+  const roots = opts.root ? [opts.root] : [FIXTURE_ROOT, LIVE_RECORD_DIR];
+  const index = new Map<string, IndexEntry>();
+  for (const r of roots) {
+    for (const [k, e] of indexFor(r)) if (!index.has(k) || index.get(k)!.mtime < e.mtime) index.set(k, e);
+  }
   let hit = index.get(cacheKey(req));
   let closestRecordedQuery: string | undefined;
   if (!hit && opts.closest) {
@@ -128,16 +136,15 @@ export function readRecording(
   };
 }
 
-function record(req: SearchRequest, response: SearchResponse, now: Date, root: string): void {
+function record(req: SearchRequest, response: SearchResponse, now: Date, dir: string): void {
   const slug = normalizeQuery(req.query)
     .replace(/[^a-z0-9]+/g, "-")
     .slice(0, 40);
-  const dir = join(root, "cache");
   const file = join(dir, `${slug}-${req.config.country}-${cacheKey(req)}.json`);
   try {
     mkdirSync(dir, { recursive: true });
     writeFileSync(file, JSON.stringify({ request: req, recordedAt: now.toISOString(), response }, null, 2));
-    indexFor(root).set(cacheKey(req), { file, mtime: now.getTime(), request: req });
+    indexFor(dir).set(cacheKey(req), { file, mtime: now.getTime(), request: req });
   } catch {
     /* read-only filesystem (e.g. some hosts): recording is best effort */
   }
@@ -151,19 +158,18 @@ export async function cachedSearch(
   req: SearchRequest,
   opts: { mode: "live" | "replay"; fetchFn?: FetchFn; now?: Date; apiKey?: string; root?: string },
 ): Promise<CachedSearch> {
-  const root = opts.root ?? FIXTURE_ROOT;
   if (opts.mode === "replay") {
-    const rec = readRecording(req, { closest: true, root });
+    const rec = readRecording(req, { closest: true, root: opts.root });
     if (!rec) throw new RecordingMissingError(`no recording for "${req.query}" in ${req.config.country} (demo mode)`);
     return rec;
   }
   try {
     const response = await searchProducts(req, { fetchFn: opts.fetchFn, apiKey: opts.apiKey });
-    record(req, response, opts.now ?? new Date(), root);
+    record(req, response, opts.now ?? new Date(), opts.root ?? LIVE_RECORD_DIR);
     return { response, source: "live", recordedAt: null };
   } catch (err) {
     if (err instanceof Channel3Error && err.fallbackable) {
-      const rec = readRecording(req, { root });
+      const rec = readRecording(req, { root: opts.root });
       if (rec) return { ...rec, fallbackReason: `live search unavailable (${err.status})` };
     }
     throw err;

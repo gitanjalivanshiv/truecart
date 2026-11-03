@@ -37,9 +37,13 @@ export interface Recording {
   turns: Turn[];
 }
 
+/** PayPal order/capture ids from the recording run would be stale on replay (a new order is created). */
+export const scrubRunIds = (text: string) => text.replace(/`?\b[0-9A-Z]{17}\b`?/g, "(see PayPal activity)");
+
 export function replayAdapter(file: string): ModelAdapter {
   const rec = JSON.parse(readFileSync(file, "utf8")) as Recording;
-  return { ...scriptedAdapter(rec.turns, "replay"), model: `replay:${rec.model}` };
+  const turns = rec.turns.map((t) => ({ ...t, text: scrubRunIds(t.text) }));
+  return { ...scriptedAdapter(turns, "replay"), model: `replay:${rec.model}` };
 }
 
 /** Wraps a live adapter and keeps its normalized turns, so a good run can be saved as the demo fallback. */
@@ -51,7 +55,7 @@ export function recordingAdapter(inner: ModelAdapter): ModelAdapter & { turns: T
     turns,
     async complete(req): Promise<ModelResponse> {
       const res = await inner.complete(req);
-      turns.push({ role: "assistant", text: res.message.text, toolCalls: res.message.toolCalls });
+      turns.push({ role: "assistant", text: scrubRunIds(res.message.text), toolCalls: res.message.toolCalls });
       return res;
     },
   };

@@ -1,0 +1,270 @@
+{
+  "request": {
+    "query": "insulated stainless steel water bottle 1 litre",
+    "limit": 10,
+    "config": {
+      "country": "US",
+      "currency": "USD",
+      "language": "en"
+    }
+  },
+  "recordedAt": "2026-11-02T17:48:05.217Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "ojo6D26",
+        "title": "1l stainless steel insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e777cd"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://us.store-17b5d2.com/",
+            "domain": "us.store-17b5d2.com",
+            "price": {
+              "price": 58,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "9N4xS0w",
+        "title": "Metal insulated straw bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand cb0d32"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://us.store-172057.com/",
+            "domain": "us.store-172057.com",
+            "price": {
+              "price": 36,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "goZv1wF",
+        "title": "Steel bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 08bb42"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e8e22e.com/",
+            "domain": "store-e8e22e.com",
+            "price": {
+              "price": 24.97,
+              "compare_at_price": 34,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "5Nnlxof",
+        "title": "Insulated stainless steel water bottle green",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 903e89"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-59bcac.com/",
+            "domain": "store-59bcac.com",
+            "price": {
+              "price": 17.99,
+              "compare_at_price": 44.99,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "9JOIIZF",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 444024"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://us.store-283a6b.com/",
+            "domain": "us.store-283a6b.com",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "ALietLi",
+        "title": "Set 1l bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand cb0d32"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://us.store-172057.com/",
+            "domain": "us.store-172057.com",
+            "price": {
+              "price": 22.8,
+              "compare_at_price": 38,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "qNoOxyd",
+        "title": "Oz stainless steel insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 92b001"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-dbf4b6.com/",
+            "domain": "store-dbf4b6.com",
+            "price": {
+              "price": 29.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-a2091b.com/",
+            "domain": "store-a2091b.com",
+            "price": {
+              "price": 30.79,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-93f37c.com/",
+            "domain": "store-93f37c.com",
+            "price": {
+              "price": 31.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "PUeDkHu",
+        "title": "Insulated stainless steel water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand cdcf98"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-eb54f0.com/",
+            "domain": "store-eb54f0.com",
+            "price": {
+              "price": 35,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "hHTMPi2",
+        "title": "Insulated stainless steel water bottle with lids and straw",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 43259d"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-2c2f66.com/",
+            "domain": "store-2c2f66.com",
+            "price": {
+              "price": 9.9,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "EZrOh37",
+        "title": "Insulated stainless steel water bottle with straw lid",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 92b001"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-532821.com/",
+            "domain": "store-532821.com",
+            "price": {
+              "price": 28.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "request": {
+    "query": "insulated water bottle 1 litre",
+    "limit": 10,
+    "config": {
+      "country": "GB",
+      "currency": "GBP",
+      "language": "en"
+    }
+  },
+  "recordedAt": "2026-11-02T18:13:59.527Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "ZwQ5usk",
+        "title": "1000ml insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand bf84e4"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 60,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "xMwYdZT",
+        "title": "Metal insulated straw bottle 1l",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand cb0d32"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://uk.store-7a7126.com/",
+            "domain": "uk.store-7a7126.com",
+            "price": {
+              "price": 35,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "q4Ex0mz",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 4688b3"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-c42fe7.com/",
+            "domain": "store-c42fe7.com",
+            "price": {
+              "price": 25.99,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Sdusz3W",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-06039c.nl/",
+            "domain": "store-06039c.nl",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "CRING7Y",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-94a74a.com.au/",
+            "domain": "store-94a74a.com.au",
+            "price": {
+              "price": 36,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-4b496d.com/",
+            "domain": "store-4b496d.com",
+            "price": {
+              "price": 36,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "UuDvmjO",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-0fff57.se/",
+            "domain": "store-0fff57.se",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-4b496d.com/",
+            "domain": "store-4b496d.com",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-8a5002.com/",
+            "domain": "store-8a5002.com",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "yrY3yE9",
+        "title": "Water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 821e9f"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-05534f.com/",
+            "domain": "store-05534f.com",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "lIEVO98",
+        "title": "Personalised insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand c6c1c9"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-4313e3.co.uk/",
+            "domain": "store-4313e3.co.uk",
+            "price": {
+              "price": 20,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "uh7PElH",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 267fda"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e2fb8f.co.uk/",
+            "domain": "store-e2fb8f.co.uk",
+            "price": {
+              "price": 15,
+              "compare_at_price": 26.95,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "WDR4iUu",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9b200e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-960d29.com/",
+            "domain": "store-960d29.com",
+            "price": {
+              "price": 45,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

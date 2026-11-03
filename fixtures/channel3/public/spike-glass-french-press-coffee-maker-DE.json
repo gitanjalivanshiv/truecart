@@ -1,0 +1,248 @@
+{
+  "request": {
+    "query": "glass french press coffee maker",
+    "limit": 10,
+    "config": {
+      "country": "DE",
+      "currency": "EUR",
+      "language": "de"
+    }
+  },
+  "recordedAt": "2026-11-02T17:48:10.435Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "rOk4s1F",
+        "title": "Product listing",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand c645bf"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-7e09e2.com/",
+            "domain": "store-7e09e2.com",
+            "price": {
+              "price": 279.9,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Y2OaNjF",
+        "title": "French press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand fd4002"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-b0bdcb.com/",
+            "domain": "store-b0bdcb.com",
+            "price": {
+              "price": 70,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "8BlYmlQ",
+        "title": "French press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand f09267"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-4582e5.com/",
+            "domain": "store-4582e5.com",
+            "price": {
+              "price": 112.5,
+              "compare_at_price": 125,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "ubjvhXB",
+        "title": "French coffee press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 294f77"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-6e8fac.com/",
+            "domain": "store-6e8fac.com",
+            "price": {
+              "price": 179,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "PbLbHup",
+        "title": "French press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand fd4002"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-b0bdcb.com/",
+            "domain": "store-b0bdcb.com",
+            "price": {
+              "price": 80,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Xqp0vYc",
+        "title": "French press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand f09267"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-4582e5.com/",
+            "domain": "store-4582e5.com",
+            "price": {
+              "price": 125,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Gb0o0Mv",
+        "title": "Oz insulated french press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand c655b7"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-1cd265.com/",
+            "domain": "store-1cd265.com",
+            "price": {
+              "price": 69.95,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "oci8OAT",
+        "title": "Press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand a44755"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-02557c.com/",
+            "domain": "store-02557c.com",
+            "price": {
+              "price": 180,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "nlY16bX",
+        "title": "Double wall coffee",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 157b40"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-c20059.com/",
+            "domain": "store-c20059.com",
+            "price": {
+              "price": 28.9,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "2JbbUDh",
+        "title": "Product listing",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-646890.de/",
+            "domain": "store-646890.de",
+            "price": {
+              "price": 80,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

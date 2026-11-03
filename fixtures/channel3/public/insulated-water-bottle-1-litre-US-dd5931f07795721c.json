@@ -1,0 +1,270 @@
+{
+  "request": {
+    "query": "insulated water bottle 1 litre",
+    "limit": 10,
+    "config": {
+      "country": "US",
+      "currency": "USD",
+      "language": "en"
+    }
+  },
+  "recordedAt": "2026-11-02T18:13:59.156Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "ojo6D26",
+        "title": "1l stainless steel insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e777cd"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://us.store-17b5d2.com/",
+            "domain": "us.store-17b5d2.com",
+            "price": {
+              "price": 58,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "hjOJqhm",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand a9a3e8"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-d1a6af.com/",
+            "domain": "store-d1a6af.com",
+            "price": {
+              "price": 16.99,
+              "compare_at_price": 21.99,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "dhWlf1S",
+        "title": "Sport insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand a9a3e8"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-3e113e.com/",
+            "domain": "store-3e113e.com",
+            "price": {
+              "price": 16,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "9JOIIZF",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 444024"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://us.store-283a6b.com/",
+            "domain": "us.store-283a6b.com",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Fp83v17",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-7423b2.com/",
+            "domain": "store-7423b2.com",
+            "price": {
+              "price": 40,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "TeK1eG8",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e3b0c4"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-739d44.com/",
+            "domain": "store-739d44.com",
+            "price": {
+              "price": 29.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "F7UCf1Y",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 92b001"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-f215a8.com/",
+            "domain": "store-f215a8.com",
+            "price": {
+              "price": 28.49,
+              "compare_at_price": 44.99,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-dbf4b6.com/",
+            "domain": "store-dbf4b6.com",
+            "price": {
+              "price": 54.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-93f37c.com/",
+            "domain": "store-93f37c.com",
+            "price": {
+              "price": 54.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "YWSdnA1",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 7e1679"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-f32400.com/",
+            "domain": "store-f32400.com",
+            "price": {
+              "price": 13.99,
+              "compare_at_price": 20,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "GzvgOpd",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 92b001"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-f215a8.com/",
+            "domain": "store-f215a8.com",
+            "price": {
+              "price": 26.98,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "t2PiR3r",
+        "title": "24oz insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand b6ecfd"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-43e47f.com/",
+            "domain": "store-43e47f.com",
+            "price": {
+              "price": 29.79,
+              "compare_at_price": 39.99,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

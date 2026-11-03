@@ -148,3 +148,16 @@ Format: date (IST) · decision · reason.
 - **Recorded fallback:** demo requests replay recorded real runs when the live model is busy or over its limits, but **only if the failed live turn proposed nothing** (never repeat a purchase). `AGENT_MODE=replay` forces it for tests or quota exhaustion. The UI always labels a recorded run.
 - **Masking:** a mid-payment ledger row briefly showed a raw store domain (it joined on a field set only after payment). Purchases now join their proposal by id, and no view falls back to raw ids or domains. PayPal payloads in the activity panel have personal payer/address fields redacted.
 - Route handlers re-throw Next.js control-flow errors (`unstable_rethrow`) so prerender bail-outs are not turned into 500s.
+
+## 2026-11-03 · Public repo carries anonymized Channel3 data only
+
+- Channel3's guidance allows light caching to power your own UI; long-term storage or bulk export needs their agreement, and offer URLs must be fetched fresh. Publishing raw recordings (titles, descriptions, brands, images, buy links) goes beyond that.
+- **Committed (`fixtures/channel3/public/`, made by `scripts/fixtures/anonymize-channel3.ts`):**
+  - kept: product ids (Channel3: safe to cache indefinitely), prices, currencies, availability;
+  - changed: titles reduced to generic words; pseudonymous brands and store domains that keep country hints;
+  - dropped: descriptions, images, links.
+  - Ranking, matching and replay are unchanged.
+- Raw live recordings go to `data/channel3-cache/` (git-ignored); FX live recordings to `data/fx-cache/`. Raw recordings were removed from git history before the first push.
+- Store labels are now numbered by best rank within each country ("Store GB-1" = best UK store) and keyed by country + domain. Previously a `.com` store listed in two markets shared one label.
+- A stray "1l insulated bottle" recording made the hero query resolve to a set without the price flip. It was removed, and the hero run was re-recorded from live Gemini (it buys the true #1, £18.99).
+- Recorded runs never replay a PayPal order id (replay creates a new order). Ids are scrubbed on save and on load.

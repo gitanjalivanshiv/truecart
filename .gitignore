@@ -49,3 +49,7 @@ next-env.d.ts
 /scripts/spikes/.out/
 /playwright-report/
 /test-results/
+
+# raw live recordings (Channel3 listings, FX) stay local; the repo carries anonymized fixtures only
+/data/channel3-cache/
+/data/fx-cache/

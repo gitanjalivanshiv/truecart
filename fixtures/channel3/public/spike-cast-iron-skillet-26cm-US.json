@@ -1,0 +1,303 @@
+{
+  "request": {
+    "query": "cast iron skillet 26cm",
+    "limit": 10,
+    "config": {
+      "country": "US",
+      "currency": "USD",
+      "language": "en"
+    }
+  },
+  "recordedAt": "2026-11-02T17:48:12.578Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "XwXQL66",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-93f37c.com/",
+            "domain": "store-93f37c.com",
+            "price": {
+              "price": 33.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "WWBpYjr",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-0cca7f.com/",
+            "domain": "store-0cca7f.com",
+            "price": {
+              "price": 33.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "IgMpes8",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-5538e2.com/",
+            "domain": "store-5538e2.com",
+            "price": {
+              "price": 19.9,
+              "compare_at_price": 22.95,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-0cca7f.com/",
+            "domain": "store-0cca7f.com",
+            "price": {
+              "price": 34.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "R7ObAWk",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-0cca7f.com/",
+            "domain": "store-0cca7f.com",
+            "price": {
+              "price": 54.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "LZYDK7U",
+        "title": "Cast iron square skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-0cca7f.com/",
+            "domain": "store-0cca7f.com",
+            "price": {
+              "price": 39.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "a8bvjjd",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-d808b9.com/",
+            "domain": "store-d808b9.com",
+            "price": {
+              "price": 63.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-835468.com/",
+            "domain": "store-835468.com",
+            "price": {
+              "price": 100,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "1Y0c0Ot",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-cdc3fc.com/",
+            "domain": "store-cdc3fc.com",
+            "price": {
+              "price": 49.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "5ckuHbR",
+        "title": "Cast iron skillet set",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-d808b9.com/",
+            "domain": "store-d808b9.com",
+            "price": {
+              "price": 99.96,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "YGRXk8Z",
+        "title": "Product listing",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-eeebdc.com/",
+            "domain": "store-eeebdc.com",
+            "price": {
+              "price": 39.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-acc415.com/",
+            "domain": "store-acc415.com",
+            "price": {
+              "price": 39.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-eed4ac.com/",
+            "domain": "store-eed4ac.com",
+            "price": {
+              "price": 40,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-5538e2.com/",
+            "domain": "store-5538e2.com",
+            "price": {
+              "price": 40,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "zjJiKEb",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e76b0e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-2ee0c0.com/",
+            "domain": "store-2ee0c0.com",
+            "price": {
+              "price": 17.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

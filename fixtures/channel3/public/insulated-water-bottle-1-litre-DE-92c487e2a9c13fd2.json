@@ -1,0 +1,259 @@
+{
+  "request": {
+    "query": "insulated water bottle 1 litre",
+    "limit": 10,
+    "config": {
+      "country": "DE",
+      "currency": "EUR",
+      "language": "de"
+    }
+  },
+  "recordedAt": "2026-11-02T18:13:59.624Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "wSkr8v2",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand f09267"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://de.store-120d59.com/",
+            "domain": "de.store-120d59.com",
+            "price": {
+              "price": 60,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "y9L7PCz",
+        "title": "Stainless steel insulated drink bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand f93e32"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-4313e3.co.uk/",
+            "domain": "store-4313e3.co.uk",
+            "price": {
+              "price": 39,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "kfI5UDM",
+        "title": "Thermo stainless steel bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 3897cd"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-41b461.com/",
+            "domain": "store-41b461.com",
+            "price": {
+              "price": 27.5,
+              "compare_at_price": 55,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "10qDpgq",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-0b5fb2.be/",
+            "domain": "store-0b5fb2.be",
+            "price": {
+              "price": 39,
+              "compare_at_price": 47,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "66a6Qf9",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-646890.de/",
+            "domain": "store-646890.de",
+            "price": {
+              "price": 48,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "xfJfLPx",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-646890.de/",
+            "domain": "store-646890.de",
+            "price": {
+              "price": 48,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "WDR4iUu",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9b200e"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-960d29.com/",
+            "domain": "store-960d29.com",
+            "price": {
+              "price": 55,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "285CJTo",
+        "title": "Narrow mouth bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 569310"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-57fd45.com/",
+            "domain": "store-57fd45.com",
+            "price": {
+              "price": 17.95,
+              "compare_at_price": 21.95,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-2e32b7.com/",
+            "domain": "store-2e32b7.com",
+            "price": {
+              "price": 22,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "WOHqL3e",
+        "title": "Product listing",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 1d0241"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-9eccbe.com/",
+            "domain": "store-9eccbe.com",
+            "price": {
+              "price": 17.99,
+              "compare_at_price": 26,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "NQp0D1X",
+        "title": "Product listing",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 317db1"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-7e5f32.de/",
+            "domain": "store-7e5f32.de",
+            "price": {
+              "price": 34.95,
+              "compare_at_price": null,
+              "currency": "EUR"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

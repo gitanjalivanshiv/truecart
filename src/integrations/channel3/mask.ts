@@ -40,7 +40,15 @@ export function brandMaskingEnabled(env: NodeJS.ProcessEnv = process.env): boole
   return env.MASK_BRANDS !== "false";
 }
 
-export function displayLabels(offers: readonly NormalizedOffer[], mask: boolean): Map<string, DisplayOffer> {
+/**
+ * `rankOrder` (offer ids, best first) numbers stores within each country by their best-ranked offer, so
+ * "Store GB-1" is the cheapest landed UK store in that search. Without it, stores are numbered by name.
+ */
+export function displayLabels(
+  offers: readonly NormalizedOffer[],
+  mask: boolean,
+  rankOrder?: readonly string[],
+): Map<string, DisplayOffer> {
   const out = new Map<string, DisplayOffer>();
   if (!mask) {
     for (const o of offers)
@@ -51,20 +59,26 @@ export function displayLabels(offers: readonly NormalizedOffer[], mask: boolean)
   const brandLabel = new Map(
     brands.map((b, i) => [b, `Brand ${String.fromCharCode(65 + (i % 26))}${i >= 26 ? Math.floor(i / 26) : ""}`]),
   );
-  const merchants = [...new Set(offers.map((o) => `${o.merchantCountry ?? o.market}|${o.merchantDomain}`))].sort();
+  const rank = new Map((rankOrder ?? []).map((id, i) => [id, i]));
+  const bestRank = new Map<string, number>();
+  for (const o of offers) {
+    const key = `${o.merchantCountry ?? o.market}|${o.merchantDomain}`;
+    bestRank.set(key, Math.min(bestRank.get(key) ?? Infinity, rank.get(o.offerId) ?? Infinity));
+  }
+  const merchants = [...bestRank.keys()].sort((a, b) => bestRank.get(a)! - bestRank.get(b)! || a.localeCompare(b));
   const counters = new Map<string, number>();
   const merchantLabel = new Map<string, string>();
   for (const m of merchants) {
     const country = m.split("|")[0];
     const n = (counters.get(country) ?? 0) + 1;
     counters.set(country, n);
-    merchantLabel.set(m.split("|")[1], `Store ${country}-${n}`);
+    merchantLabel.set(m, `Store ${country}-${n}`); // keyed by country + domain: a .com store can appear in several markets
   }
   for (const o of offers) {
     out.set(o.offerId, {
       title: genericTitle(o.title),
       brand: o.brand ? brandLabel.get(o.brand)! : null,
-      merchant: merchantLabel.get(o.merchantDomain)!,
+      merchant: merchantLabel.get(`${o.merchantCountry ?? o.market}|${o.merchantDomain}`)!,
       imageUrl: null,
     });
   }

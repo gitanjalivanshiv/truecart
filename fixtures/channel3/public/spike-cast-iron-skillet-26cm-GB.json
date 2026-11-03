@@ -1,0 +1,259 @@
+{
+  "request": {
+    "query": "cast iron skillet 26cm",
+    "limit": 10,
+    "config": {
+      "country": "GB",
+      "currency": "GBP",
+      "language": "en"
+    }
+  },
+  "recordedAt": "2026-11-02T17:48:11.760Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "i7vlDbT",
+        "title": "Cast iron deep skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-afc528.co.uk/",
+            "domain": "store-afc528.co.uk",
+            "price": {
+              "price": 209,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-4b496d.com/",
+            "domain": "store-4b496d.com",
+            "price": {
+              "price": 209,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "bjqFuDB",
+        "title": "Cast iron round skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-afc528.co.uk/",
+            "domain": "store-afc528.co.uk",
+            "price": {
+              "price": 169,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "6wg08QT",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 8bd2cd"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-85e8cf.com/",
+            "domain": "store-85e8cf.com",
+            "price": {
+              "price": 32,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "IsGTA6Q",
+        "title": "Cast iron round skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-94a74a.com.au/",
+            "domain": "store-94a74a.com.au",
+            "price": {
+              "price": 155,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Ra4CMyt",
+        "title": "Cast iron deep skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-afc528.co.uk/",
+            "domain": "store-afc528.co.uk",
+            "price": {
+              "price": 209,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "0GRJfqz",
+        "title": "Product listing",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-afc528.co.uk/",
+            "domain": "store-afc528.co.uk",
+            "price": {
+              "price": 169,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "iYZWyHf",
+        "title": "Cast iron round skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-afd762.no/",
+            "domain": "store-afd762.no",
+            "price": {
+              "price": 125,
+              "compare_at_price": 185,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "BP0k0sM",
+        "title": "Product listing",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-afd762.no/",
+            "domain": "store-afd762.no",
+            "price": {
+              "price": 125,
+              "compare_at_price": 185,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Q193Ury",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 52aabb"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-85e8cf.com/",
+            "domain": "store-85e8cf.com",
+            "price": {
+              "price": 28,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "GD8aiLA",
+        "title": "Cast iron skillet",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 612be3"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 40.99,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

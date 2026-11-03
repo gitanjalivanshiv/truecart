@@ -135,6 +135,23 @@ describe("brand masking (display only)", () => {
     ["ACME", "Product listing"],
   ])("genericTitle(%j) = %j", (t, out) => expect(genericTitle(t)).toBe(out));
 
+  it("gives the same .com store different labels in different markets", () => {
+    const mk = (country: string, currency: string) =>
+      normalizeProducts(
+        [
+          {
+            id: `p-${country}`,
+            title: "Bottle",
+            offers: [{ url: "u", domain: "shop.com", price: { price: 10, currency }, availability: "InStock" }],
+          },
+        ],
+        { country, currency, language: "en" },
+      ).offers;
+    const offers = [...mk("GB", "GBP"), ...mk("DE", "EUR")];
+    const labels = displayLabels(offers, true);
+    expect(offers.map((o) => labels.get(o.offerId)!.merchant)).toEqual(["Store GB-1", "Store DE-1"]);
+  });
+
   it("labels brands and stores deterministically, hides images, and is a no-op when masking is off", () => {
     const { offers } = normalizeProducts(
       [

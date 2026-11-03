@@ -1,0 +1,248 @@
+{
+  "request": {
+    "query": "glass french press coffee maker",
+    "limit": 10,
+    "config": {
+      "country": "GB",
+      "currency": "GBP",
+      "language": "en"
+    }
+  },
+  "recordedAt": "2026-11-02T17:48:07.700Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "xEQO8ob",
+        "title": "Glass french press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e60181"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-85e8cf.com/",
+            "domain": "store-85e8cf.com",
+            "price": {
+              "price": 38,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "o1m9F3b",
+        "title": "French press glass coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e60181"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 34,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "NbJC0sS",
+        "title": "Cup cafetiere 1l french press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 224729"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 25.99,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "eYHUq9f",
+        "title": "French press coffee maker cafetiere cup",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand af04db"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 55.99,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "wTQDwy5",
+        "title": "French press coffee maker cafetiere cup",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand af04db"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 48.99,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "LXxEuIZ",
+        "title": "French press coffee maker 1l grey",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e60181"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 39,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Uriod7K",
+        "title": "French press cup coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand ef89fc"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-4313e3.co.uk/",
+            "domain": "store-4313e3.co.uk",
+            "price": {
+              "price": 13.34,
+              "compare_at_price": 40,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "bo51KYS",
+        "title": "Glass french press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 69990d"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-a69cf3.com/",
+            "domain": "store-a69cf3.com",
+            "price": {
+              "price": 59.95,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "vGNrc5T",
+        "title": "Small glass french press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 69990d"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-a69cf3.com/",
+            "domain": "store-a69cf3.com",
+            "price": {
+              "price": 48.95,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "0dZ6h6M",
+        "title": "French press",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 92d110"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-b8d440.com/",
+            "domain": "store-b8d440.com",
+            "price": {
+              "price": 85,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

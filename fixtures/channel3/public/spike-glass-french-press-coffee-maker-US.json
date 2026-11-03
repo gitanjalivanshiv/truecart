@@ -1,0 +1,347 @@
+{
+  "request": {
+    "query": "glass french press coffee maker",
+    "limit": 10,
+    "config": {
+      "country": "US",
+      "currency": "USD",
+      "language": "en"
+    }
+  },
+  "recordedAt": "2026-11-02T17:48:08.877Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "Cz2Trvs",
+        "title": "French press glass coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 54531d"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-430fb6.com/",
+            "domain": "store-430fb6.com",
+            "price": {
+              "price": 22.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-697161.com/",
+            "domain": "store-697161.com",
+            "price": {
+              "price": 23.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "OAxW2uD",
+        "title": "French press coffee maker with glass",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 287289"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-7f01fc.co/",
+            "domain": "store-7f01fc.co",
+            "price": {
+              "price": 129,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "iIHC7o8",
+        "title": "French press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand ef89fc"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-6a2e32.com/",
+            "domain": "store-6a2e32.com",
+            "price": {
+              "price": 25,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-f14ac4.com/",
+            "domain": "store-f14ac4.com",
+            "price": {
+              "price": 25.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "ERfzQoR",
+        "title": "French press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand ef89fc"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-c5a43c.com/",
+            "domain": "store-c5a43c.com",
+            "price": {
+              "price": 25,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-50901f.com/",
+            "domain": "store-50901f.com",
+            "price": {
+              "price": 29.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "a5OvSon",
+        "title": "French press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand fb52a4"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-bb9235.com/",
+            "domain": "store-bb9235.com",
+            "price": {
+              "price": 25.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-f14ac4.com/",
+            "domain": "store-f14ac4.com",
+            "price": {
+              "price": 44.99,
+              "compare_at_price": 52,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "ShZCN7H",
+        "title": "French press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 54531d"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-b6e7cf.com/",
+            "domain": "store-b6e7cf.com",
+            "price": {
+              "price": 16.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-0226a3.com/",
+            "domain": "store-0226a3.com",
+            "price": {
+              "price": 19.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "6YWl6gD",
+        "title": "French press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9c7c6a"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-d93d54.com/",
+            "domain": "store-d93d54.com",
+            "price": {
+              "price": 44.95,
+              "compare_at_price": 54.95,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-f8fff8.com/",
+            "domain": "store-f8fff8.com",
+            "price": {
+              "price": 44.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-f8fff8.com/",
+            "domain": "store-f8fff8.com",
+            "price": {
+              "price": 44.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-d808b9.com/",
+            "domain": "store-d808b9.com",
+            "price": {
+              "price": 49.95,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "8q5dekz",
+        "title": "French press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 6b4ae0"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-f14ac4.com/",
+            "domain": "store-f14ac4.com",
+            "price": {
+              "price": 33.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "VpdrpXi",
+        "title": "French press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 503d19"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-bea55c.com/",
+            "domain": "store-bea55c.com",
+            "price": {
+              "price": 19.99,
+              "compare_at_price": null,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "hQuWpxw",
+        "title": "French press coffee maker",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 2cb4b1"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-835468.com/",
+            "domain": "store-835468.com",
+            "price": {
+              "price": 37.99,
+              "compare_at_price": 56,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-f14ac4.com/",
+            "domain": "store-f14ac4.com",
+            "price": {
+              "price": 38.99,
+              "compare_at_price": 59.99,
+              "currency": "USD"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}

@@ -296,3 +296,11 @@ describe("tool contracts", () => {
     }
   });
 });
+
+describe("recorded runs", () => {
+  it("never replay a stale PayPal order id", async () => {
+    const { scrubRunIds } = await import("@/src/agent/adapters/scripted");
+    expect(scrubRunIds("Order ID: `81S68168KC7440017`, captured.")).toBe("Order ID: (see PayPal activity), captured.");
+    expect(scrubRunIds("ref o4 for 24.89 GBP")).toBe("ref o4 for 24.89 GBP");
+  });
+});

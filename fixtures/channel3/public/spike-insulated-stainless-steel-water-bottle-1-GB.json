@@ -1,0 +1,270 @@
+{
+  "request": {
+    "query": "insulated stainless steel water bottle 1 litre",
+    "limit": 10,
+    "config": {
+      "country": "GB",
+      "currency": "GBP",
+      "language": "en"
+    }
+  },
+  "recordedAt": "2026-11-02T17:48:03.311Z",
+  "note": "Anonymized from a Channel3 search recorded at recordedAt: generic titles, pseudonymous brands and stores; no descriptions, images or links.",
+  "response": {
+    "products": [
+      {
+        "id": "0lBj0lP",
+        "title": "Stainless steel insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-8a5002.com/",
+            "domain": "store-8a5002.com",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "NEsB2pu",
+        "title": "Insulated stainless steel water bottle leakproof",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e7c451"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 36.95,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "pKxzYpi",
+        "title": "Insulated stainless steel water bottle 1l vacuum flask cups",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand d95c6f"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 17.49,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "xMwYdZT",
+        "title": "Metal insulated straw bottle 1l",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand cb0d32"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://uk.store-7a7126.com/",
+            "domain": "uk.store-7a7126.com",
+            "price": {
+              "price": 35,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "ZSlI8cj",
+        "title": "1200ml insulated stainless steel water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand a56f48"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-e1300b.com/",
+            "domain": "store-e1300b.com",
+            "price": {
+              "price": 34.99,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "ncqFwPn",
+        "title": "Large insulated stainless steel water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e6c5ff"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-85e8cf.com/",
+            "domain": "store-85e8cf.com",
+            "price": {
+              "price": 35,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "K6x2bXR",
+        "title": "Insulated stainless steel water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand e6c5ff"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-85e8cf.com/",
+            "domain": "store-85e8cf.com",
+            "price": {
+              "price": 25,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "tk8gYK0",
+        "title": "Stainless steel water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand ac4063"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-c9b8f0.com/",
+            "domain": "store-c9b8f0.com",
+            "price": {
+              "price": 20,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "Sdusz3W",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-06039c.nl/",
+            "domain": "store-06039c.nl",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      },
+      {
+        "id": "UuDvmjO",
+        "title": "Insulated water bottle",
+        "description": "",
+        "brands": [
+          {
+            "name": "Brand 9644af"
+          }
+        ],
+        "offers": [
+          {
+            "url": "https://store-0fff57.se/",
+            "domain": "store-0fff57.se",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-4b496d.com/",
+            "domain": "store-4b496d.com",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          },
+          {
+            "url": "https://store-8a5002.com/",
+            "domain": "store-8a5002.com",
+            "price": {
+              "price": 42,
+              "compare_at_price": null,
+              "currency": "GBP"
+            },
+            "availability": "InStock",
+            "condition": "new"
+          }
+        ]
+      }
+    ],
+    "next_page_token": null
+  }
+}
