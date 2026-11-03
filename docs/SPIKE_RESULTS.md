@@ -105,6 +105,8 @@ _Last updated: 2026-11-02. All six spikes have run live._
     - **never accept `WEBHOOK_ID` (simulator) signatures in production**, since any developer can aim simulator events at our URL.
   - The registered webhook points at an expired quick-tunnel URL. Replace it (and `PAYPAL_WEBHOOK_ID`) when Render is deployed.
 
+- **Production check 2026-11-03 (Render, https://truecart-dm3w.onrender.com):** webhook `7AH02865BT686273P` registered for `/api/webhooks/paypal`; the earlier tunnel webhook was deleted. A live purchase (order 5RE76111T3202363G, Gemini agent, vaulted wallet) produced `PAYMENT.CAPTURE.COMPLETED` about 13 s after capture. It was signature-verified by the deployed route, de-duplicated by event id, matched to the purchase, and shown in the PayPal activity panel.
+
 ## S6 · PayPal hosted sandbox MCP
 
 - **Docs:** sandbox `https://mcp.sandbox.paypal.com/http` (streamable HTTP) and `/sse`. Headless auth uses `Authorization: Bearer <access token from client credentials>`. The environment is chosen by host. The local alternative is `npx -y @paypal/mcp --tools=all` with `PAYPAL_ACCESS_TOKEN` and `PAYPAL_ENVIRONMENT=SANDBOX`. The docs don't state token lifetime; the spike records `expires_in`.
