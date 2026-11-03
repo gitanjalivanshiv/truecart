@@ -3,6 +3,7 @@
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { BoxHead, Meter, Stamp } from "./bits";
+import { Deliveries } from "./Deliveries";
 import { gridTheme, GridProvider } from "./grid";
 import type { MoneyView, StateView } from "./types";
 import { useApi } from "./useApi";
@@ -176,18 +177,21 @@ export function Ledger() {
           <p className="text-muted">No purchases yet.</p>
         ) : (
           <GridProvider>
-            <div style={{ height: 420 }}>
+            <div>
               <AgGridReact<LedgerRow>
                 theme={gridTheme}
                 rowData={data?.rows ?? []}
                 columnDefs={cols}
                 getRowId={(p) => p.data.purchaseId}
+                domLayout="autoHeight"
                 suppressCellFocus
               />
             </div>
           </GridProvider>
         )}
       </section>
+
+      <Deliveries />
     </div>
   );
 }

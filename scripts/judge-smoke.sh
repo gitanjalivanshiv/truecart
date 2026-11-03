@@ -42,5 +42,9 @@ if [[ "${2:-}" != "--no-pay" ]]; then
         if (e.type==="done") console.log("   answer:", e.text.slice(0,140).replace(/\n/g," "), "…"); } })'
   echo "$EVENTS" | grep -q '"status":"CAPTURED"' || fail "hero purchase was not captured"
   curl -fsS -b "$JAR" "$URL/api/ledger" | j '"   ledger: "+o.rows.length+" purchase(s), spent "+o.spend.committed.text+" of "+o.spend.monthlyCap.text'
+  echo "6. shipment registered with PayPal tracking"
+  SHIP="$(curl -fsS -b "$JAR" "$URL/api/shipments")"
+  echo "$SHIP" | j 'o.length ? "   "+o[0].carrier+" "+o[0].trackingNumber+", PayPal tracker "+(o[0].paypalTrackerId??"none ("+o[0].paypalError+")") : "   no shipment"'
+  echo "$SHIP" | grep -q '"paypalTrackerId":"[^"]' || fail "no PayPal tracker registered"
 fi
 echo "PASS"

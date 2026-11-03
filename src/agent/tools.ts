@@ -17,6 +17,7 @@ import type { AgentSession, OfferRef } from "./session";
 import type { ToolSpec } from "./types";
 import { merchantText, UNTRUSTED_NOTE } from "./untrusted";
 import { proposePurchase as proposeShared } from "./purchase";
+import { shipmentsForMandate } from "@/src/shipping/shipments";
 
 const fmt = (m: Money) => `${toDecimalString(m)} ${m.currency}`;
 const MAX_RESULTS = 10;
@@ -351,10 +352,33 @@ const getMandateSummary: AgentTool<Record<string, never>> = {
   },
 };
 
+const trackDeliveries: AgentTool<Record<string, never>> = {
+  spec: {
+    name: "track_deliveries",
+    description:
+      "Delivery status of the user's paid orders (carrier progress is simulated in this demo). Flags overdue parcels.",
+    parameters: { type: "object", properties: {}, required: [] },
+  },
+  schema: z.strictObject({}),
+  async run(s) {
+    const m = mandateOf(s);
+    return shipmentsForMandate(s.db, m.id, m.buyerCountry).map((x) => ({
+      item: x.title,
+      store: x.store,
+      stage: x.state.stage,
+      day: x.state.dayOf,
+      expected_days: x.state.expectedDays,
+      overdue: x.state.overdue,
+      days_late: x.state.daysLate,
+      paypal_tracking_registered: x.paypalTrackerId !== null,
+      note: "Carrier events are simulated. If overdue, the user can prepare evidence on the Ledger page and open an item-not-received case with PayPal.",
+    }));
+  },
+};
+
 export const TOOLS: Record<string, AgentTool<never>> = Object.fromEntries(
-  [searchOffers, explainRanking, checkPolicy, proposePurchase, getOrderStatus, getMandateSummary].map((t) => [
-    t.spec.name,
-    t as AgentTool<never>,
-  ]),
+  [searchOffers, explainRanking, checkPolicy, proposePurchase, getOrderStatus, getMandateSummary, trackDeliveries].map(
+    (t) => [t.spec.name, t as AgentTool<never>],
+  ),
 );
 export const TOOL_SPECS: ToolSpec[] = Object.values(TOOLS).map((t) => t.spec);

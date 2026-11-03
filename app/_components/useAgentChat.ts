@@ -42,6 +42,8 @@ function describeCall(name: string, a: Record<string, unknown>): string {
       return "Looked up the order status";
     case "get_mandate_summary":
       return "Read your mandate";
+    case "track_deliveries":
+      return "Checked your deliveries";
     default:
       return `Tried “${name}”`;
   }

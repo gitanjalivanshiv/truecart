@@ -12,6 +12,7 @@ import { evaluate, type PolicyResult, type PurchaseIntent } from "@/src/domain/p
 import { costingContextFor, type RankedRow } from "@/src/discovery/rank";
 import { buy, type BuyOutcome } from "@/src/executor/executor";
 import type { PayPalGateway } from "@/src/executor/gateway";
+import { shipPurchase, type TrackerApi } from "@/src/shipping/shipments";
 
 export const fmtMoney = (m: Money) => `${toDecimalString(m)} ${m.currency}`;
 
@@ -21,6 +22,8 @@ export interface PurchaseContext {
   sessionId: string;
   gateway: PayPalGateway | null;
   now: () => Date;
+  /** Defaults to PayPal's tracking API; tests pass a double. */
+  trackerApi?: TrackerApi;
 }
 
 export function repriceRow(
@@ -113,5 +116,15 @@ export async function proposePurchase(
     { proposalId: id, intent, merchantLabel: display.merchant },
   );
   finishProposal(ctx.db, id, outcome.status === "DENIED" ? "DENIED" : "DONE", outcome, ctx.now());
+  // The simulated merchant ships and registers a PayPal tracker. Never affects the payment result.
+  if (outcome.status === "CAPTURED") {
+    await shipPurchase(
+      ctx.db,
+      outcome.purchaseId,
+      row.offer.merchantCountry,
+      mandate.buyerCountry,
+      ctx.trackerApi,
+    ).catch(() => {});
+  }
   return { status: "EXECUTED", proposalId: id, policy, cost, outcome };
 }

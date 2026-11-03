@@ -58,14 +58,14 @@ No login is needed for the hosted demo: every workspace starts with a shared Pay
 
 ## What you can do
 
-| Page          | What it shows                                                                                                                                                                                                            |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Shop**      | Ask the agent for a product. A live log shows every search, cost breakdown, mandate check and payment, next to the PayPal activity (orders, webhooks).                                                                   |
-| **Offers**    | All offers from UK, US and German shops ranked by landed cost (toggle to sticker price), with a cost build-up bar, the mandate's decision per offer, and a line-by-line breakdown. Buy within the mandate from here too. |
-| **Approvals** | Purchases above your auto-buy limit, laid out like a declaration. Approve and pay, or reject.                                                                                                                            |
-| **Ledger**    | Spend against your caps, and every purchase reconciled against PayPal's capture breakdown (fee model vs actual fee).                                                                                                     |
-| **Mandate**   | Caps, auto-buy limit, max units, allowed shop countries, pause switch, and PayPal sandbox wallet linking.                                                                                                                |
-| **Red team**  | A synthetic hostile listing that tries to hijack the agent. Run it through the AI agent, or simulate a fully hijacked agent: both are denied by the mandate.                                                             |
+| Page          | What it shows                                                                                                                                                                                                                                                         |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Shop**      | Ask the agent for a product. A live log shows every search, cost breakdown, mandate check and payment, next to the PayPal activity (orders, webhooks).                                                                                                                |
+| **Offers**    | All offers from UK, US and German shops ranked by landed cost (toggle to sticker price), with a cost build-up bar, the mandate's decision per offer, and a line-by-line breakdown. Buy within the mandate from here too.                                              |
+| **Approvals** | Purchases above your auto-buy limit, laid out like a declaration. Approve and pay, or reject.                                                                                                                                                                         |
+| **Ledger**    | Spend against your caps; every purchase reconciled against PayPal's capture breakdown (fee model vs actual fee); deliveries with the PayPal tracking number, simulated carrier progress (+1 day / simulate a delay) and an evidence summary when a parcel is overdue. |
+| **Mandate**   | Caps, auto-buy limit, max units, allowed shop countries, pause switch, and PayPal sandbox wallet linking.                                                                                                                                                             |
+| **Red team**  | A synthetic hostile listing that tries to hijack the agent. Run it through the AI agent, or simulate a fully hijacked agent: both are denied by the mandate.                                                                                                          |
 
 Each visitor gets their own workspace (anonymous cookie): their own mandate, approvals and ledger.
 

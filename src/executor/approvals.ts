@@ -2,7 +2,8 @@
 // the executor still re-runs the policy, so a cap used up in the meantime still blocks the charge.
 
 import { randomUUID } from "node:crypto";
-import { insertApproval } from "@/src/db/repositories";
+import { getMandate, insertApproval } from "@/src/db/repositories";
+import { shipPurchase } from "@/src/shipping/shipments";
 import { finishProposal, getProposal, transitionProposal } from "@/src/db/proposals";
 import { createApproval } from "@/src/domain/approval";
 import { buy, type BuyOutcome, type ExecutorDeps } from "./executor";
@@ -34,6 +35,12 @@ export async function approveProposal(deps: ExecutorDeps, proposalId: string): P
     outcome,
     (deps.now ?? (() => new Date()))(),
   );
+  if (outcome.status === "CAPTURED") {
+    const buyer = getMandate(deps.db, proposal.mandateId)?.buyerCountry ?? "GB";
+    await shipPurchase(deps.db, outcome.purchaseId, proposal.display.merchantCountry, buyer, deps.trackerApi).catch(
+      () => {},
+    );
+  }
   return outcome;
 }
 

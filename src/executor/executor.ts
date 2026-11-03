@@ -18,6 +18,7 @@ import type { ApprovalProblem } from "@/src/domain/approval";
 import { money, parseDecimal, toDecimalString } from "@/src/domain/money";
 import type { PolicyResult, PurchaseIntent, ReasonCode } from "@/src/domain/policy";
 import { classifyFailure, type ClassifiedFailure } from "./errors";
+import type { TrackerApi } from "@/src/shipping/shipments";
 import type { OrderSnapshot, PayPalGateway } from "./gateway";
 
 export type BuyOutcome =
@@ -33,6 +34,8 @@ export interface ExecutorDeps {
   now?: () => Date;
   sleep?: (ms: number) => Promise<void>;
   maxAttempts?: number;
+  /** Post-capture shipping (approvals path); defaults to PayPal's tracking API. */
+  trackerApi?: TrackerApi;
 }
 
 const defaultSleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));

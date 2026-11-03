@@ -109,6 +109,22 @@ const MIGRATIONS: string[] = [
     revoked_at   TEXT
   );
   `,
+  `
+  CREATE TABLE shipments (
+    id                TEXT PRIMARY KEY,
+    purchase_id       TEXT NOT NULL UNIQUE REFERENCES purchases(id),
+    mandate_id        TEXT NOT NULL REFERENCES mandates(id),
+    carrier           TEXT NOT NULL,             -- PayPal carrier enum
+    tracking_number   TEXT NOT NULL,
+    paypal_tracker_id TEXT,                      -- from POST /v2/checkout/orders/{id}/track
+    paypal_error      TEXT,
+    origin_country    TEXT,
+    expected_days     INTEGER NOT NULL,
+    shipped_at        TEXT NOT NULL,
+    sim_days          INTEGER NOT NULL DEFAULT 0, -- "time machine": simulated days elapsed
+    sim_delayed       INTEGER NOT NULL DEFAULT 0  -- simulate a parcel that never arrives
+  );
+  `,
 ];
 
 export function openDatabase(path: string = process.env.DATABASE_PATH ?? "data/truecart.db"): Db {

@@ -171,3 +171,16 @@ Format: date (IST) · decision · reason.
   - `buy_within_mandate` (the shared purchase path: the policy re-runs, above the auto-buy limit goes to the person's approval inbox, the executor pays).
   - No tool can change limits. Each token's searches are separate, and offers are referenced by ids we issued.
 - **Verified 2026-11-03** over HTTP against a production build with the SDK client: 401 without a token; 4 tools; 20 units DENIED; 1 unit CAPTURED in the sandbox; the revoked token was refused.
+
+## 2026-11-03 · Shipment tracking (SPEC 5.8)
+
+- **Verified from PayPal's Orders v2 OpenAPI schema:**
+  - `POST /v2/checkout/orders/{id}/track` takes `capture_id`, `tracking_number` (≤64), `carrier` (1,451-value enum incl. ROYAL_MAIL, USPS, DHL, OTHER) and `notify_payer`, and returns the order with `purchase_units[].shipping.trackers[]` (id `<capture>-<tracking>`).
+  - **Tracker status is only SHIPPED or CANCELLED**: PayPal has no delivery states.
+- **Design:**
+  - After capture (auto and approval paths), the simulated merchant registers a real PayPal tracker. Carrier by shop country: ROYAL_MAIL / USPS / DHL, shown as "UK post / US post / German courier".
+  - Carrier progress (label, transit, customs for cross-border, out for delivery, delivered) is **simulated and labelled**, with a time machine (+1 day, simulate a delay, reset).
+  - Overdue = more than 2 days past the expected days from the shipping table. It shows an evidence summary and a sandbox Resolution Center link (no automatic dispute: the buyer-side Disputes API is gated, F7).
+- Tracking never affects payment: a tracker failure is stored on the shipment and shown. `ensureShipments` ships captured purchases missed by the post-capture hook (e.g. captured by webhook).
+- The agent has a `track_deliveries` tool and is told to surface overdue parcels.
+- **Verified live 2026-11-03:** a sandbox purchase from a US shop got tracker `9BF51690H49954839-TC6115277401US`.
