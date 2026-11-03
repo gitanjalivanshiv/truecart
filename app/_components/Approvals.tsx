@@ -118,6 +118,7 @@ export function Approvals() {
       <section>
         <BoxHead no="01" title="Waiting for you" aside={<span className="label">{waiting.length} open</span>} />
         {error && <p className="text-stop">{error}</p>}
+        {loading && <p className="label">Loading…</p>}
         {!loading && waiting.length === 0 && (
           <p className="text-muted">
             Nothing to approve. Purchases above your auto-buy limit land here. Ask for more than one unit on the{" "}

@@ -145,7 +145,7 @@ export function Mandate({ walletStatus }: { walletStatus?: string }) {
       setBusy(false);
     }
   };
-  if (!state) return null;
+  if (!state) return <p className="label">Loading your mandate…</p>;
   const m = state.mandate;
   return (
     <div className="space-y-12">

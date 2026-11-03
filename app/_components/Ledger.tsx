@@ -122,12 +122,13 @@ const cols: ColDef<LedgerRow>[] = [
 ];
 
 export function Ledger() {
-  const { data } = useApi<{ spend: StateView["spend"]; rows: LedgerRow[] }>("/api/ledger");
+  const { data, loading } = useApi<{ spend: StateView["spend"]; rows: LedgerRow[] }>("/api/ledger");
   const { data: state } = useApi<StateView>("/api/state");
   return (
     <div className="space-y-12">
       <section>
         <BoxHead no="01" title="Spend against your mandate" />
+        {loading && <p className="label">Loading…</p>}
         {data && state && (
           <div className="grid gap-x-12 gap-y-6 md:grid-cols-3">
             <div>

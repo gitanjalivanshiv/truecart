@@ -55,7 +55,7 @@ export function Header() {
       <div className="mx-auto flex max-w-[1240px] flex-wrap items-end gap-x-8 gap-y-3 px-4 pt-5 pb-3 sm:px-6">
         <Link href="/" className="leading-none">
           <span className="text-[22px] font-bold tracking-[-0.02em]">TrueCart</span>
-          <span className="label ml-2 align-[3px]">landed-cost shopping under a mandate</span>
+          <span className="label ml-2 hidden align-[3px] sm:inline">landed-cost shopping under a mandate</span>
         </Link>
         <nav className="flex flex-wrap gap-x-5 gap-y-1 text-[14px]">
           {NAV.map((n) => {

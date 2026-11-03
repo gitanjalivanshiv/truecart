@@ -10,7 +10,7 @@
   --sheet: #fbf9f4;
   --ink: #1c1b17;
   --ink-2: #4a463e;
-  --muted: #77705f;
+  --muted: #6b6454; /* 5.1:1 on paper (WCAG AA) */
   --rule: #d9d1c1;
   --rule-strong: #1c1b17;
   --go: #2f6a3f;

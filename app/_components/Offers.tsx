@@ -342,6 +342,7 @@ export function Offers() {
       </form>
       {searchError && <p className="mb-3 text-stop">{searchError}</p>}
       {error && <p className="text-stop">{error}</p>}
+      {loading && !s && <p className="label">Loading…</p>}
       {!loading && !s && <p className="text-muted">No search yet. Rank offers above, or ask on the Shop page.</p>}
 
       {s && (

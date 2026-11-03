@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { Mandate } from "../_components/Mandate";
 
+export const metadata = { title: "Mandate · TrueCart (sandbox)" };
+
 async function WithStatus({ searchParams }: { searchParams: PageProps<"/mandate">["searchParams"] }) {
   const sp = await searchParams;
   const wallet = typeof sp.wallet === "string" ? sp.wallet : undefined;
