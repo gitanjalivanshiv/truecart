@@ -161,3 +161,13 @@ Format: date (IST) · decision · reason.
 - Store labels are now numbered by best rank within each country ("Store GB-1" = best UK store) and keyed by country + domain. Previously a `.com` store listed in two markets shared one label.
 - A stray "1l insulated bottle" recording made the hero query resolve to a set without the price flip. It was removed, and the hero run was re-recorded from live Gemini (it buys the true #1, £18.99).
 - Recorded runs never replay a PayPal order id (replay creates a new order). Ids are scrubbed on save and on load.
+
+## 2026-11-03 · TrueCart MCP server (SPEC 5.10)
+
+- `/mcp`, streamable HTTP, **stateless**: one `McpServer` + `WebStandardStreamableHTTPServerTransport` per request, JSON responses. It suits a single free instance that may restart at any time.
+- **Auth:** `Authorization: Bearer tc_mcp_…`, a mandate token created by the person on the Mandate page (shown once, stored as a sha256 hash, revocable, max 5 active, 60 requests / 10 min per token). Missing, unknown or revoked → 401.
+- **Tools:**
+  - `get_mandate`, `search_offers`, `explain_offer` (all read-only);
+  - `buy_within_mandate` (the shared purchase path: the policy re-runs, above the auto-buy limit goes to the person's approval inbox, the executor pays).
+  - No tool can change limits. Each token's searches are separate, and offers are referenced by ids we issued.
+- **Verified 2026-11-03** over HTTP against a production build with the SDK client: 401 without a token; 4 tools; 20 units DENIED; 1 unit CAPTURED in the sandbox; the revoked token was refused.

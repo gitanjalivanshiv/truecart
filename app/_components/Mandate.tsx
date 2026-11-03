@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BoxHead } from "./bits";
+import { ConnectAgent } from "./ConnectAgent";
 import type { StateView } from "./types";
 import { post, refreshAll, useApi } from "./useApi";
 
@@ -242,6 +243,8 @@ export function Mandate({ walletStatus }: { walletStatus?: string }) {
           </dd>
         </dl>
       </section>
+
+      <ConnectAgent />
     </div>
   );
 }

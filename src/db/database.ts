@@ -98,6 +98,17 @@ const MIGRATIONS: string[] = [
   );
   CREATE INDEX proposals_by_status ON proposals (status, created_at);
   `,
+  `
+  CREATE TABLE agent_tokens (
+    id           TEXT PRIMARY KEY,
+    mandate_id   TEXT NOT NULL REFERENCES mandates(id),
+    token_hash   TEXT NOT NULL UNIQUE,         -- sha256 of the token; the token itself is shown once, never stored
+    label        TEXT NOT NULL,
+    created_at   TEXT NOT NULL,
+    last_used_at TEXT,
+    revoked_at   TEXT
+  );
+  `,
 ];
 
 export function openDatabase(path: string = process.env.DATABASE_PATH ?? "data/truecart.db"): Db {

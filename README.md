@@ -22,6 +22,10 @@ No login is needed. Each visitor gets their own workspace with a demo mandate (�
 
 Workspaces reset when the free server restarts.
 
+### Connect your own AI agent (MCP)
+
+TrueCart is also an MCP server. On the **Mandate** page, under **Connect an agent**, create a token and add the shown configuration to any MCP client that supports remote (streamable HTTP) servers with headers. The agent gets four tools (`get_mandate`, `search_offers`, `explain_offer`, `buy_within_mandate`) and shops inside exactly that mandate: the same limits, approval inbox and pause switch apply, and it cannot change them. Revoke the token at any time.
+
 ## Run locally
 
 Requires Node.js 24 (see `.node-version`; 22.12+ works).
@@ -76,17 +80,18 @@ The free plan sleeps after 15 minutes without traffic (about a minute to wake) a
 
 ## Scripts
 
-| Command                                                                                      | What it does                                                                                                                                       |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev` / `build` / `start`                                                            | Next.js dev server / production build / serve the build                                                                                            |
-| `npm test`                                                                                   | Unit tests (Vitest)                                                                                                                                |
-| `npm run test:e2e`                                                                           | Playwright end-to-end tests (starts the dev server)                                                                                                |
-| `npm run typecheck` · `lint` · `format`                                                      | Types, ESLint, Prettier                                                                                                                            |
-| `npm run demo:discover -- "insulated water bottle 1 litre"`                                  | CLI: offers from UK, US and German shops ranked by landed cost, with the mandate's decision (`--replay` uses recordings, `--unmasked` shows names) |
-| `npm run demo:chat -- "Get me a 1L insulated water bottle, delivered to the UK, under £40."` | Talk to the agent in the terminal (dry run by default; `--pay` charges in the PayPal sandbox; `--replay hero` uses a recorded run)                 |
-| `npm run smoke:executor`                                                                     | One live sandbox purchase through the payment executor (needs the wallet vaulted by `spike:vault`)                                                 |
-| `scripts/judge-smoke.sh <url> [--no-pay]`                                                    | The judges' path against a deployment: health, fresh workspace, ranking, hijacked-agent drill (must be denied), hero purchase (sandbox)            |
-| `npm run spike:<name>`                                                                       | Feasibility spikes: `vault`, `fx-orders`, `fx-quote`, `channel3`, `channel3-mcp`, `webhook`, `mcp` (see `scripts/spikes/`)                         |
+| Command                                                                                      | What it does                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev` / `build` / `start`                                                            | Next.js dev server / production build / serve the build                                                                                                        |
+| `npm test`                                                                                   | Unit tests (Vitest)                                                                                                                                            |
+| `npm run test:e2e`                                                                           | Playwright end-to-end tests (starts the dev server)                                                                                                            |
+| `npm run typecheck` · `lint` · `format`                                                      | Types, ESLint, Prettier                                                                                                                                        |
+| `npm run demo:discover -- "insulated water bottle 1 litre"`                                  | CLI: offers from UK, US and German shops ranked by landed cost, with the mandate's decision (`--replay` uses recordings, `--unmasked` shows names)             |
+| `npm run demo:chat -- "Get me a 1L insulated water bottle, delivered to the UK, under £40."` | Talk to the agent in the terminal (dry run by default; `--pay` charges in the PayPal sandbox; `--replay hero` uses a recorded run)                             |
+| `npm run smoke:executor`                                                                     | One live sandbox purchase through the payment executor (needs the wallet vaulted by `spike:vault`)                                                             |
+| `scripts/judge-smoke.sh <url> [--no-pay]`                                                    | The judges' path against a deployment: health, fresh workspace, ranking, hijacked-agent drill (must be denied), hero purchase (sandbox)                        |
+| `npx tsx scripts/smoke/mcp-client.ts <url> <token> [--buy]`                                  | Connects to TrueCart's MCP server as an outside agent: lists tools, reads the mandate, searches, shows that 20 units are denied, optionally buys one (sandbox) |
+| `npm run spike:<name>`                                                                       | Feasibility spikes: `vault`, `fx-orders`, `fx-quote`, `channel3`, `channel3-mcp`, `webhook`, `mcp` (see `scripts/spikes/`)                                     |
 
 ## Project layout
 
@@ -99,7 +104,7 @@ src/agent/          provider-neutral tool-use agent (Gemini adapter), tools, inj
 src/integrations/   paypal (client, webhooks) · channel3 (client, record/replay, normalize, mask) · fxrates · anthropic
 src/discovery/      query -> offers across markets -> landed cost -> ranking -> policy dry run
 fixtures/           recorded Channel3 responses and FX rates (demo works offline with DEMO_MODE=true)
-src/mcp/            TrueCart MCP server                                             [P1]
+src/mcp/            TrueCart MCP server (/mcp): mandate-scoped tools for outside agents
 src/db/             SQLite (node:sqlite): mandates, approvals, purchases, ledger, webhook events
 scripts/spikes/     feasibility spikes (S1–S6)
 tests/{unit,e2e}/   Vitest and Playwright

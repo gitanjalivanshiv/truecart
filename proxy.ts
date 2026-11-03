@@ -28,6 +28,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except static assets and the PayPal webhook (server-to-server).
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/webhooks|api/health).*)"],
+  // Everything except static assets and server-to-server routes (PayPal webhook, MCP with bearer tokens).
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/webhooks|api/health|mcp).*)"],
 };
