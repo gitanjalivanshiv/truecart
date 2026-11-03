@@ -61,13 +61,17 @@ The free plan sleeps after 15 minutes without traffic (about a minute to wake) a
 
 ## Scripts
 
-| Command                                 | What it does                                                                                                               |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev` / `build` / `start`       | Next.js dev server / production build / serve the build                                                                    |
-| `npm test`                              | Unit tests (Vitest)                                                                                                        |
-| `npm run test:e2e`                      | Playwright end-to-end tests (starts the dev server)                                                                        |
-| `npm run typecheck` · `lint` · `format` | Types, ESLint, Prettier                                                                                                    |
-| `npm run spike:<name>`                  | Feasibility spikes: `vault`, `fx-orders`, `fx-quote`, `channel3`, `channel3-mcp`, `webhook`, `mcp` (see `scripts/spikes/`) |
+| Command                                                                                      | What it does                                                                                                                                       |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev` / `build` / `start`                                                            | Next.js dev server / production build / serve the build                                                                                            |
+| `npm test`                                                                                   | Unit tests (Vitest)                                                                                                                                |
+| `npm run test:e2e`                                                                           | Playwright end-to-end tests (starts the dev server)                                                                                                |
+| `npm run typecheck` · `lint` · `format`                                                      | Types, ESLint, Prettier                                                                                                                            |
+| `npm run demo:discover -- "insulated water bottle 1 litre"`                                  | CLI: offers from UK, US and German shops ranked by landed cost, with the mandate's decision (`--replay` uses recordings, `--unmasked` shows names) |
+| `npm run demo:chat -- "Get me a 1L insulated water bottle, delivered to the UK, under £40."` | Talk to the agent in the terminal (dry run by default; `--pay` charges in the PayPal sandbox; `--replay hero` uses a recorded run)                 |
+| `npm run smoke:executor`                                                                     | One live sandbox purchase through the payment executor (needs the wallet vaulted by `spike:vault`)                                                 |
+| `scripts/judge-smoke.sh <url> [--no-pay]`                                                    | The judges' path against a deployment: health, fresh workspace, ranking, hijacked-agent drill (must be denied), hero purchase (sandbox)            |
+| `npm run spike:<name>`                                                                       | Feasibility spikes: `vault`, `fx-orders`, `fx-quote`, `channel3`, `channel3-mcp`, `webhook`, `mcp` (see `scripts/spikes/`)                         |
 
 ## Project layout
 
