@@ -1,4 +1,5 @@
 import { createSetupToken } from "@/src/integrations/paypal/vault";
+import { appBaseUrl } from "@/src/server/baseUrl";
 import { handle, json } from "@/src/server/http";
 import { allow, LIMITS } from "@/src/server/rateLimit";
 import { workspace } from "@/src/server/visitor";
@@ -10,7 +11,7 @@ export const POST = handle(async () => {
   const l = LIMITS.walletLinksPerVisitor;
   if (!allow(`wallet:${vid}`, l.limit, l.windowMs).ok)
     return json({ error: "Too many wallet link attempts. Try again later." }, 429);
-  const base = process.env.APP_BASE_URL ?? "http://localhost:3000";
+  const base = appBaseUrl();
   const { id, approveUrl } = await createSetupToken(`${base}/api/wallet/return`, `${base}/mandate?wallet=cancelled`);
   rememberSetup(vid, id);
   return json({ approveUrl });

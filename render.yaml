@@ -1,12 +1,15 @@
-# Render Blueprint (stub). Docs: https://render.com/docs/blueprint-spec — [VERIFY] fields and plan before first deploy.
+# Render Blueprint (free plan). Docs: https://render.com/docs/blueprint-spec
+# Free web services sleep after 15 min idle (about 1 min to wake) and have an ephemeral filesystem, so the
+# SQLite demo data resets on restart. A GitHub Action (keepalive.yml) pings /api/health to keep it awake.
 services:
   - type: web
     name: truecart
     runtime: node
-    plan: free # SPEC 13.3: paid instance vs free tier is an open decision (free spins down; disk not persistent)
+    plan: free
     buildCommand: npm ci && npm run build
     startCommand: npm run start
     healthCheckPath: /api/health
+    autoDeployTrigger: commit
     envVars:
       - key: NODE_VERSION
         value: "24"
@@ -18,18 +21,18 @@ services:
         sync: false
       - key: PAYPAL_WEBHOOK_ID
         sync: false
-      - key: LLM_PROVIDER
-        value: gemini
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: GEMINI_MODEL
-        value: gemini-3.5-flash-lite
-      - key: CHANNEL3_API_KEY
-        sync: false
-      - key: APP_BASE_URL
-        sync: false
       - key: DEMO_WALLET_TOKEN
         sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CHANNEL3_API_KEY
+        sync: false
+      - key: LLM_PROVIDER
+        value: gemini
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: AGENT_MODE
+        value: live
       - key: AGENT_DAILY_TURNS
         value: "300"
       - key: MASK_BRANDS

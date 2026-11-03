@@ -50,6 +50,15 @@ _Placeholder: a sandbox personal (GB) buyer login will be listed here and in the
 
 Each visitor gets their own workspace (anonymous cookie): their own mandate, approvals and ledger.
 
+## Deploy (Render, free plan)
+
+1. In Render: **New → Blueprint**, pick this repository. `render.yaml` defines the service.
+2. Fill in the secret values Render asks for: `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `DEMO_WALLET_TOKEN` (the sandbox buyer's Vault token from `npm run spike:vault`), `GEMINI_API_KEY`, `CHANNEL3_API_KEY`. Leave `PAYPAL_WEBHOOK_ID` empty for the first deploy.
+3. After the first deploy, register the webhook: `npm run spike:webhook -- create --url https://<your-service>.onrender.com/api/webhooks/paypal`, put the returned id in `PAYPAL_WEBHOOK_ID` on Render, and redeploy.
+4. Optional: set the GitHub repository variable `DEMO_URL` to the Render URL so `.github/workflows/keepalive.yml` keeps the free instance awake.
+
+The free plan sleeps after 15 minutes without traffic (about a minute to wake) and its disk is not persistent: demo workspaces reset when the service restarts. The hosted demo runs with `DEMO_MODE=true` (recorded, anonymized product data) so it never spends Channel3 credits.
+
 ## Scripts
 
 | Command                                 | What it does                                                                                                               |
