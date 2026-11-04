@@ -64,7 +64,11 @@ export const POST = handle(async (request: Request) => {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      const send = (e: StreamEvent) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(e)}\n\n`));
+      let captured = false;
+      const send = (e: StreamEvent) => {
+        if (e.type === "tool_result" && e.status === "CAPTURED") captured = true;
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(e)}\n\n`));
+      };
       const run = (adapter: ModelAdapter, history = convo.history) =>
         runTurn({ adapter, session: convo.session, history, userText: body.message, onEvent: send });
       try {
@@ -88,10 +92,17 @@ export const POST = handle(async (request: Request) => {
           turn = await run(adapter, historyBefore);
         }
         convo.history = turn.history;
-        send({ type: "done", text: turn.text, stoppedBy: turn.stoppedBy });
+        const hint =
+          turn.stoppedBy === "model_error" && !scenario && !triedToBuy
+            ? `\n\nThe demo request still works when the live model is busy (it replays a recorded run): "${SCENARIOS.hero.prompt}"`
+            : "";
+        send({ type: "done", text: turn.text + hint, stoppedBy: turn.stoppedBy });
       } catch (err) {
         console.error(`[agent] ${(err as Error).name}: ${(err as Error).message}`);
-        send({ type: "done", text: "Something went wrong on our side. Nothing was charged.", stoppedBy: "error" });
+        const text = captured
+          ? "Something went wrong on our side after your purchase went through. See the Ledger for the PayPal order."
+          : "Something went wrong on our side. Nothing was charged.";
+        send({ type: "done", text, stoppedBy: "error" });
       } finally {
         controller.close();
       }

@@ -38,9 +38,9 @@ If a form asks for a government-ID name, a phone that can receive texts, or says
 
 Sign up at trychannel3.com/sign-up/developer and copy the key to `CHANNEL3_API_KEY`. The free tier is 1,000 searches a month.
 
-## C. Anthropic
+## C. Gemini (free tier)
 
-Go to console.anthropic.com → **Settings → API Keys → Create key** and put it in `ANTHROPIC_API_KEY`. Set a low monthly limit under **Settings → Limits**.
+Go to aistudio.google.com → **Get API key → Create API key** and put it in `GEMINI_API_KEY`. No billing account is needed. Without a key, the agent can still replay its recorded demo runs (`AGENT_MODE=replay`).
 
 ## D. GitHub, Render, optional tools
 

@@ -77,12 +77,16 @@ export async function runTurn(args: {
     } catch (err) {
       const kind = err instanceof ModelError ? err.kind : "UNEXPECTED";
       emit({ type: "error", kind, message: (err as Error).message });
-      const text =
+      const reason =
         kind === "RATE_LIMITED"
-          ? "The AI model is rate-limited right now (free tier). Please try again in a minute. Nothing was bought."
+          ? "The AI model is rate-limited right now (free tier). Please try again in a minute."
           : kind === "CONFIG"
-            ? "The AI model is not configured on this server (missing API key). Nothing was bought."
-            : "The AI model is unavailable right now. Nothing was bought.";
+            ? "The AI model is not configured on this server (missing API key)."
+            : "The AI model is unavailable right now.";
+      // A purchase captured earlier in this turn stands; never tell the user otherwise.
+      const text = captured
+        ? `${reason} Your purchase in this request went through: see the Ledger for the PayPal order.`
+        : `${reason} Nothing was bought in this request.`;
       return { text, history: messages, events, usage, stoppedBy: "model_error" };
     }
     usage.inputTokens += res.usage.inputTokens;

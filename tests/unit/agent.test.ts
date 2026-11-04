@@ -250,6 +250,20 @@ describe("agent: limits and failures", () => {
     expect(turn.text).toMatch(/rate-limited.*Nothing was bought/);
   });
 
+  it("never says nothing was bought when the model fails after a capture", async () => {
+    const adapter = scriptedAdapter((req, step) => {
+      if (step === 0) return use(call("search_offers", { query: HERO }));
+      if (step === 1)
+        return use(call("propose_purchase", { ref: offersIn(req).find((o) => o.true_rank === 1)!.ref, quantity: 1 }));
+      throw new ModelError("UNAVAILABLE", "503");
+    });
+    const turn = await runTurn({ adapter, session, history: [], userText: "buy the bottle" });
+    expect(pay.calls).toHaveLength(1);
+    expect(turn).toMatchObject({ stoppedBy: "model_error" });
+    expect(turn.text).toMatch(/went through/);
+    expect(turn.text).not.toMatch(/Nothing was bought/);
+  });
+
   it("refuses unknown offer refs and other sessions' proposals", async () => {
     const adapter = scriptedAdapter([
       use(
