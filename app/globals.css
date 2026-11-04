@@ -395,3 +395,19 @@ body {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
+
+/* Grid rows: pinned totals, the best offer, offers the mandate refuses */
+.ag-row.row-total {
+  font-weight: 600;
+  border-top: 1px solid var(--ink);
+}
+.ag-row.row-best {
+  box-shadow: inset 3px 0 0 var(--go);
+}
+.ag-row.row-denied {
+  color: var(--muted);
+}
+/* Auto-height grids keep a 150px minimum for AG Grid's empty overlay; ours show their own empty state. */
+.grid-fit .ag-layout-auto-height {
+  min-height: 0 !important;
+}

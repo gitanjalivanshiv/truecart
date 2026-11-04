@@ -1,10 +1,10 @@
 "use client";
 
-import type { ColDef, ICellRendererParams } from "ag-grid-community";
+import type { ColDef, GridApi, ICellRendererParams, IRowNode } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BoxHead, Stamp, Waterfall, WaterfallKey, type LineView } from "./bits";
-import { gridTheme, GridProvider } from "./grid";
+import { exportCsv, gridTheme, GridProvider } from "./grid";
 import { LINE_TEXT, reason } from "./text";
 import type { MoneyView } from "./types";
 import { post, refreshAll, useApi } from "./useApi";
@@ -197,6 +197,10 @@ function WaterfallCell(p: ICellRendererParams<Row>) {
   ) : null;
 }
 
+const MARKET_NAME: Record<string, string> = { GB: "UK", US: "US", DE: "Germany" };
+const breakdown = (r: Row) =>
+  r.lines.map((l) => `${LINE_TEXT[l.kind] ?? l.kind} ${l.amount.text}${l.estimate ? " (est.)" : ""}`).join(" · ");
+
 export function Offers() {
   const { data: search, error, loading } = useApi<Search | null>("/api/offers");
   const [override, setOverride] = useState<Search | null>(null);
@@ -206,7 +210,23 @@ export function Offers() {
   const [qty, setQty] = useState(1);
   const [busy, setBusy] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [market, setMarket] = useState<string>("ALL");
+  const [allowedOnly, setAllowedOnly] = useState(false);
+  const [filterText, setFilterText] = useState("");
+  const [shown, setShown] = useState<number | null>(null);
+  const api = useRef<GridApi<Row> | null>(null);
   const s = override ?? search;
+
+  // Market and mandate filters run as an AG Grid external filter; the text box is the grid's quick filter.
+  const isExternalFilterPresent = useCallback(() => market !== "ALL" || allowedOnly, [market, allowedOnly]);
+  const doesExternalFilterPass = useCallback(
+    (node: IRowNode<Row>) =>
+      !!node.data &&
+      (market === "ALL" || node.data.market === market) &&
+      (!allowedOnly || node.data.decision !== "DENIED"),
+    [market, allowedOnly],
+  );
+  useEffect(() => api.current?.onFilterChanged(), [market, allowedOnly]);
 
   const compact = selected !== null;
   const rows = useMemo(
@@ -236,6 +256,7 @@ export function Offers() {
       { headerName: "Store", field: "store", minWidth: 92, flex: 1 },
       {
         headerName: "From",
+        colId: "from",
         valueGetter: (p) => `${p.data?.merchantCountry ?? "?"}${p.data?.countrySource === "locale" ? "*" : ""}`,
         minWidth: 64,
         maxWidth: 72,
@@ -243,6 +264,7 @@ export function Offers() {
       },
       {
         headerName: "Price",
+        colId: "price",
         valueGetter: (p) => p.data?.price.text,
         minWidth: 96,
         flex: 1,
@@ -251,7 +273,9 @@ export function Offers() {
       },
       {
         headerName: "Landed (est.)",
+        colId: "landed",
         valueGetter: (p) => p.data?.landed.text,
+        tooltipValueGetter: (p) => (p.data ? breakdown(p.data) : null),
         minWidth: 108,
         flex: 1,
         cellClass: "cell-num",
@@ -260,13 +284,14 @@ export function Offers() {
       },
       {
         headerName: "Cost build-up",
+        colId: "buildup",
         cellRenderer: WaterfallCell,
         minWidth: 110,
         flex: 2,
         sortable: false,
         hide: compact,
       },
-      { headerName: "Mandate", cellRenderer: DecisionCell, minWidth: 128, maxWidth: 150 },
+      { headerName: "Mandate", field: "decision", cellRenderer: DecisionCell, minWidth: 128, maxWidth: 150 },
     ];
   }, [by, compact]);
   const selectedRow = s?.rows.find((r) => r.offerId === selected) ?? null;
@@ -363,6 +388,53 @@ export function Offers() {
               FX {s.fxSource}: {s.rates.map((r) => `${r.pair} ${r.rate}`).join(", ")} ({s.rates[0]?.asOf})
             </span>
           </div>
+          <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2" role="group" aria-label="Filter offers">
+            <span className="flex text-[13px]">
+              {["ALL", ...s.markets.map((m) => m.country)].map((c, i) => (
+                <button
+                  key={c}
+                  type="button"
+                  aria-pressed={market === c}
+                  className={`btn ${i ? "-ml-px" : ""} ${market === c ? "btn-primary" : ""}`}
+                  onClick={() => setMarket(c)}
+                >
+                  {c === "ALL" ? "All shops" : (MARKET_NAME[c] ?? c)}
+                </button>
+              ))}
+            </span>
+            <label className="flex items-center gap-2 text-[13px]">
+              <input type="checkbox" checked={allowedOnly} onChange={(e) => setAllowedOnly(e.target.checked)} />
+              Only what my mandate allows
+            </label>
+            <input
+              className="field max-w-[220px] font-sans text-[13px]"
+              placeholder="Filter by product or store"
+              aria-label="Filter by product or store"
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+            />
+            <span className="label ml-auto" role="status">
+              {shown ?? s.rows.length} of {s.rows.length} shown
+            </span>
+            <button
+              type="button"
+              className="btn-link text-[13px]"
+              onClick={() =>
+                exportCsv(api.current, "offers", [
+                  by === "landed" ? "trueRank" : "stickerRank",
+                  by === "landed" ? "stickerRank" : "trueRank",
+                  "title",
+                  "store",
+                  "from",
+                  "price",
+                  "landed",
+                  "decision",
+                ])
+              }
+            >
+              Download CSV
+            </button>
+          </div>
           <div className={`grid gap-6 ${selectedRow ? "xl:grid-cols-[minmax(0,1fr)_360px]" : ""}`}>
             <div>
               <GridProvider>
@@ -374,6 +446,16 @@ export function Offers() {
                     getRowId={(p) => p.data.offerId}
                     rowSelection={{ mode: "singleRow", checkboxes: false, enableClickSelection: true }}
                     onRowClicked={(e) => e.data && setSelected(e.data.offerId)}
+                    onGridReady={(e) => (api.current = e.api)}
+                    onModelUpdated={(e) => setShown(e.api.getDisplayedRowCount())}
+                    quickFilterText={filterText}
+                    isExternalFilterPresent={isExternalFilterPresent}
+                    doesExternalFilterPass={doesExternalFilterPass}
+                    rowClassRules={{
+                      "row-best": (p) => p.data?.trueRank === 1,
+                      "row-denied": (p) => p.data?.decision === "DENIED",
+                    }}
+                    tooltipShowDelay={250}
                     suppressCellFocus
                   />
                 </div>

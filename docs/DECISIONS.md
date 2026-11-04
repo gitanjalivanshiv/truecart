@@ -196,3 +196,18 @@ Format: date (IST) · decision · reason.
   - Payer name and e-mail in PayPal's response are dropped before anything reaches the model or the UI.
 - **Agent limits:** the step limit is raised from 6 to 8 so a turn can search, explain, buy, confirm and answer. A step or token stop after a capture now says the purchase went through.
 - The hero recording was re-recorded with the live model (it now buys o1 and confirms with PayPal). On replay, the recorded `proposal_id` is replaced with the one this run produced.
+
+## 2026-11-04 · AG Grid: Community features only
+
+- **Verified** against the installed `ag-grid-community` 36.2.0 type definitions. Everything used is in `AllCommunityModule`: `CsvExport`, `QuickFilter`, `ExternalFilter`, `PinnedRow`, `Tooltip`, `RowStyle` and `HighlightChanges`. `grandTotalRow` needs the Enterprise row-grouping module, so totals are pinned rows (`pinnedBottomRowData`) computed on the server. The browser never sums money.
+- **Offers:**
+  - market buttons and "only what my mandate allows" (external filter);
+  - a text filter (quick filter) with a "N of M shown" count from `getDisplayedRowCount()`;
+  - row rules for the best offer and for refused offers;
+  - a cost breakdown tooltip on the landed cost;
+  - CSV export of exactly what is shown.
+- **Ledger:** paid totals per charge currency pinned under the purchases, and CSV export.
+- **CSV safety:**
+  - Product titles come from third-party listings, so every exported cell goes through `csvSafe`. It prefixes cells starting with `= + @`, a tab, a CR, or `-` not followed by a digit, so spreadsheets don't run them as formulas (OWASP CSV injection).
+  - Every file starts with a sandbox/estimates label.
+- **Auto-height:** AG Grid keeps a 150px minimum on auto-height grids for its empty overlay. The ledger shows its own empty state, so the minimum is removed there.

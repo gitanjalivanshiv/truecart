@@ -1,11 +1,11 @@
 "use client";
 
-import type { ColDef, ICellRendererParams } from "ag-grid-community";
+import type { ColDef, GridApi, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { BoxHead, Meter, Stamp } from "./bits";
 import { Deliveries } from "./Deliveries";
-import { gridTheme, GridProvider } from "./grid";
+import { exportCsv, gridTheme, GridProvider } from "./grid";
 import { PayPalCheck } from "./PayPalCheck";
 import type { MoneyView, StateView } from "./types";
 import { useApi } from "./useApi";
@@ -31,11 +31,43 @@ interface LedgerRow {
   };
   predictedMerchantFee: MoneyView | null;
   feeModelErrorPct: number | null;
+  /** Set on the pinned totals rows (one per charge currency, summed on the server). */
+  total?: true;
 }
 
-const StatusCell = (p: ICellRendererParams<LedgerRow>) => (p.data ? <Stamp status={p.data.status} /> : null);
+interface Totals {
+  currency: string;
+  count: number;
+  charged: MoneyView;
+  paypalFee: MoneyView | null;
+  predictedMerchantFee: MoneyView | null;
+  feeModelErrorPct: number | null;
+}
+
+const totalRow = (t: Totals): LedgerRow => ({
+  purchaseId: `total-${t.currency}`,
+  createdAt: "",
+  status: "",
+  title: `${t.count} paid in ${t.currency}`,
+  merchant: "",
+  quantity: 0,
+  authorizedVia: "AUTO",
+  charged: t.charged,
+  landedEstimate: { minor: 0, currency: t.currency, text: "" },
+  paypalOrderId: null,
+  errorCode: null,
+  actual: { gross: null, paypalFee: t.paypalFee, net: null, receivable: null, exchangeRate: null },
+  predictedMerchantFee: t.predictedMerchantFee,
+  feeModelErrorPct: t.feeModelErrorPct,
+  total: true,
+});
+
+const StatusCell = (p: ICellRendererParams<LedgerRow>) =>
+  p.data && !p.data.total ? <Stamp status={p.data.status} /> : null;
 const ViaCell = (p: ICellRendererParams<LedgerRow>) =>
-  p.data ? <span className="label">{p.data.authorizedVia === "AUTO" ? "auto" : "approved"}</span> : null;
+  p.data && !p.data.total ? (
+    <span className="label">{p.data.authorizedVia === "AUTO" ? "auto" : "approved"}</span>
+  ) : null;
 
 interface GridContext {
   onCheck: (row: LedgerRow) => void;
@@ -50,24 +82,41 @@ const CheckCell = (p: ICellRendererParams<LedgerRow, unknown, GridContext>) =>
 const cols: ColDef<LedgerRow>[] = [
   {
     headerName: "When",
-    valueGetter: (p) =>
-      p.data &&
-      new Date(p.data.createdAt).toLocaleString("en-GB", {
+    colId: "when",
+    valueGetter: (p) => {
+      if (!p.data) return null;
+      if (p.data.total) return "Total";
+      return new Date(p.data.createdAt).toLocaleString("en-GB", {
         day: "2-digit",
         month: "short",
         hour: "2-digit",
         minute: "2-digit",
-      }),
+      });
+    },
     minWidth: 120,
     maxWidth: 130,
     cellClass: "cell-num",
   },
-  { headerName: "Item", valueGetter: (p) => p.data && `${p.data.title} × ${p.data.quantity}`, minWidth: 170, flex: 2 },
+  {
+    headerName: "Item",
+    colId: "item",
+    valueGetter: (p) => p.data && (p.data.total ? p.data.title : `${p.data.title} × ${p.data.quantity}`),
+    minWidth: 170,
+    flex: 2,
+  },
   { headerName: "Store", field: "merchant", minWidth: 90, flex: 1 },
-  { headerName: "How", cellRenderer: ViaCell, minWidth: 90, maxWidth: 100 },
-  { headerName: "Status", cellRenderer: StatusCell, minWidth: 110, maxWidth: 120 },
+  {
+    headerName: "How",
+    colId: "how",
+    valueGetter: (p) => (p.data && !p.data.total ? p.data.authorizedVia.toLowerCase() : ""),
+    cellRenderer: ViaCell,
+    minWidth: 90,
+    maxWidth: 100,
+  },
+  { headerName: "Status", field: "status", cellRenderer: StatusCell, minWidth: 110, maxWidth: 120 },
   {
     headerName: "Charged",
+    colId: "charged",
     valueGetter: (p) => p.data?.charged.text,
     minWidth: 104,
     flex: 1,
@@ -76,7 +125,8 @@ const cols: ColDef<LedgerRow>[] = [
   },
   {
     headerName: "Landed (est.)",
-    valueGetter: (p) => p.data?.landedEstimate.text,
+    colId: "landed",
+    valueGetter: (p) => (p.data?.total ? "" : p.data?.landedEstimate.text),
     minWidth: 110,
     flex: 1,
     cellClass: "cell-num",
@@ -84,6 +134,7 @@ const cols: ColDef<LedgerRow>[] = [
   },
   {
     headerName: "PayPal fee",
+    colId: "fee",
     headerTooltip: "Paid by the merchant, from PayPal's capture breakdown",
     valueGetter: (p) => p.data?.actual.paypalFee?.text ?? "–",
     minWidth: 96,
@@ -93,6 +144,7 @@ const cols: ColDef<LedgerRow>[] = [
   },
   {
     headerName: "Our fee model",
+    colId: "model",
     valueGetter: (p) => p.data?.predictedMerchantFee?.text ?? "–",
     minWidth: 110,
     flex: 1,
@@ -101,6 +153,7 @@ const cols: ColDef<LedgerRow>[] = [
   },
   {
     headerName: "Model error",
+    colId: "error",
     valueGetter: (p) =>
       p.data?.feeModelErrorPct == null ? "–" : `${p.data.feeModelErrorPct > 0 ? "+" : ""}${p.data.feeModelErrorPct}%`,
     minWidth: 96,
@@ -110,7 +163,8 @@ const cols: ColDef<LedgerRow>[] = [
   },
   {
     headerName: "Merchant got",
-    valueGetter: (p) => p.data?.actual.receivable?.text ?? p.data?.actual.net?.text ?? "–",
+    colId: "received",
+    valueGetter: (p) => (p.data?.total ? "" : (p.data?.actual.receivable?.text ?? p.data?.actual.net?.text ?? "–")),
     minWidth: 110,
     flex: 1,
     cellClass: "cell-num",
@@ -118,7 +172,9 @@ const cols: ColDef<LedgerRow>[] = [
   },
   {
     headerName: "PayPal FX",
-    valueGetter: (p) => (p.data?.actual.exchangeRate ? Number(p.data.actual.exchangeRate).toFixed(4) : "–"),
+    colId: "fx",
+    valueGetter: (p) =>
+      p.data?.total ? "" : p.data?.actual.exchangeRate ? Number(p.data.actual.exchangeRate).toFixed(4) : "–",
     minWidth: 86,
     maxWidth: 96,
     cellClass: "cell-num",
@@ -126,16 +182,27 @@ const cols: ColDef<LedgerRow>[] = [
   },
   {
     headerName: "PayPal order",
+    colId: "order",
     valueGetter: (p) => p.data?.paypalOrderId ?? p.data?.errorCode ?? "",
     minWidth: 150,
     flex: 1,
     cellClass: "cell-num",
   },
-  { headerName: "PayPal record", cellRenderer: CheckCell, minWidth: 140, maxWidth: 150, pinned: "right" },
+  {
+    headerName: "PayPal record",
+    colId: "check",
+    cellRenderer: CheckCell,
+    minWidth: 140,
+    maxWidth: 150,
+    pinned: "right",
+  },
 ];
+const EXPORT_COLUMNS = cols.map((c) => c.colId ?? c.field!).filter((id) => id !== "check");
 
 export function Ledger() {
-  const { data, loading } = useApi<{ spend: StateView["spend"]; rows: LedgerRow[] }>("/api/ledger");
+  const { data, loading } = useApi<{ spend: StateView["spend"]; rows: LedgerRow[]; totals: Totals[] }>("/api/ledger");
+  const api = useRef<GridApi<LedgerRow> | null>(null);
+  const pinned = useMemo(() => (data?.totals ?? []).map(totalRow), [data]);
   const { data: state } = useApi<StateView>("/api/state");
   const [checking, setChecking] = useState<LedgerRow | null>(null);
   return (
@@ -181,7 +248,19 @@ export function Ledger() {
         <BoxHead
           no="02"
           title="Purchases and reconciliation"
-          aside={<span className="label">{data?.rows.length ?? 0} purchases</span>}
+          aside={
+            <span className="flex items-center gap-4">
+              <span className="label">{data?.rows.length ?? 0} purchases</span>
+              {!!data?.rows.length && (
+                <button
+                  className="btn-link text-[13px]"
+                  onClick={() => exportCsv(api.current, "ledger", EXPORT_COLUMNS)}
+                >
+                  Download CSV
+                </button>
+              )}
+            </span>
+          }
         />
         <p className="mb-3 max-w-[85ch] text-[13px] text-ink-2">
           Landed figures are our estimates at the time of purchase. The fee columns compare our merchant-fee model with
@@ -192,12 +271,15 @@ export function Ledger() {
           <p className="text-muted">No purchases yet.</p>
         ) : (
           <GridProvider>
-            <div>
+            <div className="grid-fit">
               <AgGridReact<LedgerRow>
                 theme={gridTheme}
                 rowData={data?.rows ?? []}
                 columnDefs={cols}
                 getRowId={(p) => p.data.purchaseId}
+                pinnedBottomRowData={pinned}
+                getRowClass={(p) => (p.data?.total ? "row-total" : undefined)}
+                onGridReady={(e) => (api.current = e.api)}
                 domLayout="autoHeight"
                 suppressCellFocus
                 context={{ onCheck: setChecking } satisfies GridContext}

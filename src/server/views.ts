@@ -157,6 +157,41 @@ export function ledgerView(db: Db, mandate: Mandate) {
   });
 }
 
+/** Paid totals per charge currency (the grid pins them under the ledger). Money is summed here, never in the browser. */
+export function ledgerTotals(rows: ReturnType<typeof ledgerView>) {
+  const by = new Map<
+    string,
+    { count: number; charged: number; fee: number; feeRows: number; pred: number; act: number }
+  >();
+  for (const r of rows) {
+    if (r.status !== "CAPTURED") continue;
+    const t = by.get(r.charged.currency) ?? { count: 0, charged: 0, fee: 0, feeRows: 0, pred: 0, act: 0 };
+    t.count++;
+    t.charged += r.charged.minor;
+    const fee = r.actual.paypalFee;
+    if (fee && fee.currency === r.charged.currency) {
+      t.fee += fee.minor;
+      t.feeRows++;
+      if (r.predictedMerchantFee && r.predictedMerchantFee.currency === fee.currency) {
+        t.pred += r.predictedMerchantFee.minor;
+        t.act += fee.minor;
+      }
+    }
+    by.set(r.charged.currency, t);
+  }
+  return [...by.entries()].map(([currency, t]) => {
+    const c = currency as Money["currency"];
+    return {
+      currency,
+      count: t.count,
+      charged: mm(t.charged, c),
+      paypalFee: t.feeRows ? mm(t.fee, c) : null,
+      predictedMerchantFee: t.act ? mm(t.pred, c) : null,
+      feeModelErrorPct: t.act ? Math.round(((t.pred - t.act) / t.act) * 1000) / 10 : null,
+    };
+  });
+}
+
 export function activityView(db: Db, mandate: Mandate) {
   const purchases = purchasesForMandate(db, mandate.id);
   const calls = purchases
