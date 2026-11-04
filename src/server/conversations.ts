@@ -6,6 +6,7 @@ import type { AgentMessage } from "@/src/agent/types";
 import type { Db } from "@/src/db/database";
 import { discoveryMode } from "@/src/discovery/discover";
 import { paypalGateway } from "@/src/executor/gateway";
+import { lookupOrderViaToolkit } from "@/src/integrations/paypal/toolkit";
 import { brandMaskingEnabled } from "@/src/integrations/channel3/mask";
 
 interface Conversation {
@@ -29,6 +30,7 @@ export function conversation(db: Db, vid: string, conversationId: string, mandat
         db,
         mandateId,
         gateway: paypalGateway,
+        paypalLookup: (orderId) => lookupOrderViaToolkit(orderId),
         discoveryMode: discoveryMode(),
         maskBrands: brandMaskingEnabled(),
         now: () => new Date(),

@@ -24,4 +24,5 @@ export const LIMITS = {
   agentTurnsGlobalPerDay: { limit: Number(process.env.AGENT_DAILY_TURNS ?? 300), windowMs: 24 * 60 * 60_000 },
   searchesPerVisitor: { limit: 20, windowMs: 10 * 60_000 },
   walletLinksPerVisitor: { limit: 5, windowMs: 60 * 60_000 },
+  paypalChecksPerVisitor: { limit: 20, windowMs: 10 * 60_000 },
 };

@@ -46,5 +46,10 @@ if [[ "${2:-}" != "--no-pay" ]]; then
   SHIP="$(curl -fsS -b "$JAR" "$URL/api/shipments")"
   echo "$SHIP" | j 'o.length ? "   "+o[0].carrier+" "+o[0].trackingNumber+", PayPal tracker "+(o[0].paypalTrackerId??"none ("+o[0].paypalError+")") : "   no shipment"'
   echo "$SHIP" | grep -q '"paypalTrackerId":"[^"]' || fail "no PayPal tracker registered"
+  echo "7. PayPal's own record via PayPal's Agent Toolkit matches the ledger"
+  PID="$(curl -fsS -b "$JAR" "$URL/api/ledger" | j 'o.rows[0].purchaseId')"
+  CHECK="$(curl -fsS --max-time 60 -b "$JAR" "$URL/api/ledger/$PID/paypal")"
+  echo "$CHECK" | j '"   "+(o.allMatch?"reconciled":"MISMATCH")+" ("+o.calls.map(c=>c.tool).join(", ")+"): "+o.rows.filter(r=>r.verdict!=="info").map(r=>r.field+"="+r.verdict).join(", ")'
+  echo "$CHECK" | grep -q '"allMatch":true' || fail "PayPal's record does not match the ledger"
 fi
 echo "PASS"

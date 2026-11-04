@@ -6,7 +6,7 @@ import { TOOLS } from "@/src/agent/tools";
 import { ModelError, type AgentMessage, type ModelRequest, type ToolCall } from "@/src/agent/types";
 import { openDatabase, type Db } from "@/src/db/database";
 import { getProposal, listProposals } from "@/src/db/proposals";
-import { getMandate, ledgerForMandate, saveMandate } from "@/src/db/repositories";
+import { getMandate, getPurchaseByOrderId, ledgerForMandate, saveMandate } from "@/src/db/repositories";
 import { demoMandate } from "@/src/discovery/demoMandate";
 import { approveProposal, ProposalStateError, rejectProposal } from "@/src/executor/approvals";
 import type { PayPalGateway, VaultedOrderRequest } from "@/src/executor/gateway";
@@ -76,6 +76,75 @@ type Offer = {
   mandate_decision: string;
 };
 const offersIn = (req: ModelRequest) => lastToolResult(req, "search_offers").offers as Offer[];
+
+describe("agent: confirm_with_paypal", () => {
+  it("compares the captured purchase with PayPal's own record, and only for this session's proposals", async () => {
+    const lookups: string[] = [];
+    const withPayPal = newSession({
+      ...session,
+      id: "s-pp",
+      paypalLookup: async (orderId) => {
+        lookups.push(orderId);
+        const p = getPurchaseByOrderId(db, orderId)!;
+        return {
+          orderId,
+          orderStatus: "COMPLETED",
+          amount: { currency: "GBP", value: "18.99" },
+          invoiceId: p.id,
+          captureId: p.paypalCaptureId,
+          captureStatus: "COMPLETED",
+          paypalFee: null,
+          net: null,
+          sellerProtection: "ELIGIBLE",
+          paymentInitiator: "MERCHANT",
+          usagePattern: "UNSCHEDULED_PREPAID",
+          payerCountry: "GB",
+          createdAt: null,
+          trackers: [],
+          calls: [{ tool: "get_order", ms: 1 }],
+        };
+      },
+    });
+    let proposalId = "";
+    const adapter = scriptedAdapter((req, step) => {
+      if (step === 0) return use(call("search_offers", { query: HERO }));
+      if (step === 1)
+        return use(call("propose_purchase", { ref: offersIn(req).find((o) => o.true_rank === 1)!.ref, quantity: 1 }));
+      if (step === 2) {
+        proposalId = lastToolResult(req, "propose_purchase").proposal_id as string;
+        return use(call("confirm_with_paypal", { proposal_id: proposalId }));
+      }
+      if (step === 3) {
+        expect(lastToolResult(req, "confirm_with_paypal")).toMatchObject({
+          checked: true,
+          matches_truecart_ledger: true,
+        });
+        return use(call("confirm_with_paypal", { proposal_id: "prop_00000000-0000-0000-0000-000000000000" }));
+      }
+      return say("PayPal's record matches.");
+    });
+    const turn = await runTurn({ adapter, session: withPayPal, history: [], userText: "buy the bottle" });
+    expect(lookups).toEqual(["ORDER-1"]);
+    expect(
+      turn.events
+        .filter((e) => e.type === "tool_result" && e.name === "confirm_with_paypal")
+        .map((e) => (e as { ok: boolean }).ok),
+    ).toEqual([true, false]);
+  });
+
+  it("says when PayPal cannot be asked instead of guessing", async () => {
+    const adapter = scriptedAdapter((req, step) => {
+      if (step === 0) return use(call("search_offers", { query: HERO }));
+      if (step === 1)
+        return use(call("propose_purchase", { ref: offersIn(req).find((o) => o.true_rank === 1)!.ref, quantity: 1 }));
+      if (step === 2)
+        return use(call("confirm_with_paypal", { proposal_id: lastToolResult(req, "propose_purchase").proposal_id }));
+      expect(lastToolResult(req, "confirm_with_paypal")).toMatchObject({ checked: false });
+      return say("done");
+    });
+    await runTurn({ adapter, session, history: [], userText: "buy" });
+  });
+});
 
 describe("agent: hero path", () => {
   it("searches, proposes the best landed offer, and the executor charges the amount WE computed", async () => {
@@ -225,6 +294,18 @@ describe("agent: limits and failures", () => {
     expect(adapter.requests).toHaveLength(3);
   });
 
+  it("a step-limit stop after a payment still says the purchase went through", async () => {
+    const adapter = scriptedAdapter((req, step) => {
+      if (step === 0) return use(call("search_offers", { query: HERO }));
+      if (step === 1)
+        return use(call("propose_purchase", { ref: offersIn(req).find((o) => o.true_rank === 1)!.ref, quantity: 1 }));
+      return use(call("get_mandate_summary", {}));
+    });
+    const turn = await runTurn({ adapter, session, history: [], userText: "buy", limits: { ...limits, maxSteps: 3 } });
+    expect(turn.stoppedBy).toBe("steps");
+    expect(turn.text).toMatch(/went through/);
+  });
+
   it("stops at the token budget", async () => {
     const adapter = scriptedAdapter(() => use(call("get_mandate_summary", {})));
     const turn = await runTurn({
@@ -316,5 +397,48 @@ describe("recorded runs", () => {
     const { scrubRunIds } = await import("@/src/agent/adapters/scripted");
     expect(scrubRunIds("Order ID: `81S68168KC7440017`, captured.")).toBe("Order ID: (see PayPal activity), captured.");
     expect(scrubRunIds("ref o4 for 24.89 GBP")).toBe("ref o4 for 24.89 GBP");
+    expect(scrubRunIds("Tracking `TC1622039566GB`.")).toBe("Tracking (see Ledger).");
+  });
+
+  it("replays the hero recording against this run's own proposal", async () => {
+    const { replayAdapter } = await import("@/src/agent/adapters/scripted");
+    const asked: string[] = [];
+    const replaySession = newSession({
+      ...session,
+      id: "s-replay",
+      paypalLookup: async (orderId) => {
+        asked.push(orderId);
+        const p = getPurchaseByOrderId(db, orderId)!;
+        return {
+          orderId,
+          orderStatus: "COMPLETED",
+          amount: { currency: "GBP", value: "18.99" },
+          invoiceId: p.id,
+          captureId: p.paypalCaptureId,
+          captureStatus: "COMPLETED",
+          paypalFee: null,
+          net: null,
+          sellerProtection: null,
+          paymentInitiator: "MERCHANT",
+          usagePattern: "UNSCHEDULED_PREPAID",
+          payerCountry: "GB",
+          createdAt: null,
+          trackers: [],
+          calls: [],
+        };
+      },
+    });
+    const turn = await runTurn({
+      adapter: replayAdapter("fixtures/agent/hero.json"),
+      session: replaySession,
+      history: [],
+      userText: "Get me a 1L insulated water bottle, delivered to the UK, under £40.",
+    });
+    expect(turn.stoppedBy).toBe("answer");
+    expect(pay.calls).toMatchObject([{ currency: "GBP", value: "18.99" }]);
+    expect(asked).toEqual(["ORDER-1"]);
+    const results = turn.events.filter((e) => e.type === "tool_result");
+    expect(results.map((e) => (e as { status?: string }).status).filter(Boolean)).toEqual(["CAPTURED", "PAYPAL_MATCH"]);
+    expect(turn.text).not.toMatch(/TC\d{10}/);
   });
 });

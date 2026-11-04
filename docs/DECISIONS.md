@@ -184,3 +184,15 @@ Format: date (IST) · decision · reason.
 - Tracking never affects payment: a tracker failure is stored on the shipment and shown. `ensureShipments` ships captured purchases missed by the post-capture hook (e.g. captured by webhook).
 - The agent has a `track_deliveries` tool and is told to surface overdue parcels.
 - **Verified live 2026-11-03:** a sandbox purchase from a US shop got tracker `9BF51690H49954839-TC6115277401US`.
+
+## 2026-11-04 · PayPal Agent Toolkit as an independent, read-only check
+
+- **Dependency:** `@paypal/agent-toolkit` 1.11.0, pinned exactly (it brings its own transitive dependencies, including zod 3 and axios; npm keeps them separate from ours). It is PayPal's official toolkit for agents and the only working way to call PayPal's MCP tools in the sandbox today: the hosted server lists tools but every call fails (`docs/SPIKE_RESULTS.md`, S6).
+- **Use:** the toolkit's MCP server runs in-process (`src/integrations/paypal/toolkit.ts`) with two read actions: `get_order` and `get_shipment_tracking`. After a payment, the agent calls `confirm_with_paypal`, and the Ledger offers "Check with PayPal". Both compare PayPal's own record with the ledger: status, amount, capture, invoice id (our purchase id), fee, tracking.
+- **Safety:**
+  - No toolkit write tool is enabled, and the connection fails if any other tool is exposed. Money still moves only through `src/executor/`.
+  - The toolkit's API base is asserted to be the sandbox, because the toolkit defaults to production.
+  - The model passes only a `proposal_id`; the order id comes from our records.
+  - Payer name and e-mail in PayPal's response are dropped before anything reaches the model or the UI.
+- **Agent limits:** the step limit is raised from 6 to 8 so a turn can search, explain, buy, confirm and answer. A step or token stop after a capture now says the purchase went through.
+- The hero recording was re-recorded with the live model (it now buys o1 and confirms with PayPal). On replay, the recorded `proposal_id` is replaced with the one this run produced.

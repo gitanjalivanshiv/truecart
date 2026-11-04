@@ -40,6 +40,8 @@ function describeCall(name: string, a: Record<string, unknown>): string {
       return `Proposed buying ${a.ref} ×${a.quantity}`;
     case "get_order_status":
       return "Looked up the order status";
+    case "confirm_with_paypal":
+      return "Asked PayPal for its own record of the order (Agent Toolkit)";
     case "get_mandate_summary":
       return "Read your mandate";
     case "track_deliveries":

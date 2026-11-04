@@ -14,11 +14,12 @@ Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com) (2026
 
 No login is needed. Each visitor gets their own workspace with a demo mandate (£150 per purchase, £400 a month, auto-buy up to £40) and a shared PayPal **sandbox** buyer wallet.
 
-1. **Shop:** click the suggested request. The agent searches UK, US and German shops, ranks them by landed cost and buys the best one within the mandate. Watch the log and the PayPal activity.
+1. **Shop:** click the suggested request. The agent searches UK, US and German shops, ranks them by landed cost, buys the best one within the mandate, then asks PayPal (through PayPal's Agent Toolkit) whether its record matches the ledger. Watch the log and the PayPal activity.
 2. **Offers:** see why the cheapest sticker price is not the cheapest purchase; click a row for the cost breakdown.
 3. Ask for **3 bottles**: it goes to **Approvals** instead of being bought. Approve it there.
-4. **Red team:** a listing that tries to hijack the agent. Run it through the agent, or simulate a fully hijacked agent: both are denied.
-5. **Mandate:** change limits or pause everything, then try again.
+4. **Ledger:** click **Check with PayPal** on a purchase to see PayPal's own record next to TrueCart's.
+5. **Red team:** a listing that tries to hijack the agent. Run it through the agent, or simulate a fully hijacked agent: both are denied.
+6. **Mandate:** change limits or pause everything, then try again.
 
 Workspaces reset when the free server restarts.
 
@@ -58,14 +59,14 @@ No login is needed for the hosted demo: every workspace starts with a shared Pay
 
 ## What you can do
 
-| Page          | What it shows                                                                                                                                                                                                                                                         |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Shop**      | Ask the agent for a product. A live log shows every search, cost breakdown, mandate check and payment, next to the PayPal activity (orders, webhooks).                                                                                                                |
-| **Offers**    | All offers from UK, US and German shops ranked by landed cost (toggle to sticker price), with a cost build-up bar, the mandate's decision per offer, and a line-by-line breakdown. Buy within the mandate from here too.                                              |
-| **Approvals** | Purchases above your auto-buy limit, laid out like a declaration. Approve and pay, or reject.                                                                                                                                                                         |
-| **Ledger**    | Spend against your caps; every purchase reconciled against PayPal's capture breakdown (fee model vs actual fee); deliveries with the PayPal tracking number, simulated carrier progress (+1 day / simulate a delay) and an evidence summary when a parcel is overdue. |
-| **Mandate**   | Caps, auto-buy limit, max units, allowed shop countries, pause switch, and PayPal sandbox wallet linking.                                                                                                                                                             |
-| **Red team**  | A synthetic hostile listing that tries to hijack the agent. Run it through the AI agent, or simulate a fully hijacked agent: both are denied by the mandate.                                                                                                          |
+| Page          | What it shows                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Shop**      | Ask the agent for a product. A live log shows every search, cost breakdown, mandate check and payment, next to the PayPal activity (orders, webhooks).                                                                                                                                                                                                                                            |
+| **Offers**    | All offers from UK, US and German shops ranked by landed cost (toggle to sticker price), with a cost build-up bar, the mandate's decision per offer, and a line-by-line breakdown. Buy within the mandate from here too.                                                                                                                                                                          |
+| **Approvals** | Purchases above your auto-buy limit, laid out like a declaration. Approve and pay, or reject.                                                                                                                                                                                                                                                                                                     |
+| **Ledger**    | Spend against your caps; every purchase reconciled against PayPal's capture breakdown (fee model vs actual fee); **Check with PayPal** reads PayPal's own record of the order through PayPal's Agent Toolkit and compares it field by field; deliveries with the PayPal tracking number, simulated carrier progress (+1 day / simulate a delay) and an evidence summary when a parcel is overdue. |
+| **Mandate**   | Caps, auto-buy limit, max units, allowed shop countries, pause switch, and PayPal sandbox wallet linking.                                                                                                                                                                                                                                                                                         |
+| **Red team**  | A synthetic hostile listing that tries to hijack the agent. Run it through the AI agent, or simulate a fully hijacked agent: both are denied by the mandate.                                                                                                                                                                                                                                      |
 
 Each visitor gets their own workspace (anonymous cookie): their own mandate, approvals and ledger.
 
@@ -80,18 +81,18 @@ The free plan sleeps after 15 minutes without traffic (about a minute to wake) a
 
 ## Scripts
 
-| Command                                                                                      | What it does                                                                                                                                                   |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev` / `build` / `start`                                                            | Next.js dev server / production build / serve the build                                                                                                        |
-| `npm test`                                                                                   | Unit tests (Vitest)                                                                                                                                            |
-| `npm run test:e2e`                                                                           | Playwright end-to-end tests (builds and serves the app on port 3200 with recorded data)                                                                        |
-| `npm run typecheck` · `lint` · `format`                                                      | Types, ESLint, Prettier                                                                                                                                        |
-| `npm run demo:discover -- "insulated water bottle 1 litre"`                                  | CLI: offers from UK, US and German shops ranked by landed cost, with the mandate's decision (`--replay` uses recordings, `--unmasked` shows names)             |
-| `npm run demo:chat -- "Get me a 1L insulated water bottle, delivered to the UK, under £40."` | Talk to the agent in the terminal (dry run by default; `--pay` charges in the PayPal sandbox; `--replay hero` uses a recorded run)                             |
-| `npm run smoke:executor`                                                                     | One live sandbox purchase through the payment executor (needs the wallet vaulted by `spike:vault`)                                                             |
-| `scripts/judge-smoke.sh <url> [--no-pay]`                                                    | The judges' path against a deployment: health, fresh workspace, ranking, hijacked-agent drill (must be denied), hero purchase (sandbox)                        |
-| `npx tsx scripts/smoke/mcp-client.ts <url> <token> [--buy]`                                  | Connects to TrueCart's MCP server as an outside agent: lists tools, reads the mandate, searches, shows that 20 units are denied, optionally buys one (sandbox) |
-| `npm run spike:<name>`                                                                       | Feasibility spikes: `vault`, `fx-orders`, `fx-quote`, `channel3`, `channel3-mcp`, `webhook`, `mcp` (see `scripts/spikes/`)                                     |
+| Command                                                                                      | What it does                                                                                                                                                                 |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev` / `build` / `start`                                                            | Next.js dev server / production build / serve the build                                                                                                                      |
+| `npm test`                                                                                   | Unit tests (Vitest)                                                                                                                                                          |
+| `npm run test:e2e`                                                                           | Playwright end-to-end tests (builds and serves the app on port 3200 with recorded data)                                                                                      |
+| `npm run typecheck` · `lint` · `format`                                                      | Types, ESLint, Prettier                                                                                                                                                      |
+| `npm run demo:discover -- "insulated water bottle 1 litre"`                                  | CLI: offers from UK, US and German shops ranked by landed cost, with the mandate's decision (`--replay` uses recordings, `--unmasked` shows names)                           |
+| `npm run demo:chat -- "Get me a 1L insulated water bottle, delivered to the UK, under £40."` | Talk to the agent in the terminal (dry run by default; `--pay` charges in the PayPal sandbox; `--replay hero` uses a recorded run)                                           |
+| `npm run smoke:executor`                                                                     | One live sandbox purchase through the payment executor (needs the wallet vaulted by `spike:vault`)                                                                           |
+| `scripts/judge-smoke.sh <url> [--no-pay]`                                                    | The judges' path against a deployment: health, fresh workspace, ranking, hijacked-agent drill (must be denied), hero purchase (sandbox), PayPal tracker, PayPal record check |
+| `npx tsx scripts/smoke/mcp-client.ts <url> <token> [--buy]`                                  | Connects to TrueCart's MCP server as an outside agent: lists tools, reads the mandate, searches, shows that 20 units are denied, optionally buys one (sandbox)               |
+| `npm run spike:<name>`                                                                       | Feasibility spikes: `vault`, `fx-orders`, `fx-quote`, `channel3`, `channel3-mcp`, `webhook`, `mcp` (see `scripts/spikes/`)                                                   |
 
 ## Project layout
 
@@ -101,7 +102,7 @@ src/config/         sandbox guard
 src/domain/         money · mandate · policy · approval · authorize · landedCost · fees (pure, no network)
 src/executor/       the only code that can move money: reserve -> vaulted PayPal charge -> settle; webhooks; reconcile
 src/agent/          provider-neutral tool-use agent (Gemini adapter), tools, injection guards
-src/integrations/   paypal (client, webhooks) · channel3 (client, record/replay, normalize, mask) · fxrates
+src/integrations/   paypal (client, webhooks, vault, Agent Toolkit) · channel3 (client, record/replay, normalize, mask) · fxrates
 src/discovery/      query -> offers across markets -> landed cost -> ranking -> policy dry run
 fixtures/           recorded Channel3 responses and FX rates (demo works offline with DEMO_MODE=true)
 src/mcp/            TrueCart MCP server (/mcp): mandate-scoped tools for outside agents
@@ -119,6 +120,7 @@ docs/               DECISIONS.md (append-only), SPIKE_RESULTS.md, SETUP_CREDENTI
 - Money is integer minor units; the LLM never does arithmetic on money.
 - Product text from merchants is untrusted data and cannot change limits or tool arguments.
 - Every PayPal write carries a `PayPal-Request-Id` idempotency key; every external call has a timeout.
+- After paying, the agent asks PayPal for its own record through **PayPal's Agent Toolkit** (`@paypal/agent-toolkit`, run in-process as an MCP server). Only the read-only `get_order` and `get_shipment_tracking` tools are enabled, the toolkit is forced to the sandbox, and it reports whether PayPal agrees with the ledger.
 
 ## Acknowledgements
 

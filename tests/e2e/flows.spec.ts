@@ -69,8 +69,16 @@ test("hero path (recorded AI run, real PayPal sandbox): the agent buys the bottl
   await expect(page.getByText(/^recorded run of /)).toBeVisible();
   // The recorded run picks the true #1 (UK store, 15.00 + 3.99 simulated shipping).
   await expect(page.locator("header")).toContainText("18.99 GBP of 400.00 GBP");
+  // After paying, the agent asks PayPal (Agent Toolkit, read-only) for its own record of the order.
+  await expect(page.locator("ol li").filter({ hasText: "Asked PayPal for its own record" })).toContainText("Matches", {
+    timeout: 30_000,
+  });
   await open(page, "/ledger");
   await expect(page.locator(".ag-row").first()).toContainText("Paid");
+  await page.getByRole("button", { name: "Check with PayPal" }).first().click();
+  const check = page.getByRole("region", { name: "PayPal record check" });
+  await expect(check.getByRole("status")).toContainText("Reconciled", { timeout: 30_000 });
+  await expect(check).toContainText("get_order");
 });
 
 test("approval path (real PayPal sandbox): over the auto-buy limit waits for a person, then pays once", async ({

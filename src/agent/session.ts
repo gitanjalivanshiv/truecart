@@ -6,6 +6,7 @@ import type { PayPalGateway } from "@/src/executor/gateway";
 import type { Quote } from "@/src/domain/money";
 import type { RankedRow } from "@/src/discovery/rank";
 import type { Discovery } from "@/src/discovery/discover";
+import type { PayPalOrderView } from "@/src/integrations/paypal/toolkit";
 
 export interface OfferRef {
   ref: string;
@@ -20,6 +21,8 @@ export interface AgentSession {
   mandateId: string;
   /** null = dry run: AUTO purchases are reported but never charged. */
   gateway: PayPalGateway | null;
+  /** Reads PayPal's own record of an order (PayPal Agent Toolkit). Absent = not available (dry run, tests). */
+  paypalLookup?: ((orderId: string) => Promise<PayPalOrderView>) | null;
   discoveryMode: "live" | "replay";
   maskBrands: boolean;
   now: () => Date;

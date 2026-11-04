@@ -1,17 +1,17 @@
 {
   "description": "Get me a 1L insulated water bottle, delivered to the UK, under £40.",
   "model": "gemini/gemini-3.5-flash-lite",
-  "recordedAt": "2026-11-03T06:07:42.557Z",
+  "recordedAt": "2026-11-04T06:19:54.593Z",
   "turns": [
     {
       "role": "assistant",
       "text": "",
       "toolCalls": [
         {
-          "id": "call_397001",
+          "id": "call_191507",
           "name": "search_offers",
           "args": {
-            "query": "insulated water bottle 1 litre"
+            "query": "1L insulated water bottle"
           }
         }
       ]
@@ -21,7 +21,7 @@
       "text": "",
       "toolCalls": [
         {
-          "id": "call_246358",
+          "id": "call_271688",
           "name": "explain_ranking",
           "args": {
             "ref": "o1"
@@ -34,18 +34,31 @@
       "text": "",
       "toolCalls": [
         {
-          "id": "call_243719",
+          "id": "call_248864",
           "name": "propose_purchase",
           "args": {
-            "quantity": 1,
-            "ref": "o1"
+            "ref": "o1",
+            "quantity": 1
           }
         }
       ]
     },
     {
       "role": "assistant",
-      "text": "Found 36 offers. The best value is **o1** from Store GB-1 at an estimated landed total of **18.99 GBP** (15.00 GBP item + estimated 3.99 GBP shipping), well under your £40 budget.\n\nPurchase completed successfully (Status: **CAPTURED**, Order ID: (see PayPal activity)).",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "call_251311",
+          "name": "confirm_with_paypal",
+          "args": {
+            "proposal_id": "prop_11cac1dd-3c53-4375-9632-8d4dd0a3f1ad"
+          }
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "text": "**Recommended Offer:** **o1** (Store GB-1) – **£18.99** estimated landed cost (£15.00 item + £3.99 shipping).\n\n**Why:** It is the top-ranked offer by true landed cost and fits well within your £40 budget.\n\n**Purchase Status:** Bought successfully (**CAPTURED**). PayPal's own record matches TrueCart's ledger (Order (see PayPal activity), Tracking (see Ledger)).",
       "toolCalls": []
     }
   ]

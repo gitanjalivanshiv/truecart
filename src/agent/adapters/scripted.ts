@@ -37,13 +37,42 @@ export interface Recording {
   turns: Turn[];
 }
 
-/** PayPal order/capture ids from the recording run would be stale on replay (a new order is created). */
-export const scrubRunIds = (text: string) => text.replace(/`?\b[0-9A-Z]{17}\b`?/g, "(see PayPal activity)");
+/** PayPal order/capture ids and tracking numbers from the recording run would be stale on replay. */
+export const scrubRunIds = (text: string) =>
+  text.replace(/`?\b[0-9A-Z]{17}\b`?/g, "(see PayPal activity)").replace(/`?\bTC\d{10}[A-Z]{2}\b`?/g, "(see Ledger)");
+
+const PROPOSAL_ID = /^prop_[0-9a-f-]{36}$/;
+
+/** The proposal id the live tools returned most recently in this turn (replay substitutes it for the recorded one). */
+function latestProposalId(req: ModelRequest): string | null {
+  for (const m of [...req.messages].reverse()) {
+    if (m.role !== "tool") continue;
+    for (const r of m.results) {
+      const id = (r.content as { proposal_id?: unknown } | null)?.proposal_id;
+      if (r.name === "propose_purchase" && typeof id === "string") return id;
+    }
+  }
+  return null;
+}
 
 export function replayAdapter(file: string): ModelAdapter {
   const rec = JSON.parse(readFileSync(file, "utf8")) as Recording;
   const turns = rec.turns.map((t) => ({ ...t, text: scrubRunIds(t.text) }));
-  return { ...scriptedAdapter(turns, "replay"), model: `replay:${rec.model}` };
+  const replay = (req: ModelRequest, step: number): Turn => {
+    const turn = turns[step];
+    if (!turn) throw new ModelError("UNAVAILABLE", `replay: no recorded turn ${step}`);
+    const current = latestProposalId(req);
+    return {
+      ...turn,
+      toolCalls: turn.toolCalls.map((c) => {
+        const args = c.args as { proposal_id?: unknown } | null;
+        return current && typeof args?.proposal_id === "string" && PROPOSAL_ID.test(args.proposal_id)
+          ? { ...c, args: { ...args, proposal_id: current } }
+          : c;
+      }),
+    };
+  };
+  return { ...scriptedAdapter(replay, "replay"), model: `replay:${rec.model}` };
 }
 
 /** Wraps a live adapter and keeps its normalized turns, so a good run can be saved as the demo fallback. */

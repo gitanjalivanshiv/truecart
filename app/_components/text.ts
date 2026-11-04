@@ -36,7 +36,7 @@ export const LINE_TEXT: Record<string, string> = {
 
 export type Tone = "go" | "wait" | "stop" | "plain";
 export function tone(status: string): Tone {
-  if (["AUTO", "CAPTURED", "DONE", "EXECUTED"].includes(status)) return "go";
+  if (["AUTO", "CAPTURED", "DONE", "EXECUTED", "PAYPAL_MATCH"].includes(status)) return "go";
   if (
     [
       "NEEDS_APPROVAL",
@@ -47,10 +47,11 @@ export function tone(status: string): Tone {
       "EXECUTING",
       "UNKNOWN",
       "DRY_RUN",
+      "NOT_CHECKED",
     ].includes(status)
   )
     return "wait";
-  if (["DENIED", "FAILED", "REJECTED"].includes(status)) return "stop";
+  if (["DENIED", "FAILED", "REJECTED", "PAYPAL_MISMATCH"].includes(status)) return "stop";
   return "plain";
 }
 export const STATUS_TEXT: Record<string, string> = {
@@ -67,4 +68,7 @@ export const STATUS_TEXT: Record<string, string> = {
   EXECUTING: "Paying",
   DRY_RUN: "Dry run",
   UNKNOWN: "Unconfirmed",
+  PAYPAL_MATCH: "Matches",
+  PAYPAL_MISMATCH: "Differs",
+  NOT_CHECKED: "Not checked",
 };

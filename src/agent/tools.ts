@@ -3,7 +3,7 @@
 // moves money and never does money arithmetic). Schemas are strict: unknown fields are rejected.
 
 import { z } from "zod";
-import { getMandate, ledgerForMandate } from "@/src/db/repositories";
+import { getMandate, ledgerForMandate, purchasesForMandate } from "@/src/db/repositories";
 import { getProposal } from "@/src/db/proposals";
 import { committedThisMonth } from "@/src/domain/ledger";
 import { agentView } from "@/src/domain/mandate";
@@ -18,6 +18,7 @@ import type { ToolSpec } from "./types";
 import { merchantText, UNTRUSTED_NOTE } from "./untrusted";
 import { proposePurchase as proposeShared } from "./purchase";
 import { shipmentsForMandate } from "@/src/shipping/shipments";
+import { checkPurchaseWithPayPal } from "@/src/server/paypalCheck";
 
 const fmt = (m: Money) => `${toDecimalString(m)} ${m.currency}`;
 const MAX_RESULTS = 10;
@@ -322,6 +323,41 @@ const getOrderStatus: AgentTool<{ proposal_id: string }> = {
   },
 };
 
+const confirmWithPayPal: AgentTool<{ proposal_id: string }> = {
+  spec: {
+    name: "confirm_with_paypal",
+    description:
+      "After a payment, ask PayPal itself (PayPal Agent Toolkit, read-only) for its record of the order and compare it with TrueCart's ledger: status, amount, capture, fee, tracking.",
+    parameters: {
+      type: "object",
+      properties: { proposal_id: { type: "string", description: "proposal_id from propose_purchase" } },
+      required: ["proposal_id"],
+    },
+  },
+  schema: z.strictObject({ proposal_id: z.string().regex(/^prop_[0-9a-f-]{36}$/) }),
+  async run(s, { proposal_id }) {
+    const p = getProposal(s.db, proposal_id);
+    if (!p || p.sessionId !== s.id) throw new ToolInputError("unknown proposal");
+    const purchase = purchasesForMandate(s.db, s.mandateId).find((x) => x.proposalId === proposal_id);
+    const notChecked = (reason: string) => ({ proposal_id, checked: false, status: "NOT_CHECKED", reason });
+    if (!purchase?.paypalOrderId) return notChecked("no PayPal order for this proposal yet");
+    if (!s.paypalLookup) return notChecked("PayPal lookup is not available here");
+    try {
+      const r = await checkPurchaseWithPayPal(s.db, mandateOf(s), purchase.id, s.paypalLookup);
+      return {
+        proposal_id,
+        checked: true,
+        status: r.allMatch ? "PAYPAL_MATCH" : "PAYPAL_MISMATCH",
+        source: r.source,
+        matches_truecart_ledger: r.allMatch,
+        fields: r.rows.map((x) => ({ field: x.field, paypal: x.paypal, verdict: x.verdict })),
+      };
+    } catch {
+      return notChecked("PayPal did not answer the check; the ledger record stands");
+    }
+  },
+};
+
 const getMandateSummary: AgentTool<Record<string, never>> = {
   spec: {
     name: "get_mandate_summary",
@@ -377,8 +413,15 @@ const trackDeliveries: AgentTool<Record<string, never>> = {
 };
 
 export const TOOLS: Record<string, AgentTool<never>> = Object.fromEntries(
-  [searchOffers, explainRanking, checkPolicy, proposePurchase, getOrderStatus, getMandateSummary, trackDeliveries].map(
-    (t) => [t.spec.name, t as AgentTool<never>],
-  ),
+  [
+    searchOffers,
+    explainRanking,
+    checkPolicy,
+    proposePurchase,
+    getOrderStatus,
+    confirmWithPayPal,
+    getMandateSummary,
+    trackDeliveries,
+  ].map((t) => [t.spec.name, t as AgentTool<never>]),
 );
 export const TOOL_SPECS: ToolSpec[] = Object.values(TOOLS).map((t) => t.spec);

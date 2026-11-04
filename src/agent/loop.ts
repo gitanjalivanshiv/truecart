@@ -15,7 +15,7 @@ export interface TurnLimits {
   maxTurnTokens: number; // input + output across the turn
 }
 
-export const DEFAULT_LIMITS: TurnLimits = { maxSteps: 6, maxOutputTokens: 1_024, maxTurnTokens: 60_000 };
+export const DEFAULT_LIMITS: TurnLimits = { maxSteps: 8, maxOutputTokens: 1_024, maxTurnTokens: 60_000 };
 
 export type AgentEvent =
   | { type: "model"; step: number; provider: string; model: string; inputTokens: number; outputTokens: number }
@@ -32,6 +32,8 @@ export interface TurnResult {
   usage: { inputTokens: number; outputTokens: number };
   stoppedBy: "answer" | "steps" | "tokens" | "model_error";
 }
+
+const PAID_NOTE = " Your purchase in this request went through: see the Ledger for the PayPal order.";
 
 // Broad on purpose: a false positive only appends the true statement "no payment was made".
 const PURCHASE_CLAIM =
@@ -84,9 +86,7 @@ export async function runTurn(args: {
             ? "The AI model is not configured on this server (missing API key)."
             : "The AI model is unavailable right now.";
       // A purchase captured earlier in this turn stands; never tell the user otherwise.
-      const text = captured
-        ? `${reason} Your purchase in this request went through: see the Ledger for the PayPal order.`
-        : `${reason} Nothing was bought in this request.`;
+      const text = captured ? reason + PAID_NOTE : `${reason} Nothing was bought in this request.`;
       return { text, history: messages, events, usage, stoppedBy: "model_error" };
     }
     usage.inputTokens += res.usage.inputTokens;
@@ -147,7 +147,9 @@ export async function runTurn(args: {
     if (usage.inputTokens + usage.outputTokens > limits.maxTurnTokens) {
       emit({ type: "guard", rule: "TOKEN_BUDGET", detail: `${usage.inputTokens + usage.outputTokens} tokens` });
       return {
-        text: "I stopped because this request used its token budget. Here is what I found so far in the activity log.",
+        text:
+          "I stopped because this request used its token budget." +
+          (captured ? PAID_NOTE : " Here is what I found so far in the activity log."),
         history: messages,
         events,
         usage,
@@ -157,7 +159,9 @@ export async function runTurn(args: {
   }
   emit({ type: "guard", rule: "STEP_LIMIT", detail: `${limits.maxSteps} steps` });
   return {
-    text: "I stopped after the maximum number of steps for one request. Please narrow it down.",
+    text:
+      "I stopped after the maximum number of steps for one request." +
+      (captured ? PAID_NOTE : " Please narrow it down."),
     history: messages,
     events,
     usage,

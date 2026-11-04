@@ -2,9 +2,11 @@
 
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
+import { useState } from "react";
 import { BoxHead, Meter, Stamp } from "./bits";
 import { Deliveries } from "./Deliveries";
 import { gridTheme, GridProvider } from "./grid";
+import { PayPalCheck } from "./PayPalCheck";
 import type { MoneyView, StateView } from "./types";
 import { useApi } from "./useApi";
 
@@ -34,6 +36,16 @@ interface LedgerRow {
 const StatusCell = (p: ICellRendererParams<LedgerRow>) => (p.data ? <Stamp status={p.data.status} /> : null);
 const ViaCell = (p: ICellRendererParams<LedgerRow>) =>
   p.data ? <span className="label">{p.data.authorizedVia === "AUTO" ? "auto" : "approved"}</span> : null;
+
+interface GridContext {
+  onCheck: (row: LedgerRow) => void;
+}
+const CheckCell = (p: ICellRendererParams<LedgerRow, unknown, GridContext>) =>
+  p.data?.paypalOrderId ? (
+    <button className="btn-link text-[13px]" onClick={() => p.context.onCheck(p.data!)}>
+      Check with PayPal
+    </button>
+  ) : null;
 
 const cols: ColDef<LedgerRow>[] = [
   {
@@ -119,11 +131,13 @@ const cols: ColDef<LedgerRow>[] = [
     flex: 1,
     cellClass: "cell-num",
   },
+  { headerName: "PayPal record", cellRenderer: CheckCell, minWidth: 140, maxWidth: 150, pinned: "right" },
 ];
 
 export function Ledger() {
   const { data, loading } = useApi<{ spend: StateView["spend"]; rows: LedgerRow[] }>("/api/ledger");
   const { data: state } = useApi<StateView>("/api/state");
+  const [checking, setChecking] = useState<LedgerRow | null>(null);
   return (
     <div className="space-y-12">
       <section>
@@ -186,9 +200,18 @@ export function Ledger() {
                 getRowId={(p) => p.data.purchaseId}
                 domLayout="autoHeight"
                 suppressCellFocus
+                context={{ onCheck: setChecking } satisfies GridContext}
               />
             </div>
           </GridProvider>
+        )}
+        {checking && (
+          <PayPalCheck
+            key={checking.purchaseId}
+            purchaseId={checking.purchaseId}
+            title={`${checking.title} × ${checking.quantity} · ${checking.charged.text}`}
+            onClose={() => setChecking(null)}
+          />
         )}
       </section>
 

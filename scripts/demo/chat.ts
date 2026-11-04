@@ -17,6 +17,7 @@ import { openDatabase } from "@/src/db/database";
 import { saveMandate } from "@/src/db/repositories";
 import { demoMandate } from "@/src/discovery/demoMandate";
 import { paypalGateway } from "@/src/executor/gateway";
+import { lookupOrderViaToolkit } from "@/src/integrations/paypal/toolkit";
 import { arg, load, run } from "../spikes/_lib";
 
 run(async () => {
@@ -43,6 +44,7 @@ run(async () => {
     db,
     mandateId: "demo-mandate",
     gateway: pay ? paypalGateway : null,
+    paypalLookup: pay ? (orderId) => lookupOrderViaToolkit(orderId) : null,
     discoveryMode: process.argv.includes("--live-search") ? "live" : "replay",
     maskBrands: !process.argv.includes("--unmasked"),
     now: () => new Date(),
