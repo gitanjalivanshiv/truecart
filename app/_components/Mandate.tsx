@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BoxHead } from "./bits";
+import { BoxHead, PageHead } from "./bits";
 import { ConnectAgent } from "./ConnectAgent";
 import type { StateView } from "./types";
 import { post, refreshAll, useApi } from "./useApi";
@@ -145,10 +145,23 @@ export function Mandate({ walletStatus }: { walletStatus?: string }) {
       setBusy(false);
     }
   };
-  if (!state) return <p className="label">Loading your mandate…</p>;
+  const head = (
+    <PageHead kicker="Mandate" title="Your rules. The agent can't change them.">
+      The limits every purchase is checked against, in the payment code, at the moment of payment. Outside agents
+      connected over MCP get exactly these limits too.
+    </PageHead>
+  );
+  if (!state)
+    return (
+      <>
+        {head}
+        <p className="label">Loading your mandate…</p>
+      </>
+    );
   const m = state.mandate;
   return (
     <div className="space-y-12">
+      {head}
       <section>
         <BoxHead no="01" title="Purchases" />
         <div className="flex flex-wrap items-center gap-4">
@@ -160,7 +173,7 @@ export function Mandate({ walletStatus }: { walletStatus?: string }) {
           >
             {m.paused ? "Resume purchases" : "Pause all purchases"}
           </button>
-          <span className="text-[13px] text-ink-2">
+          <span className="text-[14.5px] text-ink-2">
             {m.paused
               ? "The agent can still search and compare, but nothing will be bought."
               : "Pausing stops every purchase immediately, including approved ones not yet paid."}

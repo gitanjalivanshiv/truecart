@@ -2,8 +2,9 @@
 
 import type { ColDef, GridApi, ICellRendererParams, IRowNode } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BoxHead, Stamp, Waterfall, WaterfallKey, type LineView } from "./bits";
+import { PageHead, Stamp, Waterfall, WaterfallKey, type LineView } from "./bits";
 import { exportCsv, gridTheme, GridProvider } from "./grid";
 import { LINE_TEXT, reason } from "./text";
 import type { MoneyView } from "./types";
@@ -198,6 +199,41 @@ function WaterfallCell(p: ICellRendererParams<Row>) {
 }
 
 const MARKET_NAME: Record<string, string> = { GB: "UK", US: "US", DE: "Germany" };
+
+/** Three headline figures for the current search; all amounts come from the server as text. */
+function Summary({ s }: { s: Search }) {
+  const best = s.rows.find((r) => r.trueRank === 1);
+  const tag = s.rows.find((r) => r.stickerRank === 1);
+  if (!best || !tag) return null;
+  return (
+    <div className="mb-6 grid gap-px border-[1.5px] border-ink bg-ink sm:grid-cols-3">
+      <div className="bg-accent-bg p-4">
+        <div className="label">Best purchase</div>
+        <div className="figure mt-2 text-[30px]">
+          <span className="mark">{best.landed.text}</span>
+        </div>
+        <div className="mt-1 text-[14px] text-ink-2">
+          {best.title} · {best.store}
+        </div>
+      </div>
+      <div className="bg-sheet p-4">
+        <div className="label">Cheapest price tag</div>
+        <div className="figure mt-2 text-[30px]">{tag.price.text}</div>
+        <div className="mt-1 text-[14px] text-ink-2">
+          lands at {tag.landed.text} · <strong>#{tag.trueRank}</strong> by what you pay
+        </div>
+      </div>
+      <div className="bg-sheet p-4">
+        <div className="label">Searched</div>
+        <div className="figure mt-2 text-[30px]">{s.rows.length} offers</div>
+        <div className="mt-1 text-[14px] text-ink-2">
+          {s.markets.map((m) => MARKET_NAME[m.country] ?? m.country).join(", ")} ·{" "}
+          {s.via === "agent" ? "found by the agent" : "direct search"}
+        </div>
+      </div>
+    </div>
+  );
+}
 const breakdown = (r: Row) =>
   r.lines.map((l) => `${LINE_TEXT[l.kind] ?? l.kind} ${l.amount.text}${l.estimate ? " (est.)" : ""}`).join(" · ");
 
@@ -241,19 +277,19 @@ export function Offers() {
       {
         headerName: by === "landed" ? "True #" : "Sticker #",
         field: first,
-        minWidth: 72,
-        maxWidth: 84,
+        minWidth: 84,
+        maxWidth: 96,
         cellClass: "cell-num",
       },
       {
         headerName: by === "landed" ? "Sticker #" : "True #",
         field: second,
-        minWidth: 80,
-        maxWidth: 92,
+        minWidth: 100,
+        maxWidth: 112,
         cellClass: "cell-num",
       },
       { headerName: "Product", field: "title", minWidth: 150, flex: 3 },
-      { headerName: "Store", field: "store", minWidth: 92, flex: 1 },
+      { headerName: "Store", field: "store", minWidth: 112, flex: 1 },
       {
         headerName: "From",
         colId: "from",
@@ -266,7 +302,7 @@ export function Offers() {
         headerName: "Price",
         colId: "price",
         valueGetter: (p) => p.data?.price.text,
-        minWidth: 96,
+        minWidth: 116,
         flex: 1,
         cellClass: "cell-num",
         type: "rightAligned",
@@ -276,7 +312,7 @@ export function Offers() {
         colId: "landed",
         valueGetter: (p) => p.data?.landed.text,
         tooltipValueGetter: (p) => (p.data ? breakdown(p.data) : null),
-        minWidth: 108,
+        minWidth: 124,
         flex: 1,
         cellClass: "cell-num",
         type: "rightAligned",
@@ -313,22 +349,15 @@ export function Offers() {
 
   return (
     <div>
-      <BoxHead
-        no="01"
-        title="Offers by landed cost"
-        aside={
-          s && (
-            <span className="label">
-              {s.rows.length} offers · {s.via === "agent" ? "from the agent" : "direct search"}
-            </span>
-          )
-        }
-      />
-      <form onSubmit={runSearch} className="mb-5 flex flex-wrap items-end gap-2">
+      <PageHead kicker="Offers · UK, US and German shops" title="Ranked by what you would actually pay">
+        Every offer is priced the same way: item, shipping, UK import VAT and duty, and the cost of currency conversion.
+        Switch to price tag order to see how different the list looks.
+      </PageHead>
+      <form onSubmit={runSearch} className="card mb-8 flex flex-wrap items-end gap-3 p-4">
         <label className="min-w-[260px] flex-1">
           <span className="label">Search UK, US and German shops</span>
           <input
-            className="field mt-1 font-sans text-[14px]"
+            className="field mt-1 font-sans text-[15px]"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             maxLength={120}
@@ -348,31 +377,38 @@ export function Offers() {
         <button className="btn btn-primary" disabled={busy || q.trim().length < 2}>
           {busy ? "Ranking…" : "Rank offers"}
         </button>
-        <span className="ml-auto flex gap-0 text-[13px]">
-          <button
-            type="button"
-            className={`btn ${by === "landed" ? "btn-primary" : ""}`}
-            onClick={() => setBy("landed")}
-          >
-            Landed cost
-          </button>
-          <button
-            type="button"
-            className={`btn -ml-px ${by === "sticker" ? "btn-primary" : ""}`}
-            onClick={() => setBy("sticker")}
-          >
-            Sticker price
-          </button>
+        <span className="ml-auto">
+          <span className="label mb-1 block">Order by</span>
+          <span className="seg">
+            <button type="button" aria-pressed={by === "landed"} onClick={() => setBy("landed")}>
+              Landed cost
+            </button>
+            <button type="button" aria-pressed={by === "sticker"} onClick={() => setBy("sticker")}>
+              Sticker price
+            </button>
+          </span>
         </span>
       </form>
       {searchError && <p className="mb-3 text-stop">{searchError}</p>}
       {error && <p className="text-stop">{error}</p>}
       {loading && !s && <p className="label">Loading…</p>}
-      {!loading && !s && <p className="text-muted">No search yet. Rank offers above, or ask on the Shop page.</p>}
+      {!loading && !s && (
+        <div className="border-[1.5px] border-dashed border-ink px-6 py-12 text-center">
+          <p className="text-[20px] font-bold">No search yet</p>
+          <p className="mt-2 text-ink-2">
+            Press <strong>Rank offers</strong> above for the example, or ask the agent on the{" "}
+            <Link href="/" className="font-semibold underline underline-offset-2">
+              Shop
+            </Link>{" "}
+            page.
+          </p>
+        </div>
+      )}
 
       {s && (
         <>
-          <div className="mb-3 flex flex-wrap gap-x-6 gap-y-1 text-[12.5px] text-ink-2">
+          <Summary s={s} />
+          <div className="mb-4 flex flex-wrap gap-x-6 gap-y-1 text-[13px] text-ink-2">
             <span>
               “{s.query}” × {s.quantity}
             </span>
@@ -388,26 +424,20 @@ export function Offers() {
               FX {s.fxSource}: {s.rates.map((r) => `${r.pair} ${r.rate}`).join(", ")} ({s.rates[0]?.asOf})
             </span>
           </div>
-          <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2" role="group" aria-label="Filter offers">
-            <span className="flex text-[13px]">
-              {["ALL", ...s.markets.map((m) => m.country)].map((c, i) => (
-                <button
-                  key={c}
-                  type="button"
-                  aria-pressed={market === c}
-                  className={`btn ${i ? "-ml-px" : ""} ${market === c ? "btn-primary" : ""}`}
-                  onClick={() => setMarket(c)}
-                >
+          <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-3" role="group" aria-label="Filter offers">
+            <span className="seg">
+              {["ALL", ...s.markets.map((m) => m.country)].map((c) => (
+                <button key={c} type="button" aria-pressed={market === c} onClick={() => setMarket(c)}>
                   {c === "ALL" ? "All shops" : (MARKET_NAME[c] ?? c)}
                 </button>
               ))}
             </span>
-            <label className="flex items-center gap-2 text-[13px]">
+            <label className="flex items-center gap-2 text-[14px]">
               <input type="checkbox" checked={allowedOnly} onChange={(e) => setAllowedOnly(e.target.checked)} />
               Only what my mandate allows
             </label>
             <input
-              className="field max-w-[220px] font-sans text-[13px]"
+              className="field max-w-[240px] font-sans text-[14px]"
               placeholder="Filter by product or store"
               aria-label="Filter by product or store"
               value={filterText}

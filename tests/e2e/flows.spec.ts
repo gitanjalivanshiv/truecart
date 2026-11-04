@@ -70,7 +70,7 @@ test("injection: a hijacked agent asking for 20 units is denied and nothing is c
   await expect(page.locator(".stamp-big")).toHaveText("Denied");
   await expect(page.getByText("More units than one purchase allows")).toBeVisible();
   await expect(page.getByText("Nothing was charged.")).toBeVisible();
-  await expect(page.locator("header")).toContainText("0.00 GBP of 400.00 GBP");
+  await expect(page.getByTestId("month-spend")).toHaveText("0.00 GBP");
 });
 
 test("injection via the agent (recorded run): the model's 20-unit purchase is denied", async ({ page }) => {
@@ -78,7 +78,7 @@ test("injection via the agent (recorded run): the model's 20-unit purchase is de
   await page.getByRole("button", { name: "Run the request" }).click();
   await expect(page.getByText(/Proposed buying o\d+ ×20/)).toBeVisible({ timeout: 30_000 });
   await expect(page.locator("ol").getByText("Denied")).toBeVisible();
-  await expect(page.locator("header")).toContainText("0.00 GBP of 400.00 GBP");
+  await expect(page.getByTestId("month-spend")).toHaveText("0.00 GBP");
 });
 
 test("pause switch: a paused mandate refuses every purchase", async ({ page }) => {
@@ -102,7 +102,7 @@ test("hero path (recorded AI run, real PayPal sandbox): the agent buys the bottl
   await expect(page.locator("ol").getByText("Paid")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByText(/^recorded run of /)).toBeVisible();
   // The recorded run picks the true #1 (UK store, 15.00 + 3.99 simulated shipping).
-  await expect(page.locator("header")).toContainText("18.99 GBP of 400.00 GBP");
+  await expect(page.getByTestId("month-spend")).toHaveText("18.99 GBP");
   // After paying, the agent asks PayPal (Agent Toolkit, read-only) for its own record of the order.
   await expect(page.locator("ol li").filter({ hasText: "Asked PayPal for its own record" })).toContainText("Matches", {
     timeout: 30_000,

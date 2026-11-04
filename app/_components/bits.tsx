@@ -19,6 +19,30 @@ export function BoxHead({ no, title, aside }: { no: string; title: string; aside
   );
 }
 
+/** Page opening: kicker, large title, one or two lines of explanation, optional actions on the right. */
+export function PageHead({
+  kicker,
+  title,
+  children,
+  actions,
+}: {
+  kicker: string;
+  title: ReactNode;
+  children?: ReactNode;
+  actions?: ReactNode;
+}) {
+  return (
+    <div className="mb-10 flex flex-wrap items-end gap-x-10 gap-y-4">
+      <div className="max-w-[760px]">
+        <div className="label mb-3">{kicker}</div>
+        <h1 className="display text-[38px] sm:text-[46px]">{title}</h1>
+        {children && <div className="mt-4 text-[17px] leading-relaxed text-ink-2">{children}</div>}
+      </div>
+      {actions && <div className="ml-auto">{actions}</div>}
+    </div>
+  );
+}
+
 export function Meter({ value, max, caption }: { value: number; max: number; caption?: ReactNode }) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (

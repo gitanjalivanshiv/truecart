@@ -211,3 +211,16 @@ Format: date (IST) · decision · reason.
   - Product titles come from third-party listings, so every exported cell goes through `csvSafe`. It prefixes cells starting with `= + @`, a tab, a CR, or `-` not followed by a digit, so spreadsheets don't run them as formulas (OWASP CSV injection).
   - Every file starts with a sandbox/estimates label.
 - **Auto-height:** AG Grid keeps a 150px minimum on auto-height grids for its empty overlay. The ledger shows its own empty state, so the minimum is removed there.
+
+## 2026-11-04 · Visual pass: bolder ledger
+
+- **Owner feedback:** the UI read as plain, small and empty, and not like a product. We kept TrueCart's own visual language (paper, ink, hard rules, stamps) and made it louder instead of switching to a generic dashboard look.
+- **Changes:**
+  - Base type is 15px. Each page opens with a large heading.
+  - One forest-green accent marks actions and the best purchase. A highlighter yellow marks the figure that matters.
+  - Key cards have a hard ink edge. Segmented controls are inked in, so green means "act" only.
+  - Larger stamps, buttons and fields; the grid uses 14px with 46px rows.
+- **Shop opening:** a headline, the demo request as the main button, and a card comparing the cheapest price tag with the best purchase.
+  - The card comes from `/api/showcase`: the recorded hero search ranked by the real engines (replay data, FX snapshot, demo mandate). It is cached per process, never calls Channel3 or the model, and is labelled "recorded" and "estimates".
+  - The browser does no money arithmetic: the gap between the two landed costs is computed on the server.
+- **CSS layers:** component classes moved into `@layer components`, so Tailwind utilities can adjust them. Unlayered CSS always beat Tailwind's layered utilities.

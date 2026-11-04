@@ -3,7 +3,7 @@
 import type { ColDef, GridApi, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useMemo, useRef, useState } from "react";
-import { BoxHead, Meter, Stamp } from "./bits";
+import { BoxHead, Meter, PageHead, Stamp } from "./bits";
 import { Deliveries } from "./Deliveries";
 import { exportCsv, gridTheme, GridProvider } from "./grid";
 import { PayPalCheck } from "./PayPalCheck";
@@ -207,16 +207,20 @@ export function Ledger() {
   const [checking, setChecking] = useState<LedgerRow | null>(null);
   return (
     <div className="space-y-12">
+      <PageHead kicker="Ledger" title="Every payment, checked against PayPal.">
+        What you spent against your caps, each purchase reconciled with PayPal&apos;s own record and fees, and where
+        each parcel is.
+      </PageHead>
       <section>
         <BoxHead no="01" title="Spend against your mandate" />
         {loading && <p className="label">Loading…</p>}
         {data && state && (
-          <div className="grid gap-x-12 gap-y-6 md:grid-cols-3">
-            <div>
-              <div className="label mb-1">This month</div>
-              <div className="num mb-2 text-[22px] leading-none">
+          <div className="grid gap-px border-[1.5px] border-ink bg-ink md:grid-cols-3">
+            <div className="bg-sheet p-5">
+              <div className="label mb-2">This month</div>
+              <div className="figure mb-3 text-[34px]">
                 {data.spend.committed.text.replace(" GBP", "")}{" "}
-                <span className="text-[13px] text-muted">of {data.spend.monthlyCap.text}</span>
+                <span className="text-[14px] font-normal text-muted">of {data.spend.monthlyCap.text}</span>
               </div>
               <Meter
                 value={data.spend.committed.minor}
@@ -224,19 +228,15 @@ export function Ledger() {
                 caption={<>Left: {data.spend.remaining.text}. Pending payments count until settled.</>}
               />
             </div>
-            <div>
-              <div className="label mb-1">Per purchase</div>
-              <div className="num text-[22px] leading-none">
-                {state.mandate.perPurchaseCap.text.replace(" GBP", "")}
-              </div>
-              <p className="mt-2 text-[12.5px] text-muted">Anything above is refused, even with your approval.</p>
+            <div className="bg-sheet p-5">
+              <div className="label mb-2">Per purchase</div>
+              <div className="figure text-[34px]">{state.mandate.perPurchaseCap.text.replace(" GBP", "")}</div>
+              <p className="mt-3 text-[14px] text-ink-2">Anything above is refused, even with your approval.</p>
             </div>
-            <div>
-              <div className="label mb-1">Auto-buy up to</div>
-              <div className="num text-[22px] leading-none">
-                {state.mandate.approvalThreshold.text.replace(" GBP", "")}
-              </div>
-              <p className="mt-2 text-[12.5px] text-muted">
+            <div className="bg-sheet p-5">
+              <div className="label mb-2">Auto-buy up to</div>
+              <div className="figure text-[34px]">{state.mandate.approvalThreshold.text.replace(" GBP", "")}</div>
+              <p className="mt-3 text-[14px] text-ink-2">
                 Above this, purchases wait in Approvals. Max {state.mandate.maxUnitsPerPurchase} units per purchase.
               </p>
             </div>
@@ -262,7 +262,7 @@ export function Ledger() {
             </span>
           }
         />
-        <p className="mb-3 max-w-[85ch] text-[13px] text-ink-2">
+        <p className="mb-4 max-w-[85ch] text-[14.5px] text-ink-2">
           Landed figures are our estimates at the time of purchase. The fee columns compare our merchant-fee model with
           the fee PayPal actually took from the merchant (from the capture breakdown); fees are paid by the merchant,
           not you. PayPal does not report the buyer&apos;s own conversion cost.

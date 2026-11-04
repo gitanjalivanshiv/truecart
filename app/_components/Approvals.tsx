@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { BoxHead, Stamp } from "./bits";
+import { BoxHead, PageHead, Stamp } from "./bits";
 import { LINE_TEXT, reason } from "./text";
 import type { MoneyView } from "./types";
 import { post, refreshAll, useApi } from "./useApi";
@@ -115,18 +115,26 @@ export function Approvals() {
   const decided = data?.filter((p) => p.status !== "AWAITING_APPROVAL" && p.status !== "EXECUTING") ?? [];
   return (
     <div className="space-y-12">
+      <PageHead kicker="Approvals" title="Above your auto-buy limit, nothing is paid without you.">
+        Each request shows exactly what will be charged and why it needs you. Approving pays that cart once; the limits
+        are checked again at the moment of payment.
+      </PageHead>
       <section>
         <BoxHead no="01" title="Waiting for you" aside={<span className="label">{waiting.length} open</span>} />
         {error && <p className="text-stop">{error}</p>}
         {loading && <p className="label">Loading…</p>}
         {!loading && waiting.length === 0 && (
-          <p className="text-muted">
-            Nothing to approve. Purchases above your auto-buy limit land here. Ask for more than one unit on the{" "}
-            <Link href="/" className="underline underline-offset-2">
-              Shop
-            </Link>{" "}
-            page to see one.
-          </p>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-4 border-[1.5px] border-dashed border-ink px-6 py-8">
+            <div>
+              <p className="text-[20px] font-bold">Nothing to approve</p>
+              <p className="mt-1 text-ink-2">
+                Purchases above your auto-buy limit land here. Ask for three bottles to see one.
+              </p>
+            </div>
+            <Link href="/" className="btn ml-auto">
+              Go to Shop →
+            </Link>
+          </div>
         )}
         <div className="space-y-6">
           {waiting.map((p) => (
@@ -138,7 +146,7 @@ export function Approvals() {
       <section>
         <BoxHead no="02" title="Decided" />
         {decided.length === 0 ? (
-          <p className="text-[13px] text-muted">Approved, rejected and refused requests are kept here.</p>
+          <p className="text-[14px] text-muted">Approved, rejected and refused requests are kept here.</p>
         ) : (
           <table className="ruled">
             <thead>

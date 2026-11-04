@@ -29,8 +29,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Sandbox: no real money. Merchants are simulated. Shipping, tax and FX figures are estimates.
         </div>
         <Header />
-        <main className="mx-auto max-w-[1240px] px-4 pt-6 pb-16 sm:px-6">{children}</main>
-        <footer className="mx-auto max-w-[1240px] border-t border-rule px-4 py-5 text-[12px] text-muted sm:px-6">
+        <main className="mx-auto max-w-[1240px] px-4 pt-10 pb-20 sm:px-6">{children}</main>
+        <footer className="mx-auto max-w-[1240px] border-t border-rule px-4 py-6 text-[13px] text-muted sm:px-6">
           PayPal sandbox · Offers from Channel3 · Rates from Frankfurter · AI model: Gemini (free tier). Product names
           and stores are masked in demo mode.
         </footer>
