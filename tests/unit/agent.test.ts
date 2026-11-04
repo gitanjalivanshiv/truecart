@@ -273,6 +273,20 @@ describe("agent: unconfirmed purchase claims", () => {
     expect(turn.text).toMatch(/no payment was made/);
   });
 
+  it("does not flag a description of the limits", async () => {
+    const turn = await runTurn({
+      adapter: scriptedAdapter([
+        use(call("get_mandate_summary", {})),
+        say("Auto-buy limit: up to 40.00 GBP (purchases at or below this are bought immediately)."),
+      ]),
+      session,
+      history: [],
+      userText: "What are my spending limits right now?",
+    });
+    expect(turn.events.some((e) => e.type === "guard")).toBe(false);
+    expect(turn.text).not.toMatch(/no payment was made/);
+  });
+
   it("does not flag an honest answer", async () => {
     const turn = await runTurn({
       adapter: scriptedAdapter([say("Would you like me to go ahead with o1?")]),

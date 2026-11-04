@@ -4,6 +4,7 @@
 // final answer never claims a purchase the executor did not confirm.
 
 import { z } from "zod";
+import { claimsPurchase } from "./claims";
 import { SYSTEM_PROMPT } from "./prompt";
 import type { AgentSession } from "./session";
 import { TOOL_SPECS, TOOLS, ToolInputError } from "./tools";
@@ -34,10 +35,6 @@ export interface TurnResult {
 }
 
 const PAID_NOTE = " Your purchase in this request went through: see the Ledger for the PayPal order.";
-
-// Broad on purpose: a false positive only appends the true statement "no payment was made".
-const PURCHASE_CLAIM =
-  /\b(captured|bought|purchased|paid)\b|\b(purchase|order|payment|checkout)\b[^.!?\n]{0,40}\b(complete|completed|confirmed|successful|successfully|placed|done|went through|processed)\b/i;
 
 /** Keeps the last `keepUserTurns` user turns (never splits a tool call from its result). */
 export function trimHistory(history: AgentMessage[], keepUserTurns = 6): AgentMessage[] {
@@ -96,7 +93,7 @@ export async function runTurn(args: {
 
     if (res.message.toolCalls.length === 0) {
       let text = res.message.text || "(no answer)";
-      if (PURCHASE_CLAIM.test(text) && !captured) {
+      if (!captured && claimsPurchase(text)) {
         emit({
           type: "guard",
           rule: "UNCONFIRMED_PURCHASE_CLAIM",
