@@ -34,8 +34,8 @@ export function PageHead({
   return (
     <div className="mb-10 flex flex-wrap items-end gap-x-10 gap-y-4">
       <div className="max-w-[760px]">
-        <div className="label mb-3">{kicker}</div>
-        <h1 className="display text-[38px] sm:text-[46px]">{title}</h1>
+        <div className="mb-3 text-[14px] font-semibold text-brand-text">{kicker}</div>
+        <h1 className="display text-[34px] sm:text-[42px]">{title}</h1>
         {children && <div className="mt-4 text-[17px] leading-relaxed text-ink-2">{children}</div>}
       </div>
       {actions && <div className="ml-auto">{actions}</div>}

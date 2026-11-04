@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { toast } from "./toast";
 import { refreshAll } from "./useApi";
 
 type Ev =
@@ -116,6 +117,15 @@ export function useAgentChat() {
             pendingCall = describeCall(e.name, e.args);
             if (e.name === "search_offers") setSearched(true);
           } else if (e.type === "tool_result") {
+            if (e.name === "propose_purchase" && e.status === "CAPTURED")
+              toast("The agent paid in the PayPal sandbox", {
+                body: "Within your mandate. See the Ledger.",
+                tone: "success",
+              });
+            else if (e.name === "propose_purchase" && e.status === "AWAITING_APPROVAL")
+              toast("A purchase is waiting for you", { body: "It is over your auto-buy limit.", tone: "warning" });
+            else if (e.name === "propose_purchase" && e.status === "DENIED")
+              toast("Your mandate refused a purchase", { body: "No payment was made.", tone: "danger" });
             addStep({ text: pendingCall ?? e.name, status: e.status ?? (e.ok ? undefined : "FAILED") });
             pendingCall = null;
           } else if (e.type === "guard")

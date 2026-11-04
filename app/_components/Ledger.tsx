@@ -2,8 +2,10 @@
 
 import type { ColDef, GridApi, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
+import { Download } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { BoxHead, Meter, PageHead, Stamp } from "./bits";
+import { CountUp } from "./CountUp";
 import { Deliveries } from "./Deliveries";
 import { exportCsv, gridTheme, GridProvider } from "./grid";
 import { PayPalCheck } from "./PayPalCheck";
@@ -215,11 +217,11 @@ export function Ledger() {
         <BoxHead no="01" title="Spend against your mandate" />
         {loading && <p className="label">Loading…</p>}
         {data && state && (
-          <div className="grid gap-px border-[1.5px] border-ink bg-ink md:grid-cols-3">
-            <div className="bg-sheet p-5">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="card lift p-5" data-reveal>
               <div className="label mb-2">This month</div>
               <div className="figure mb-3 text-[34px]">
-                {data.spend.committed.text.replace(" GBP", "")}{" "}
+                <CountUp text={data.spend.committed.text.replace(" GBP", "")} />{" "}
                 <span className="text-[14px] font-normal text-muted">of {data.spend.monthlyCap.text}</span>
               </div>
               <Meter
@@ -228,14 +230,18 @@ export function Ledger() {
                 caption={<>Left: {data.spend.remaining.text}. Pending payments count until settled.</>}
               />
             </div>
-            <div className="bg-sheet p-5">
+            <div className="card lift p-5" data-reveal style={{ "--d": "0.08s" } as React.CSSProperties}>
               <div className="label mb-2">Per purchase</div>
-              <div className="figure text-[34px]">{state.mandate.perPurchaseCap.text.replace(" GBP", "")}</div>
+              <div className="figure text-[34px]">
+                <CountUp text={state.mandate.perPurchaseCap.text.replace(" GBP", "")} />
+              </div>
               <p className="mt-3 text-[14px] text-ink-2">Anything above is refused, even with your approval.</p>
             </div>
-            <div className="bg-sheet p-5">
+            <div className="card lift p-5" data-reveal style={{ "--d": "0.16s" } as React.CSSProperties}>
               <div className="label mb-2">Auto-buy up to</div>
-              <div className="figure text-[34px]">{state.mandate.approvalThreshold.text.replace(" GBP", "")}</div>
+              <div className="figure text-[34px]">
+                <CountUp text={state.mandate.approvalThreshold.text.replace(" GBP", "")} />
+              </div>
               <p className="mt-3 text-[14px] text-ink-2">
                 Above this, purchases wait in Approvals. Max {state.mandate.maxUnitsPerPurchase} units per purchase.
               </p>
@@ -252,10 +258,8 @@ export function Ledger() {
             <span className="flex items-center gap-4">
               <span className="label">{data?.rows.length ?? 0} purchases</span>
               {!!data?.rows.length && (
-                <button
-                  className="btn-link text-[13px]"
-                  onClick={() => exportCsv(api.current, "ledger", EXPORT_COLUMNS)}
-                >
+                <button className="btn py-2" onClick={() => exportCsv(api.current, "ledger", EXPORT_COLUMNS)}>
+                  <Download size={16} aria-hidden="true" />
                   Download CSV
                 </button>
               )}

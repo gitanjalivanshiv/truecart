@@ -1,8 +1,10 @@
 "use client";
 
+import { Inbox } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { BoxHead, PageHead, Stamp } from "./bits";
+import { toast } from "./toast";
 import { LINE_TEXT, reason } from "./text";
 import type { MoneyView } from "./types";
 import { post, refreshAll, useApi } from "./useApi";
@@ -36,7 +38,11 @@ function Request({ p }: { p: ProposalView }) {
     setBusy(action);
     setError(null);
     try {
-      await post(`/api/approvals/${p.id}`, { action });
+      const r = await post<ProposalView>(`/api/approvals/${p.id}`, { action });
+      if (action === "reject") toast("Request rejected", { body: "No payment was made.", tone: "info" });
+      else if (r?.outcome?.status === "CAPTURED")
+        toast("Approved and paid", { body: `${p.charge.text} charged in the PayPal sandbox.`, tone: "success" });
+      else toast("Not paid", { body: "The mandate or PayPal refused it. See Decided below.", tone: "danger" });
       refreshAll();
     } catch (e) {
       setError((e as Error).message);
@@ -45,13 +51,13 @@ function Request({ p }: { p: ProposalView }) {
     }
   }
   return (
-    <article className="sheet">
-      <div className="flex items-baseline gap-3 border-b border-rule px-4 py-2">
+    <article className="card fade-in overflow-hidden">
+      <div className="flex items-baseline gap-3 border-b border-rule bg-surface-2 px-5 py-3">
         <span className="label">Approval request</span>
         <span className="num text-[12px] text-muted">{when(p.createdAt)}</span>
         <span className="code ml-auto text-[11px] text-muted">{p.id.slice(5, 13)}</span>
       </div>
-      <div className="grid gap-6 p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="grid gap-6 p-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div>
           <h3 className="text-[17px] font-semibold leading-snug">
             {p.title} <span className="num text-[14px] font-normal text-ink-2">× {p.quantity}</span>
@@ -93,7 +99,7 @@ function Request({ p }: { p: ProposalView }) {
           </tfoot>
         </table>
       </div>
-      <div className="flex flex-wrap items-center gap-2 border-t border-rule px-4 py-3">
+      <div className="flex flex-wrap items-center gap-2 border-t border-rule bg-surface-2 px-5 py-4">
         <button className="btn btn-primary" disabled={busy !== null} onClick={() => act("approve")}>
           {busy === "approve" ? "Paying…" : `Approve and pay ${p.charge.text}`}
         </button>
@@ -124,7 +130,10 @@ export function Approvals() {
         {error && <p className="text-stop">{error}</p>}
         {loading && <p className="label">Loading…</p>}
         {!loading && waiting.length === 0 && (
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-4 border-[1.5px] border-dashed border-ink px-6 py-8">
+          <div className="card flex flex-wrap items-center gap-x-6 gap-y-4 px-6 py-7">
+            <span className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-brand-soft text-brand-text">
+              <Inbox size={24} />
+            </span>
             <div>
               <p className="text-[20px] font-bold">Nothing to approve</p>
               <p className="mt-1 text-ink-2">

@@ -2,10 +2,14 @@
 
 import type { ColDef, GridApi, ICellRendererParams, IRowNode } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
+import { Download, PackageSearch, Search as SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PageHead, Stamp, Waterfall, WaterfallKey, type LineView } from "./bits";
+import { CountUp } from "./CountUp";
 import { exportCsv, gridTheme, GridProvider } from "./grid";
+import { Segmented } from "./Segmented";
+import { toast } from "./toast";
 import { LINE_TEXT, reason } from "./text";
 import type { MoneyView } from "./types";
 import { post, refreshAll, useApi } from "./useApi";
@@ -82,7 +86,7 @@ function Detail({ row, search }: { row: Row; search: Search }) {
   const [error, setError] = useState<string | null>(null);
   const best = search.rows[0];
   return (
-    <section aria-label="Offer detail" className="sheet p-4">
+    <section aria-label="Offer detail" className="card fade-in p-5 xl:sticky xl:top-20">
       <div className="label">
         Rank #{row.trueRank} by landed cost · #{row.stickerRank} by sticker price
       </div>
@@ -162,7 +166,18 @@ function Detail({ row, search }: { row: Row; search: Search }) {
             setBusy(true);
             setError(null);
             try {
-              setResult(await post("/api/offers/buy", { searchId: search.id, offerId: row.offerId, quantity: qty }));
+              const r = await post<Parameters<typeof BuyResult>[0]["r"]>("/api/offers/buy", {
+                searchId: search.id,
+                offerId: row.offerId,
+                quantity: qty,
+              });
+              setResult(r);
+              if (r.status === "CAPTURED")
+                toast("Paid in the PayPal sandbox", { body: `Charged ${r.charged}.`, tone: "success" });
+              else if (r.status === "AWAITING_APPROVAL")
+                toast("Sent to Approvals", { body: "Over your auto-buy limit. Nothing charged yet.", tone: "warning" });
+              else if (r.status === "DENIED")
+                toast("Refused by your mandate", { body: "No payment was made.", tone: "danger" });
               refreshAll();
             } catch (e) {
               setError((e as Error).message);
@@ -206,26 +221,30 @@ function Summary({ s }: { s: Search }) {
   const tag = s.rows.find((r) => r.stickerRank === 1);
   if (!best || !tag) return null;
   return (
-    <div className="mb-6 grid gap-px border-[1.5px] border-ink bg-ink sm:grid-cols-3">
-      <div className="bg-accent-bg p-4">
-        <div className="label">Best purchase</div>
-        <div className="figure mt-2 text-[30px]">
-          <span className="mark">{best.landed.text}</span>
+    <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <div className="card lift border-brand bg-brand-soft p-5" data-reveal>
+        <div className="label text-brand-text">Best purchase</div>
+        <div className="figure mt-2 text-[32px] text-brand-text">
+          <CountUp text={best.landed.text} />
         </div>
         <div className="mt-1 text-[14px] text-ink-2">
           {best.title} · {best.store}
         </div>
       </div>
-      <div className="bg-sheet p-4">
+      <div className="card lift p-5" data-reveal style={{ "--d": "0.08s" } as React.CSSProperties}>
         <div className="label">Cheapest price tag</div>
-        <div className="figure mt-2 text-[30px]">{tag.price.text}</div>
+        <div className="figure mt-2 text-[32px]">
+          <CountUp text={tag.price.text} />
+        </div>
         <div className="mt-1 text-[14px] text-ink-2">
           lands at {tag.landed.text} · <strong>#{tag.trueRank}</strong> by what you pay
         </div>
       </div>
-      <div className="bg-sheet p-4">
+      <div className="card lift p-5" data-reveal style={{ "--d": "0.16s" } as React.CSSProperties}>
         <div className="label">Searched</div>
-        <div className="figure mt-2 text-[30px]">{s.rows.length} offers</div>
+        <div className="figure mt-2 text-[32px]">
+          <CountUp text={`${s.rows.length} offers`} />
+        </div>
         <div className="mt-1 text-[14px] text-ink-2">
           {s.markets.map((m) => MARKET_NAME[m.country] ?? m.country).join(", ")} ·{" "}
           {s.via === "agent" ? "found by the agent" : "direct search"}
@@ -375,26 +394,31 @@ export function Offers() {
           />
         </label>
         <button className="btn btn-primary" disabled={busy || q.trim().length < 2}>
+          <SearchIcon size={17} aria-hidden="true" />
           {busy ? "Ranking…" : "Rank offers"}
         </button>
         <span className="ml-auto">
           <span className="label mb-1 block">Order by</span>
-          <span className="seg">
-            <button type="button" aria-pressed={by === "landed"} onClick={() => setBy("landed")}>
-              Landed cost
-            </button>
-            <button type="button" aria-pressed={by === "sticker"} onClick={() => setBy("sticker")}>
-              Sticker price
-            </button>
-          </span>
+          <Segmented
+            label="Order by"
+            value={by}
+            onChange={setBy}
+            options={[
+              { value: "landed", label: "Landed cost" },
+              { value: "sticker", label: "Sticker price" },
+            ]}
+          />
         </span>
       </form>
       {searchError && <p className="mb-3 text-stop">{searchError}</p>}
       {error && <p className="text-stop">{error}</p>}
       {loading && !s && <p className="label">Loading…</p>}
       {!loading && !s && (
-        <div className="border-[1.5px] border-dashed border-ink px-6 py-12 text-center">
-          <p className="text-[20px] font-bold">No search yet</p>
+        <div className="card flex flex-col items-center px-6 py-14 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-soft text-brand-text">
+            <PackageSearch size={28} />
+          </span>
+          <p className="mt-4 text-[20px] font-bold">No search yet</p>
           <p className="mt-2 text-ink-2">
             Press <strong>Rank offers</strong> above for the example, or ask the agent on the{" "}
             <Link href="/" className="font-semibold underline underline-offset-2">
@@ -425,15 +449,22 @@ export function Offers() {
             </span>
           </div>
           <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-3" role="group" aria-label="Filter offers">
-            <span className="seg">
-              {["ALL", ...s.markets.map((m) => m.country)].map((c) => (
-                <button key={c} type="button" aria-pressed={market === c} onClick={() => setMarket(c)}>
-                  {c === "ALL" ? "All shops" : (MARKET_NAME[c] ?? c)}
-                </button>
-              ))}
-            </span>
-            <label className="flex items-center gap-2 text-[14px]">
-              <input type="checkbox" checked={allowedOnly} onChange={(e) => setAllowedOnly(e.target.checked)} />
+            <Segmented
+              label="Market"
+              value={market}
+              onChange={setMarket}
+              options={["ALL", ...s.markets.map((m) => m.country)].map((c) => ({
+                value: c,
+                label: c === "ALL" ? "All shops" : (MARKET_NAME[c] ?? c),
+              }))}
+            />
+            <label className="flex cursor-pointer items-center gap-2.5 text-[14px] font-medium">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={allowedOnly}
+                onChange={(e) => setAllowedOnly(e.target.checked)}
+              />
               Only what my mandate allows
             </label>
             <input
@@ -448,7 +479,7 @@ export function Offers() {
             </span>
             <button
               type="button"
-              className="btn-link text-[13px]"
+              className="btn py-2"
               onClick={() =>
                 exportCsv(api.current, "offers", [
                   by === "landed" ? "trueRank" : "stickerRank",
@@ -462,6 +493,7 @@ export function Offers() {
                 ])
               }
             >
+              <Download size={16} aria-hidden="true" />
               Download CSV
             </button>
           </div>

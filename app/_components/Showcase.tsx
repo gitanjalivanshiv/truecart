@@ -1,6 +1,7 @@
 "use client";
 
 import { Waterfall, WaterfallKey, type LineView } from "./bits";
+import { CountUp } from "./CountUp";
 import type { MoneyView } from "./types";
 import { useApi } from "./useApi";
 
@@ -28,10 +29,10 @@ const COUNTRY: Record<string, string> = { GB: "UK", US: "US", DE: "Germany" };
 function Offer({ p, kind }: { p: Pick; kind: "tag" | "best" }) {
   const best = kind === "best";
   return (
-    <div className={best ? "bg-accent-bg p-5" : "p-5"}>
+    <div className={best ? "m-2 rounded-[12px] bg-brand-soft p-4" : "px-6 py-5"}>
       <div className="flex items-center justify-between gap-3">
         {best ? (
-          <span className="stamp border-accent bg-accent text-on-accent">Best purchase</span>
+          <span className="stamp bg-brand text-[var(--brand-ink)]">Best purchase</span>
         ) : (
           <span className="stamp stamp-plain">Cheapest price tag</span>
         )}
@@ -46,8 +47,8 @@ function Offer({ p, kind }: { p: Pick; kind: "tag" | "best" }) {
         </div>
         <div className="text-right">
           <div className="label mb-1">You pay (est.)</div>
-          <div className="figure text-[30px]">
-            {best ? <span className="mark">{p.landed.text}</span> : p.landed.text}
+          <div className={`figure text-[30px] ${best ? "text-brand-text" : ""}`}>
+            <CountUp text={p.landed.text} />
           </div>
         </div>
       </div>
@@ -73,20 +74,24 @@ function Offer({ p, kind }: { p: Pick; kind: "tag" | "best" }) {
 /** The opening example, from a recorded search ranked by the real engines (see /api/showcase). */
 export function Showcase() {
   const { data } = useApi<ShowcaseData | null>("/api/showcase");
-  if (!data) return <div className="card h-[430px] animate-pulse" aria-hidden="true" />;
+  if (!data) return <div className="skeleton h-[460px]" aria-hidden="true" />;
   return (
     <figure className="card" aria-label="Example: cheapest price tag against best purchase">
-      <figcaption className="border-b-[1.5px] border-ink px-5 py-3">
+      <figcaption className="border-b border-border px-6 py-4">
         <div className="label">Example search · recorded</div>
         <div className="mt-0.5 text-[15px] font-semibold">
           “{data.query}” · {data.offerCount} offers from {data.markets.map((m) => COUNTRY[m] ?? m).join(", ")}
         </div>
       </figcaption>
       <Offer p={data.cheapestSticker} kind="tag" />
-      <div className="border-t border-dashed border-ink" />
+
       <Offer p={data.best} kind="best" />
-      <div className="border-t-[1.5px] border-ink px-5 py-3 text-[14px]">
-        The cheapest tag would cost <strong className="num">{data.landedGap.text}</strong> more, delivered.
+      <div className="border-t border-border px-6 py-4 text-[14.5px]">
+        The cheapest tag would cost{" "}
+        <strong className="mark num">
+          <CountUp text={data.landedGap.text} />
+        </strong>{" "}
+        more, delivered.
         <div className="mt-2">
           <WaterfallKey />
         </div>

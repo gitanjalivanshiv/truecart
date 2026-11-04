@@ -224,3 +224,29 @@ Format: date (IST) · decision · reason.
   - The card comes from `/api/showcase`: the recorded hero search ranked by the real engines (replay data, FX snapshot, demo mandate). It is cached per process, never calls Channel3 or the model, and is labelled "recorded" and "estimates".
   - The browser does no money arithmetic: the gap between the two landed costs is computed on the server.
 - **CSS layers:** component classes moved into `@layer components`, so Tailwind utilities can adjust them. Unlayered CSS always beat Tailwind's layered utilities.
+
+## 2026-11-04 · Product shell, one typeface, motion
+
+- **Owner feedback** on the previous pass:
+  - too many apparent fonts;
+  - the theme still didn't look good;
+  - it read as "a random HTML page", not a product;
+  - it needed interactive controls and motion, not a static page.
+- **One typeface:** Schibsted Grotesk only. IBM Plex Mono and the uppercase mono labels are removed.
+  - Tabular figures are used only where columns align (tables and the grid). Measured in the browser, Schibsted Grotesk's `tnum` gives equal-width digits.
+- **Shell:**
+  - a sidebar with icons and a sliding active marker;
+  - a spend card with an animated meter and the theme switch;
+  - a sticky top bar that blurs and gains a shadow on scroll;
+  - a slide-in drawer on phones.
+- **Theme:**
+  - neutral surfaces, 14–16px radii, soft shadows;
+  - one green for action and "best", and status pills in place of stamps;
+  - light and dark token sets, with a short colour transition when switching.
+- **Interaction:**
+  - each page enters with a fade and rise (`app/template.tsx`), and sections reveal as they scroll into view;
+  - segmented controls with a sliding pill, and native checkboxes drawn as switches and chips (keyboard and label semantics kept);
+  - count-up figures that settle exactly on the server's text, and landed-cost bars that grow in;
+  - hover lift on cards, skeleton loaders, and toasts for purchases, approvals, limit changes and the red-team drill.
+  - All motion is disabled under `prefers-reduced-motion`.
+- **Dependency:** `lucide-react` 1.59.0 (pinned; the newest release at least two weeks old) for icons.

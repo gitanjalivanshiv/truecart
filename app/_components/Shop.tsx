@@ -1,5 +1,6 @@
 "use client";
 
+import { Calculator, CreditCard, Globe, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { PayPalActivity } from "./Activity";
 import { AgentText, BoxHead } from "./bits";
@@ -10,16 +11,19 @@ import { useAgentChat } from "./useAgentChat";
 const HERO = "Get me a 1L insulated water bottle, delivered to the UK, under £40.";
 
 const HOW = [
-  { title: "Search three markets", text: "Shops in the UK, the US and Germany, through Channel3." },
+  { icon: Globe, title: "Search three markets", text: "Shops in the UK, the US and Germany, through Channel3." },
   {
+    icon: Calculator,
     title: "Price it properly",
     text: "Item, shipping, UK import VAT and duty, and the cost of currency conversion: the landed cost.",
   },
   {
+    icon: ShieldCheck,
     title: "Check your mandate",
     text: "Caps, auto-buy limit, units and countries, enforced in the payment code, not by the AI.",
   },
   {
+    icon: CreditCard,
     title: "Pay with PayPal",
     text: "Your saved PayPal wallet, no pop-up. Then PayPal's own record is checked against the ledger.",
   },
@@ -73,9 +77,12 @@ export function Shop() {
       <div className="space-y-16">
         <section className="grid items-center gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <div>
-            <div className="label mb-4">AI shopping agent · PayPal sandbox · delivered to the UK</div>
-            <h1 className="display text-[44px] sm:text-[60px]">
-              The cheapest price tag isn&apos;t the <span className="mark">cheapest purchase</span>.
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-[13.5px] font-semibold text-ink-2 shadow-[var(--shadow-sm)]">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-brand" aria-hidden="true" />
+              AI shopping agent · PayPal sandbox · UK delivery
+            </div>
+            <h1 className="display text-[42px] sm:text-[58px]">
+              The cheapest price tag isn&apos;t the <span className="text-brand-text">cheapest purchase</span>.
             </h1>
             <p className="mt-6 max-w-[54ch] text-[18px] leading-relaxed text-ink-2">
               TrueCart compares shops by what you would actually pay, then buys with PayPal only inside the limits on
@@ -86,7 +93,7 @@ export function Shop() {
               . No AI can talk it past them.
             </p>
             <div className="mt-8">
-              <div className="label mb-2">Try it</div>
+              <div className="label mb-2">Try the demo request</div>
               <button
                 className="btn btn-primary btn-lg w-full justify-between text-left"
                 onClick={() => send(HERO, "hero")}
@@ -113,18 +120,41 @@ export function Shop() {
           <h2 id="how" className="sr-only">
             How it works
           </h2>
-          <ol className="grid gap-px border-[1.5px] border-ink bg-ink sm:grid-cols-2 lg:grid-cols-4">
-            {HOW.map((h, i) => (
-              <li key={h.title} className="bg-sheet p-5">
-                <div className="figure text-[32px] text-accent">0{i + 1}</div>
-                <div className="mt-3 text-[17px] font-bold tracking-[-0.01em]">{h.title}</div>
-                <p className="mt-1 text-[14px] text-ink-2">{h.text}</p>
-              </li>
-            ))}
+          <div className="mb-5 flex items-end justify-between" data-reveal>
+            <div>
+              <div className="text-[14px] font-semibold text-brand-text">How it works</div>
+              <div className="mt-1 text-[26px] font-extrabold tracking-[-0.025em]">
+                Four checks before any money moves
+              </div>
+            </div>
+          </div>
+          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {HOW.map((h, i) => {
+              const Icon = h.icon;
+              return (
+                <li
+                  key={h.title}
+                  className="card lift p-5"
+                  data-reveal
+                  style={{ "--d": `${i * 0.08}s` } as React.CSSProperties}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-brand-soft text-brand-text">
+                      <Icon size={22} />
+                    </span>
+                    <span className="num text-[13px] font-semibold text-muted">Step {i + 1}</span>
+                  </div>
+                  <div className="mt-4 text-[17px] font-bold tracking-[-0.01em]">{h.title}</div>
+                  <p className="mt-1 text-[14px] text-ink-2">{h.text}</p>
+                </li>
+              );
+            })}
           </ol>
         </section>
 
-        <PayPalActivity no="02" />
+        <div data-reveal>
+          <PayPalActivity no="02" />
+        </div>
       </div>
     );
 
@@ -135,11 +165,14 @@ export function Shop() {
         <div className="space-y-6">
           {turns.map((t, i) =>
             t.who === "you" ? (
-              <div key={i} className="ml-auto max-w-[85%] bg-ink px-4 py-3 text-[16px] text-paper">
+              <div
+                key={i}
+                className="fade-in ml-auto max-w-[85%] rounded-[16px] rounded-br-[6px] bg-brand px-4 py-3 text-[16px] text-[var(--brand-ink)]"
+              >
                 {t.text}
               </div>
             ) : (
-              <div key={i} className="card px-5 py-4">
+              <div key={i} className="card fade-in px-5 py-4">
                 <div className="speaker mb-2">TrueCart</div>
                 <div className="text-[15.5px] leading-relaxed">
                   <AgentText text={t.text} />
@@ -148,11 +181,17 @@ export function Shop() {
             ),
           )}
           {busy && (
-            <div className="border-l-4 border-accent pl-4">
-              <div className="speaker mb-1">TrueCart</div>
-              <span className="text-[15px] text-ink-2">
-                working through it<span className="blink">_</span>
+            <div className="card flex items-center gap-3 px-5 py-4">
+              <span className="flex gap-1" aria-hidden="true">
+                {[0, 1, 2].map((d) => (
+                  <span
+                    key={d}
+                    className="h-2 w-2 animate-bounce rounded-full bg-brand"
+                    style={{ animationDelay: `${d * 0.15}s` }}
+                  />
+                ))}
               </span>
+              <span className="text-[15px] text-ink-2">TrueCart is working through it…</span>
             </div>
           )}
         </div>
@@ -161,8 +200,8 @@ export function Shop() {
         </div>
       </section>
 
-      <aside className="space-y-12">
-        <section>
+      <aside className="space-y-6">
+        <section className="card p-6">
           <BoxHead
             no="02"
             title="What the agent did"

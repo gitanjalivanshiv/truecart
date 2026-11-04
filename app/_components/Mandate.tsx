@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BoxHead, PageHead } from "./bits";
+import { toast } from "./toast";
 import { ConnectAgent } from "./ConnectAgent";
 import type { StateView } from "./types";
 import { post, refreshAll, useApi } from "./useApi";
@@ -73,6 +74,7 @@ function LimitsForm({ state }: { state: StateView }) {
         try {
           await patch(form);
           setMsg({ ok: true, text: "Saved. New limits apply to the next purchase." });
+          toast("Limits saved", { body: "They apply to the next purchase.", tone: "success" });
           refreshAll();
         } catch (err) {
           setMsg({ ok: false, text: (err as Error).message });
@@ -96,12 +98,12 @@ function LimitsForm({ state }: { state: StateView }) {
       </label>
       <fieldset className="md:col-span-2">
         <legend className="label mb-2">Shops may be in</legend>
-        <div className="flex flex-wrap gap-x-5 gap-y-2">
+        <div className="flex flex-wrap gap-2">
           {COUNTRIES.map(([code, name]) => (
-            <label key={code} className="flex items-center gap-1.5 text-[13.5px]">
+            <label key={code} className="chip">
               <input
                 type="checkbox"
-                className="accent-[var(--ink)]"
+                className="sr-only"
                 checked={form.allowedMerchantCountries.includes(code)}
                 onChange={(e) =>
                   set(
@@ -112,7 +114,7 @@ function LimitsForm({ state }: { state: StateView }) {
                   )
                 }
               />
-              <span className="code text-[12px] text-muted">{code}</span> {name}
+              <span className="text-[12px] opacity-70">{code}</span> {name}
             </label>
           ))}
         </div>
@@ -155,21 +157,34 @@ export function Mandate({ walletStatus }: { walletStatus?: string }) {
     return (
       <>
         {head}
-        <p className="label">Loading your mandate…</p>
+        <div className="space-y-6" aria-label="Loading your mandate" aria-busy="true">
+          <div className="skeleton h-[96px]" />
+          <div className="skeleton h-[320px]" />
+        </div>
       </>
     );
   const m = state.mandate;
   return (
-    <div className="space-y-12">
+    <div className="space-y-6">
       {head}
-      <section>
+      <section className="card p-6" data-reveal>
         <BoxHead no="01" title="Purchases" />
         <div className="flex flex-wrap items-center gap-4">
           {m.paused ? <span className="stamp stamp-stop">Paused</span> : <span className="stamp stamp-go">Active</span>}
           <button
             className={`btn ${m.paused ? "btn-primary" : "btn-danger"}`}
             disabled={busy}
-            onClick={() => run(() => patch({ paused: !m.paused }))}
+            onClick={() =>
+              run(async () => {
+                await patch({ paused: !m.paused });
+                toast(m.paused ? "Purchases resumed" : "All purchases paused", {
+                  body: m.paused
+                    ? "The agent can buy within your limits again."
+                    : "Nothing will be bought until you resume.",
+                  tone: m.paused ? "success" : "warning",
+                });
+              })
+            }
           >
             {m.paused ? "Resume purchases" : "Pause all purchases"}
           </button>
@@ -181,12 +196,12 @@ export function Mandate({ walletStatus }: { walletStatus?: string }) {
         </div>
       </section>
 
-      <section>
+      <section className="card p-6" data-reveal>
         <BoxHead no="02" title="Limits" />
         <LimitsForm key={JSON.stringify(m)} state={state} />
       </section>
 
-      <section>
+      <section className="card p-6" data-reveal>
         <BoxHead no="03" title="PayPal wallet" aside={<span className="label">sandbox</span>} />
         {walletStatus && WALLET_MESSAGES[walletStatus] && (
           <p className={`mb-3 ${walletStatus === "linked" ? "text-go" : "text-wait"}`}>
@@ -239,7 +254,7 @@ export function Mandate({ walletStatus }: { walletStatus?: string }) {
         {error && <p className="mt-2 text-stop">{error}</p>}
       </section>
 
-      <section>
+      <section className="card p-6" data-reveal>
         <BoxHead no="04" title="Fixed for this demo" />
         <dl className="grid max-w-[640px] grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-[13.5px]">
           <dt className="label pt-0.5">Delivered to</dt>

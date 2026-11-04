@@ -41,7 +41,7 @@ export function ConnectAgent() {
     );
 
   return (
-    <section>
+    <section className="card p-6" data-reveal>
       <BoxHead no="05" title="Connect an agent" aside={<span className="label">MCP</span>} />
       <p className="mb-4 max-w-[75ch] text-[13.5px] text-ink-2">
         Let another AI assistant shop for you through TrueCart&apos;s MCP server. It gets four tools (mandate, search,
@@ -77,7 +77,7 @@ export function ConnectAgent() {
       </form>
 
       {fresh && config && (
-        <div className="sheet mt-4 p-4">
+        <div className="mt-4 rounded-[12px] border border-border bg-surface-2 p-4">
           <div className="label mb-1">Shown once. Copy it now.</div>
           <p className="mb-2 text-[13px] text-ink-2">
             Server: <span className="code">{origin}/mcp</span> (streamable HTTP). Add this to an MCP client that

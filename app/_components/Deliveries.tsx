@@ -60,7 +60,7 @@ function Row({ s }: { s: Shipment }) {
   };
   const delivered = s.state.stage === "DELIVERED";
   return (
-    <article className="sheet p-4">
+    <article className="card lift p-5" data-reveal>
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
         <h3 className="text-[15px] font-semibold">{s.title}</h3>
         <span className="text-[13px] text-ink-2">{s.store}</span>
@@ -88,7 +88,7 @@ function Row({ s }: { s: Shipment }) {
       <ol className="mt-4 grid grid-flow-col gap-1" aria-label="Delivery progress (simulated)">
         {s.state.timeline.map((t) => (
           <li key={t.stage} className="min-w-0">
-            <div className={`h-1.5 ${t.reached ? (s.state.overdue ? "bg-stop" : "bg-ink") : "bg-rule"}`} />
+            <div className={`h-1.5 ${t.reached ? (s.state.overdue ? "bg-stop" : "bg-brand") : "bg-rule"}`} />
             <div className={`mt-1 truncate text-[11.5px] ${t.reached ? "text-ink" : "text-muted"}`}>
               {STAGE_TEXT[t.stage]}
             </div>

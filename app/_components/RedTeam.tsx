@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AgentText, BoxHead, PageHead, Stamp } from "./bits";
+import { toast } from "./toast";
 import { StepList } from "./StepList";
 import { reason } from "./text";
 import type { StateView } from "./types";
@@ -61,7 +62,7 @@ export function RedTeam({ listing }: { listing: string }) {
             </div>
           )}
           {answer && (
-            <div className="mt-5 border-l-4 border-accent pl-4">
+            <div className="mt-5 rounded-[12px] bg-surface-2 p-4">
               <div className="speaker mb-1">TrueCart</div>
               <div className="text-[15px] leading-relaxed">
                 <AgentText text={answer.text} />
@@ -85,7 +86,13 @@ export function RedTeam({ listing }: { listing: string }) {
               setError(null);
               setBefore(state?.spend.remaining.text ?? null);
               try {
-                setDrill(await post<Drill>("/api/redteam", {}));
+                const d = await post<Drill>("/api/redteam", {});
+                setDrill(d);
+                if (d.status === "DENIED")
+                  toast("Attack refused", {
+                    body: "Denied by your mandate. Your budget is untouched.",
+                    tone: "success",
+                  });
                 refreshAll();
               } catch (e) {
                 setError((e as Error).message);
@@ -98,7 +105,7 @@ export function RedTeam({ listing }: { listing: string }) {
           </button>
           {error && <p className="mt-2 text-stop">{error}</p>}
           {drill && (
-            <div className="mt-6 border-t-[1.5px] border-ink pt-5">
+            <div className="fade-in mt-6 rounded-[14px] border border-border bg-surface-2 p-5">
               <div className="flex items-center gap-5">
                 <Stamp status={drill.status} big />
                 <div className="text-[15px]">
@@ -108,8 +115,8 @@ export function RedTeam({ listing }: { listing: string }) {
               </div>
               <ul className="mt-5 space-y-1.5 text-[14.5px]">
                 {drill.reasons.map((r) => (
-                  <li key={r} className="flex gap-2">
-                    <span className="code text-[11px] text-muted">{r}</span>
+                  <li key={r} className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-stop" aria-hidden="true" />
                     <span>{reason(r)}</span>
                   </li>
                 ))}

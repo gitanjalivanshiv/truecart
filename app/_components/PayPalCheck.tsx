@@ -54,7 +54,7 @@ export function PayPalCheck({
   const { data, error } = state;
   const differs = data?.rows.filter((r) => r.verdict === "mismatch").length ?? 0;
   return (
-    <section className="sheet mt-4 p-4" aria-label="PayPal record check" aria-busy={!data && !error}>
+    <section className="card fade-in mt-4 p-5" aria-label="PayPal record check" aria-busy={!data && !error}>
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
         <h3 className="text-[15px] font-semibold">PayPal&apos;s own record</h3>
         <span className="text-[13px] text-ink-2">{title}</span>

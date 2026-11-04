@@ -18,7 +18,7 @@ const time = (iso: string) =>
 export function PayPalActivity({ no = "03" }: { no?: string }) {
   const { data, error } = useApi<Item[]>("/api/activity");
   return (
-    <section>
+    <section className="card p-6">
       <BoxHead no={no} title="PayPal activity" aside={<span className="label">sandbox</span>} />
       {error && <p className="text-stop">{error}</p>}
       {data && data.length === 0 && (
